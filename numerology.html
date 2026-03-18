@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8E1NGR4VSS"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-8E1NGR4VSS');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Path Number — Discover Your Numerology</title>
+<meta name="description" content="Free Life Path Number Calculator. Enter your birth date to discover your numerology life path number and unlock insights about your personality, strengths, and destiny.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FDFBF7;
+    --bg-warm: #F8F4ED;
+    --bg-card: #FFFFFF;
+    --gold: #B8943E;
+    --gold-light: #D4B568;
+    --gold-pale: #EDE3CC;
+    --gold-wash: rgba(184,148,62,0.06);
+    --gold-border: rgba(184,148,62,0.18);
+    --text-dark: #2C2620;
+    --text-body: #5A5249;
+    --text-light: #8A8279;
+    --text-faint: #B5AFA7;
+    --border: #E8E3DA;
+    --border-light: #F0ECE4;
+    --rose: #C4927A;
+    --sage: #8FA68E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--bg);
+    color: var(--text-body);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Subtle top decorative line */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 5%, var(--gold-pale) 30%, var(--gold-light) 50%, var(--gold-pale) 70%, transparent 95%);
+    z-index: 100;
+  }
+
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 72px 24px 80px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 52px;
+  }
+
+  .header-ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: softIn 1s ease forwards;
+  }
+
+  .header-ornament .line {
+    width: 48px;
+    height: 1px;
+    background: var(--gold-pale);
+  }
+
+  .header-ornament .diamond {
+    width: 7px;
+    height: 7px;
+    background: var(--gold-light);
+    transform: rotate(45deg);
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 400;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    color: var(--text-dark);
+    letter-spacing: 0.01em;
+    line-height: 1.25;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: softIn 1s ease 0.15s forwards;
+  }
+
+  .header h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .header p {
+    font-weight: 300;
+    font-size: 1.02rem;
+    color: var(--text-light);
+    line-height: 1.75;
+    max-width: 440px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: softIn 1s ease 0.3s forwards;
+  }
+
+  /* Card */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 44px 40px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 20px rgba(44,38,32,0.03);
+    position: relative;
+  }
+
+  .form-card {
+    opacity: 0;
+    animation: softIn 0.8s ease 0.4s forwards;
+  }
+
+  /* Form */
+  .form-label {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    color: var(--gold);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+
+  .date-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .input-group span {
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 400;
+  }
+
+  .input-group select,
+  .input-group input {
+    background: var(--bg-warm);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-dark);
+    font-family: 'Jost', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .input-group select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23B5AFA7' stroke-width='1.2'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+
+  .input-group select:focus,
+  .input-group input:focus {
+    border-color: var(--gold-light);
+    box-shadow: 0 0 0 3px rgba(184,148,62,0.08);
+    background: #fff;
+  }
+
+  .input-group select option {
+    background: #fff;
+    color: var(--text-dark);
+  }
+
+  .input-group input::placeholder {
+    color: var(--text-faint);
+  }
+
+  .calculate-btn {
+    width: 100%;
+    padding: 17px;
+    background: var(--gold);
+    color: #fff;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    position: relative;
+  }
+
+  .calculate-btn:hover {
+    background: #A6832F;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(184,148,62,0.2);
+  }
+
+  .calculate-btn:active {
+    transform: translateY(0);
+  }
+
+  /* Result section */
+  .result-section {
+    display: none;
+    animation: softIn 0.7s ease forwards;
+  }
+
+  .result-section.visible {
+    display: block;
+  }
+
+  /* Number display */
+  .number-card {
+    text-align: center;
+    padding: 52px 40px 48px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 20px rgba(44,38,32,0.03);
+  }
+
+  .number-card::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--gold-wash) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .number-label {
+    font-size: 0.7rem;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 20px;
+    font-weight: 400;
+  }
+
+  .number-ring {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    border: 1.5px solid var(--gold-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    position: relative;
+  }
+
+  .number-ring::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border-radius: 50%;
+    border: 1px solid var(--border-light);
+  }
+
+  .number-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.6rem;
+    font-weight: 400;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .number-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.45rem;
+    font-weight: 400;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+    letter-spacing: 0.01em;
+  }
+
+  .number-tagline {
+    font-size: 0.92rem;
+    color: var(--text-light);
+    font-weight: 300;
+    letter-spacing: 0.02em;
+  }
+
+  /* Calculation breakdown */
+  .calc-box {
+    background: var(--bg-warm);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 28px;
+  }
+
+  .calc-box-title {
+    font-size: 0.68rem;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-bottom: 8px;
+    font-weight: 400;
+  }
+
+  .calc-box-steps {
+    font-size: 0.88rem;
+    color: var(--text-light);
+    font-weight: 300;
+    line-height: 1.9;
+  }
+
+  .calc-box-steps .hl {
+    color: var(--gold);
+    font-weight: 500;
+  }
+
+  /* Detail card */
+  .detail-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 20px rgba(44,38,32,0.03);
+  }
+
+  .detail-section {
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .detail-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .detail-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .detail-icon .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--gold-light);
+  }
+
+  .detail-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    color: var(--text-dark);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  .detail-text {
+    font-weight: 300;
+    font-size: 0.94rem;
+    color: var(--text-body);
+    line-height: 1.85;
+  }
+
+  /* Traits */
+  .traits-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .trait-tag {
+    padding: 7px 18px;
+    background: var(--gold-wash);
+    border: 1px solid var(--gold-border);
+    border-radius: 100px;
+    font-size: 0.82rem;
+    color: var(--gold);
+    font-weight: 400;
+    letter-spacing: 0.03em;
+  }
+
+  /* Try again */
+  .try-again-btn {
+    display: block;
+    margin: 8px auto 24px;
+    padding: 13px 32px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-light);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.88rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 400;
+  }
+
+  .try-again-btn:hover {
+    border-color: var(--gold-light);
+    color: var(--gold);
+  }
+
+  /* Share */
+  .share-area {
+    text-align: center;
+    padding: 24px 0 8px;
+  }
+
+  .share-label {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    margin-bottom: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .share-btns {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .share-btn {
+    padding: 9px 22px;
+    background: var(--bg-warm);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--text-light);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 0.02em;
+  }
+
+  .share-btn:hover {
+    border-color: var(--gold-light);
+    color: var(--gold);
+    background: var(--gold-wash);
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 52px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .footer p {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* Divider ornament */
+  .ornament-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 32px 0;
+  }
+
+  .ornament-divider .line {
+    flex: 1;
+    max-width: 80px;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .ornament-divider .star {
+    font-size: 10px;
+    color: var(--gold-light);
+  }
+
+  /* Animations */
+  @keyframes softIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media (max-width: 520px) {
+    .container { padding: 56px 16px 60px; }
+    .card { padding: 32px 24px; }
+    .date-inputs { grid-template-columns: 1fr; gap: 10px; }
+    .number-card { padding: 40px 24px 36px; }
+    .number-ring { width: 110px; height: 110px; }
+    .number-value { font-size: 3rem; }
+    .detail-card { padding: 28px 24px; }
+  }
+</style>
+<meta property="og:title" content="Life Path Number Calculator — Celestial Self">
+<meta property="og:description" content="This number won't decide your destiny. But for something that comes from basic arithmetic, it has an oddly specific way of describing who you already are.">
+<meta property="og:url" content="/numerology.html">
+<meta property="og:site_name" content="Celestial Self">
+<meta property="og:type" content="website">
+<meta property="og:image" content="/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Life Path Number Calculator — Celestial Self">
+<meta name="twitter:description" content="This number won't decide your destiny. But for something that comes from basic arithmetic, it has an oddly specific way of describing who you already are.">
+<meta name="twitter:image" content="/og-image.png">
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <nav style="text-align:center;margin-bottom:40px;opacity:0;animation:softIn 0.8s ease forwards"><a href="index.html" style="font-size:0.78rem;color:#B5AFA7;text-decoration:none;letter-spacing:0.1em;text-transform:uppercase;transition:color 0.3s" onmouseover="this.style.color='#B8943E'" onmouseout="this.style.color='#B5AFA7'">← Back to All Tools</a></nav>
+
+  <header class="header">
+    <div class="header-ornament">
+      <span class="line"></span>
+      <span class="diamond"></span>
+      <span class="line"></span>
+    </div>
+    <h1>Your <em>Life Path</em> Number</h1>
+    <p>This number won't decide your destiny. But for something that comes from basic arithmetic, it has an oddly specific way of describing who you already are.</p>
+  </header>
+
+  <!-- Form -->
+  <div class="card form-card" id="formSection">
+    <label class="form-label">Date of Birth</label>
+    <div class="date-inputs">
+      <div class="input-group">
+        <span>Month</span>
+        <select id="month">
+          <option value="" disabled selected>—</option>
+          <option value="1">January</option>
+          <option value="2">February</option>
+          <option value="3">March</option>
+          <option value="4">April</option>
+          <option value="5">May</option>
+          <option value="6">June</option>
+          <option value="7">July</option>
+          <option value="8">August</option>
+          <option value="9">September</option>
+          <option value="10">October</option>
+          <option value="11">November</option>
+          <option value="12">December</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <span>Day</span>
+        <select id="day">
+          <option value="" disabled selected>—</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <span>Year</span>
+        <input type="number" id="year" placeholder="1985" min="1900" max="2025">
+      </div>
+    </div>
+    <button class="calculate-btn" onclick="calculate()">Discover Your Number</button>
+  </div>
+
+  <!-- Results -->
+  <div class="result-section" id="resultSection">
+    <div class="number-card">
+      <div class="number-label">Your Life Path Number</div>
+      <div class="number-ring">
+        <div class="number-value" id="resultNumber"></div>
+      </div>
+      <div class="number-name" id="resultName"></div>
+      <div class="number-tagline" id="resultTagline"></div>
+    </div>
+
+    <div class="detail-card">
+      <div class="calc-box">
+        <div class="calc-box-title">How it was calculated</div>
+        <div class="calc-box-steps" id="calcSteps"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Overview</span></div>
+        <div class="detail-text" id="resultOverview"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Key Traits</span></div>
+        <div class="traits-grid" id="resultTraits"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Strengths</span></div>
+        <div class="detail-text" id="resultStrengths"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Challenges</span></div>
+        <div class="detail-text" id="resultChallenges"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Career &amp; Purpose</span></div>
+        <div class="detail-text" id="resultCareer"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Relationships</span></div>
+        <div class="detail-text" id="resultRelationships"></div>
+      </div>
+    </div>
+
+    <div class="ornament-divider">
+      <span class="line"></span>
+      <span class="star">✦</span>
+      <span class="line"></span>
+    </div>
+
+    <button class="try-again-btn" onclick="reset()">Calculate Another</button>
+
+    <div class="share-area">
+      <div class="share-label">Share your result</div>
+      <div class="share-btns">
+        <button class="share-btn" onclick="shareTwitter()">𝕏 Post</button>
+        <button class="share-btn" onclick="shareFacebook()">Facebook</button>
+        <button class="share-btn" onclick="copyLink()">Copy Link</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>Numerology is an ancient practice, not a science. Take what resonates, leave what doesn't.<br>None of this is real. All of it is useful.</p>
+  </footer>
+</div>
+
+<script>
+const daySelect = document.getElementById('day');
+for (let i = 1; i <= 31; i++) {
+  const opt = document.createElement('option');
+  opt.value = i;
+  opt.textContent = i;
+  daySelect.appendChild(opt);
+}
+
+const lifePathData = {
+  1: {
+    name: "The Leader",
+    tagline: "Independent · Ambitious · Original",
+    overview: "Life Path 1 individuals are natural-born leaders with an innate drive to forge their own path. You possess a pioneering spirit, strong willpower, and the courage to take initiative when others hesitate. Your independence is your greatest asset — you think for yourself, trust your instincts, and are driven to create something meaningful and original in this world.",
+    traits: ["Leadership", "Independence", "Ambition", "Originality", "Determination", "Courage"],
+    strengths: "You excel at initiating projects, making decisive choices, and inspiring others through action rather than words. Your self-reliance and creative thinking allow you to see opportunities where others see obstacles. You have a natural magnetism that draws people to your vision.",
+    challenges: "Your strong will can sometimes become stubbornness. Learning to collaborate, accept help, and consider others' perspectives is essential for your growth. Impatience and a tendency to dominate can push people away if left unchecked.",
+    career: "You thrive in roles where you can lead, innovate, or work independently. Entrepreneurship, executive leadership, creative direction, freelancing, and any pioneering field suits you well. You need autonomy to do your best work.",
+    relationships: "You need a partner who respects your independence and has their own strong identity. Mutual respect and space for individual growth are essential. You love deeply but must remember that vulnerability is a form of strength."
+  },
+  2: {
+    name: "The Diplomat",
+    tagline: "Harmonious · Intuitive · Cooperative",
+    overview: "Life Path 2 individuals are gifted with deep sensitivity, emotional intelligence, and a natural ability to create harmony. You are the peacemaker, the mediator, the one who sees all sides and bridges divides. Your strength lies not in force, but in grace — your ability to influence through understanding, patience, and genuine empathy.",
+    traits: ["Diplomacy", "Sensitivity", "Cooperation", "Intuition", "Patience", "Empathy"],
+    strengths: "You have an extraordinary ability to read people, situations, and unspoken dynamics. Your patience and tact make you invaluable in negotiations, partnerships, and any situation requiring delicate handling. You create environments where others feel safe and heard.",
+    challenges: "You may struggle with indecisiveness, over-sensitivity, or putting others' needs before your own to the point of self-neglect. Setting boundaries and learning to assert your own desires without guilt is a key growth area.",
+    career: "You excel in counseling, mediation, diplomacy, human resources, teaching, healing arts, and any collaborative role. Behind-the-scenes support roles where your quiet influence shapes outcomes are your sweet spot.",
+    relationships: "Deep, meaningful connection is essential for you. You are a devoted, attentive partner who thrives in relationships built on emotional intimacy and mutual understanding. Finding someone who reciprocates your depth of care is crucial."
+  },
+  3: {
+    name: "The Communicator",
+    tagline: "Creative · Expressive · Joyful",
+    overview: "Life Path 3 individuals radiate creative energy and possess a gift for self-expression. Whether through words, art, music, or sheer charisma, you have the ability to uplift, inspire, and bring joy to those around you. Your optimism is infectious, and your imagination knows no bounds.",
+    traits: ["Creativity", "Expression", "Optimism", "Charisma", "Imagination", "Joy"],
+    strengths: "Your ability to communicate ideas, emotions, and stories in compelling ways is unmatched. You bring lightness and inspiration wherever you go. Your creative problem-solving and natural social grace open doors that remain closed to others.",
+    challenges: "Scattered focus, superficiality, and avoiding deeper emotional work are your pitfalls. You may use humor or charm to deflect from vulnerability. Developing discipline and depth alongside your natural gifts will unlock your true potential.",
+    career: "Writing, performing arts, design, marketing, public speaking, teaching, entertainment — any field where creative expression and communication are central will light you up. You need work that allows your personality to shine.",
+    relationships: "You bring fun, romance, and spontaneity to relationships. You need a partner who appreciates your playful nature but also encourages emotional depth. Communication is both your gift and your relationship superpower."
+  },
+  4: {
+    name: "The Builder",
+    tagline: "Disciplined · Reliable · Methodical",
+    overview: "Life Path 4 individuals are the architects of lasting structures — in business, in relationships, and in life. You value stability, order, and hard work. Where others dream, you build. Your dedication, attention to detail, and unwavering reliability make you the bedrock that others depend on.",
+    traits: ["Discipline", "Reliability", "Practicality", "Loyalty", "Endurance", "Precision"],
+    strengths: "Your work ethic is extraordinary. You excel at turning abstract ideas into concrete reality through systematic planning and relentless execution. People trust you because you consistently deliver on your promises. You create order from chaos.",
+    challenges: "Rigidity, stubbornness, and an excessive focus on work can lead to burnout and missed opportunities for joy. Learning to embrace flexibility, spontaneity, and rest is essential. Not everything valuable can be measured or planned.",
+    career: "Engineering, architecture, project management, finance, operations, law, and any field requiring systematic thinking and reliability. You build empires through consistency, not shortcuts.",
+    relationships: "You are a loyal, dependable partner who expresses love through actions and commitment. You need stability in relationships but should remember that emotional expression and spontaneity keep love alive."
+  },
+  5: {
+    name: "The Adventurer",
+    tagline: "Free-spirited · Versatile · Dynamic",
+    overview: "Life Path 5 individuals are the embodiment of freedom and change. You are drawn to new experiences, diverse people, and the thrill of the unknown. Your versatility and adaptability allow you to reinvent yourself throughout life. You came here to experience everything this world has to offer.",
+    traits: ["Freedom", "Versatility", "Curiosity", "Adventure", "Adaptability", "Charisma"],
+    strengths: "Your ability to adapt to any situation, connect with diverse people, and embrace change makes you resilient and resourceful. You bring excitement and fresh perspectives wherever you go. Your enthusiasm for life is genuinely magnetic.",
+    challenges: "Restlessness, overindulgence, and commitment issues can derail your progress. You may confuse constant stimulation with fulfillment. Learning that true freedom includes the freedom to commit deeply is a transformative realization.",
+    career: "Travel, journalism, sales, entrepreneurship, consulting, entertainment, and any role offering variety and autonomy. You wilt in rigid, repetitive environments. You need a career as dynamic as you are.",
+    relationships: "You need a partner who values freedom as much as you do — someone adventurous, open-minded, and secure enough not to try to cage you. When you find someone who joins your adventures rather than restricting them, you commit wholeheartedly."
+  },
+  6: {
+    name: "The Nurturer",
+    tagline: "Responsible · Loving · Protective",
+    overview: "Life Path 6 individuals carry a deep sense of responsibility toward family, community, and those in need. You are the healer, the caretaker, the one who creates beauty and harmony in your environment. Your heart is vast, and your desire to serve and protect is at the core of who you are.",
+    traits: ["Nurturing", "Responsibility", "Compassion", "Beauty", "Service", "Harmony"],
+    strengths: "Your capacity for love and devotion is extraordinary. You create warmth, beauty, and stability wherever you go. People gravitate to you for comfort and guidance. You have a natural gift for healing — whether through words, touch, or simply your presence.",
+    challenges: "Over-giving, martyrdom, and controlling behavior disguised as care are your shadows. You may sacrifice your own needs while managing everyone else's life. Learning that people must walk their own path — and that self-care is not selfish — is vital.",
+    career: "Healthcare, counseling, teaching, interior design, hospitality, social work, and any nurturing profession. You also have a strong aesthetic sense that serves well in creative fields. You need work that allows you to make a tangible difference.",
+    relationships: "Love and family are central to your life. You are deeply devoted but must guard against becoming possessive or losing yourself in your partner. A relationship of equals, where care flows both ways, brings you the deepest fulfillment."
+  },
+  7: {
+    name: "The Seeker",
+    tagline: "Analytical · Spiritual · Introspective",
+    overview: "Life Path 7 individuals are driven by an unquenchable thirst for knowledge, truth, and understanding. You are the philosopher, the researcher, the mystic — someone who looks beneath the surface of everything. Your inner world is rich and complex, and solitude is not loneliness for you; it is where you find your deepest insights.",
+    traits: ["Wisdom", "Analysis", "Intuition", "Introspection", "Mystery", "Depth"],
+    strengths: "Your analytical mind combined with strong intuition gives you a rare ability to understand complex systems — whether scientific, spiritual, or human. You see patterns others miss. Your quest for truth and depth makes you a source of genuine wisdom.",
+    challenges: "Isolation, emotional detachment, and overthinking can create walls between you and the world. You may struggle to trust others or express your feelings. Learning to balance your inner journey with human connection is your greatest growth edge.",
+    career: "Research, science, technology, psychology, philosophy, writing, spiritual teaching, and any field requiring deep analysis and independent thinking. You do your best work with autonomy and intellectual freedom.",
+    relationships: "You need a partner who respects your need for solitude and intellectual space. Shallow connections drain you; deep, meaningful bonds energize you. When you find someone who can meet you in the depths, the connection is profound."
+  },
+  8: {
+    name: "The Powerhouse",
+    tagline: "Ambitious · Authoritative · Abundant",
+    overview: "Life Path 8 individuals are here to master the material world — not for its own sake, but to create abundance, influence, and lasting impact. You understand power, money, and systems in a way that others don't. Your drive is immense, and when aligned with integrity, you become a force for extraordinary achievement.",
+    traits: ["Ambition", "Authority", "Abundance", "Resilience", "Vision", "Strength"],
+    strengths: "Your business acumen, strategic thinking, and sheer determination set you apart. You have the ability to envision large-scale goals and execute them with precision. You bounce back from setbacks with remarkable resilience. Financial and material success comes naturally when you stay focused.",
+    challenges: "Workaholism, controlling tendencies, and valuing status over substance can undermine your relationships and well-being. The lesson of the 8 is that true power comes from balance — material success means nothing without emotional richness and genuine connection.",
+    career: "Business leadership, finance, real estate, law, management, politics, and any arena where strategic thinking and authority are valued. You are built for positions of influence and large-scale impact.",
+    relationships: "You need a strong partner who isn't intimidated by your ambition. Power dynamics in relationships can be a challenge; finding someone you see as a true equal brings you the balance you need. Vulnerability is your hidden strength in love."
+  },
+  9: {
+    name: "The Humanitarian",
+    tagline: "Compassionate · Wise · Idealistic",
+    overview: "Life Path 9 individuals carry the wisdom of all the numbers before them. You are the old soul, the humanitarian, the one driven by a vision of a better world. Your compassion is vast, your perspective is broad, and you feel called to serve something greater than yourself. Letting go and giving freely are your deepest lessons and greatest gifts.",
+    traits: ["Compassion", "Wisdom", "Generosity", "Idealism", "Artistry", "Vision"],
+    strengths: "Your broad perspective, creative talent, and genuine compassion make you a natural leader in any cause that matters. You inspire through example and have the rare ability to see the big picture without losing sight of the individual. People sense your depth and are drawn to your authenticity.",
+    challenges: "Difficulty letting go — of the past, of relationships, of expectations — is your recurring theme. You may scatter your energy trying to save everyone, or become disillusioned when reality falls short of your ideals. Learning to release with grace and focus your efforts is essential.",
+    career: "Nonprofit work, art, education, counseling, international relations, healthcare, environmental causes, and any field serving the greater good. You need work with meaning and impact beyond personal gain.",
+    relationships: "You love generously but may struggle with attachment and letting go. You need a partner who shares your values and understands your need to contribute to the wider world. A relationship that supports both personal intimacy and shared purpose is your ideal."
+  },
+  11: {
+    name: "The Visionary",
+    tagline: "Inspired · Intuitive · Illuminating",
+    overview: "Life Path 11 is a Master Number — one of heightened intuition, spiritual insight, and inspirational power. You are a channel for higher wisdom, possessing an almost psychic sensitivity to the energies around you. Your purpose is to inspire and illuminate, serving as a bridge between the unseen and the everyday world.",
+    traits: ["Intuition", "Inspiration", "Sensitivity", "Vision", "Spirituality", "Charisma"],
+    strengths: "Your intuitive gifts are extraordinary. You receive insights, creative downloads, and emotional signals that others simply don't perceive. When you trust this inner guidance and channel it constructively, you become a powerful source of inspiration and transformation for those around you.",
+    challenges: "The intensity of the 11 energy can manifest as anxiety, self-doubt, or nervous tension. You may feel torn between the practical demands of life and your spiritual calling. Grounding practices, self-care, and learning to manage your sensitivity are essential to thriving.",
+    career: "Spiritual teaching, art, writing, psychology, counseling, film, music, and any visionary or healing profession. You are meant to inspire through your unique perspective. Conventional corporate environments may feel suffocating unless you find a meaningful niche.",
+    relationships: "You form deep, almost telepathic bonds with the right partner. You need someone who understands your sensitivity and spiritual nature. Relationships serve as mirrors for your growth — choose partners who help you see and embrace your full self."
+  },
+  22: {
+    name: "The Master Builder",
+    tagline: "Visionary · Powerful · Transformative",
+    overview: "Life Path 22 is the most powerful Master Number — the Master Builder who can turn the grandest visions into tangible reality. You combine the spiritual insight of the 11 with the practical mastery of the 4, giving you an extraordinary capacity to create lasting structures that benefit humanity on a large scale.",
+    traits: ["Mastery", "Vision", "Discipline", "Power", "Pragmatism", "Legacy"],
+    strengths: "Your ability to think globally while executing locally is unmatched. You can see the full arc of a massive project and methodically bring it to life. Your combination of idealism and practicality makes you capable of achievements that seem impossible to others.",
+    challenges: "The weight of the 22 can feel crushing. You may feel overwhelmed by your own potential, paralyzed by the gap between your vision and your current reality. Perfectionism and burnout are real risks. Learning to take things one step at a time — and to forgive yourself for being human — is your lifelong practice.",
+    career: "Large-scale leadership, architecture, engineering, international organizations, politics, technology, and any field where you can build systems that transform lives. You are meant for big-picture impact. Small-scale thinking will always feel like a cage.",
+    relationships: "You need a partner who can hold space for both your enormous ambition and your human vulnerability. The right relationship grounds you and gives you the emotional foundation to pursue your massive goals. Don't let your drive eclipse your need for love."
+  },
+  33: {
+    name: "The Master Teacher",
+    tagline: "Healing · Selfless · Transcendent",
+    overview: "Life Path 33 is the rarest Master Number — the Master Teacher whose purpose is to uplift humanity through selfless service, profound love, and spiritual wisdom. You carry the nurturing energy of the 6 amplified to its highest expression, combined with the visionary power of the 11 and the manifestation ability of the 22.",
+    traits: ["Healing", "Devotion", "Wisdom", "Selflessness", "Love", "Transcendence"],
+    strengths: "Your capacity for unconditional love and spiritual understanding is virtually limitless. You have a gift for healing through your presence alone. When you fully step into your power, you become a transformative force — a living example of what compassion and service can achieve.",
+    challenges: "The 33 path demands enormous self-sacrifice, which can lead to burnout, martyrdom, or losing yourself entirely in service to others. You may struggle with the weight of your own sensitivity and idealism. Maintaining your own well-being while serving others is your essential and ongoing lesson.",
+    career: "Spiritual leadership, healing arts, education, humanitarian work, counseling, and any role where you can guide others toward their highest potential. Your career and your calling are inseparable.",
+    relationships: "Love, in its most expansive sense, is at the center of your life. You need a partner who understands your mission and supports your deep need to serve. The right relationship helps you stay grounded and reminds you that receiving love is just as sacred as giving it."
+  }
+};
+
+function reduceNumber(n) {
+  while (n > 9 && n !== 11 && n !== 22 && n !== 33) {
+    n = String(n).split('').reduce((a, b) => a + parseInt(b), 0);
+  }
+  return n;
+}
+
+function calculate() {
+  const month = document.getElementById('month').value;
+  const day = document.getElementById('day').value;
+  const year = document.getElementById('year').value;
+
+  if (!month || !day || !year) {
+    alert('Please enter your complete date of birth.');
+    return;
+  }
+  if (year < 1900 || year > 2025) {
+    alert('Please enter a year between 1900 and 2025.');
+    return;
+  }
+
+  const monthNum = reduceNumber(parseInt(month));
+  const dayNum = reduceNumber(parseInt(day));
+  const yearSum = String(year).split('').reduce((a, b) => a + parseInt(b), 0);
+  const yearNum = reduceNumber(yearSum);
+  const total = monthNum + dayNum + yearNum;
+  const lifePathNumber = reduceNumber(total);
+
+  const steps = `
+    Month: ${month} → <span class="hl">${monthNum}</span><br>
+    Day: ${day} → <span class="hl">${dayNum}</span><br>
+    Year: ${year} → ${String(year).split('').join(' + ')} = ${yearSum} → <span class="hl">${yearNum}</span><br>
+    Total: ${monthNum} + ${dayNum} + ${yearNum} = ${total} → <span class="hl">${lifePathNumber}</span>
+  `;
+
+  const data = lifePathData[lifePathNumber];
+  if (!data) return;
+
+  document.getElementById('resultNumber').textContent = lifePathNumber;
+  document.getElementById('resultName').textContent = data.name;
+  document.getElementById('resultTagline').textContent = data.tagline;
+  document.getElementById('calcSteps').innerHTML = steps;
+  document.getElementById('resultOverview').textContent = data.overview;
+  document.getElementById('resultStrengths').textContent = data.strengths;
+  document.getElementById('resultChallenges').textContent = data.challenges;
+  document.getElementById('resultCareer').textContent = data.career;
+  document.getElementById('resultRelationships').textContent = data.relationships;
+
+  const traitsContainer = document.getElementById('resultTraits');
+  traitsContainer.innerHTML = '';
+  data.traits.forEach(trait => {
+    const tag = document.createElement('span');
+    tag.className = 'trait-tag';
+    tag.textContent = trait;
+    traitsContainer.appendChild(tag);
+  });
+
+  document.getElementById('formSection').style.display = 'none';
+  document.getElementById('resultSection').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function reset() {
+  document.getElementById('formSection').style.display = 'block';
+  document.getElementById('resultSection').classList.remove('visible');
+  document.getElementById('month').value = '';
+  document.getElementById('day').value = '';
+  document.getElementById('year').value = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function shareTwitter() {
+  const num = document.getElementById('resultNumber').textContent;
+  const name = document.getElementById('resultName').textContent;
+  const text = `My Life Path Number is ${num} — ${name}. Discover yours ✦`;
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`, '_blank');
+}
+
+function shareFacebook() {
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+</script>
+
+</body>
+</html>

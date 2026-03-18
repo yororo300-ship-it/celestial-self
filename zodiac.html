@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8E1NGR4VSS"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-8E1NGR4VSS');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zodiac Profile — Your Star Sign Personality</title>
+<meta name="description" content="The stars don't control you. But if you were going to be described by a constellation, wouldn't you want to know which one? Free zodiac personality profiles.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FDFBF7;
+    --bg-warm: #F8F4ED;
+    --bg-card: #FFFFFF;
+    --gold: #B8943E;
+    --gold-light: #D4B568;
+    --gold-pale: #EDE3CC;
+    --gold-wash: rgba(184,148,62,0.06);
+    --gold-border: rgba(184,148,62,0.18);
+    --text-dark: #2C2620;
+    --text-body: #5A5249;
+    --text-light: #8A8279;
+    --text-faint: #B5AFA7;
+    --border: #E8E3DA;
+    --border-light: #F0ECE4;
+    --rose: #C4927A;
+    --sage: #8FA68E;
+    --fire: #C2713A;
+    --earth: #7A8B5E;
+    --air: #6E8CA0;
+    --water: #7A6E9E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--bg);
+    color: var(--text-body);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 5%, var(--gold-pale) 30%, var(--gold-light) 50%, var(--gold-pale) 70%, transparent 95%);
+    z-index: 100;
+  }
+
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 72px 24px 80px;
+  }
+
+  .nav {
+    text-align: center;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: softIn 0.8s ease forwards;
+  }
+
+  .nav a {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+
+  .nav a:hover { color: var(--gold); }
+
+  .header {
+    text-align: center;
+    margin-bottom: 52px;
+  }
+
+  .header-ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: softIn 1s ease forwards;
+  }
+
+  .header-ornament .line { width: 48px; height: 1px; background: var(--gold-pale); }
+  .header-ornament .diamond { width: 7px; height: 7px; background: var(--gold-light); transform: rotate(45deg); }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 400;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    color: var(--text-dark);
+    letter-spacing: 0.01em;
+    line-height: 1.25;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: softIn 1s ease 0.15s forwards;
+  }
+
+  .header h1 em { font-style: italic; color: var(--gold); }
+
+  .header p {
+    font-weight: 300;
+    font-size: 1.02rem;
+    color: var(--text-light);
+    line-height: 1.75;
+    max-width: 460px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: softIn 1s ease 0.3s forwards;
+  }
+
+  /* Form */
+  .form-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 44px 40px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 20px rgba(44,38,32,0.03);
+    opacity: 0;
+    animation: softIn 0.8s ease 0.4s forwards;
+  }
+
+  .form-label {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    color: var(--gold);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+
+  .date-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .input-group span {
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .input-group select {
+    background: var(--bg-warm);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-dark);
+    font-family: 'Jost', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23B5AFA7' stroke-width='1.2'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+
+  .input-group select:focus {
+    border-color: var(--gold-light);
+    box-shadow: 0 0 0 3px rgba(184,148,62,0.08);
+    background-color: #fff;
+  }
+
+  .input-group select option {
+    background: #fff;
+    color: var(--text-dark);
+  }
+
+  .calculate-btn {
+    width: 100%;
+    padding: 17px;
+    background: var(--gold);
+    color: #fff;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+  }
+
+  .calculate-btn:hover {
+    background: #A6832F;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(184,148,62,0.2);
+  }
+
+  /* Result */
+  .result-section {
+    display: none;
+    animation: softIn 0.7s ease forwards;
+  }
+
+  .result-section.visible { display: block; }
+
+  /* Sign card */
+  .sign-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 52px 40px 44px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 2px 20px rgba(44,38,32,0.03);
+    position: relative;
+  }
+
+  .sign-dates {
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 20px;
+  }
+
+  .sign-symbol {
+    font-size: 3.8rem;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .sign-glyph {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--gold-light);
+    margin-bottom: 20px;
+    letter-spacing: 0.3em;
+  }
+
+  .sign-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+  }
+
+  .sign-tagline {
+    font-size: 0.94rem;
+    color: var(--text-light);
+    font-weight: 300;
+    margin-bottom: 20px;
+  }
+
+  .element-badge {
+    display: inline-block;
+    padding: 5px 16px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .element-fire { background: rgba(194,113,58,0.1); color: var(--fire); }
+  .element-earth { background: rgba(122,139,94,0.1); color: var(--earth); }
+  .element-air { background: rgba(110,140,160,0.1); color: var(--air); }
+  .element-water { background: rgba(122,110,158,0.1); color: var(--water); }
+
+  /* Detail card */
+  .detail-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 20px rgba(44,38,32,0.03);
+  }
+
+  .detail-section {
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .detail-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .detail-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .detail-icon .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--gold-light);
+  }
+
+  .detail-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    color: var(--text-dark);
+    font-weight: 500;
+  }
+
+  .detail-text {
+    font-weight: 300;
+    font-size: 0.94rem;
+    color: var(--text-body);
+    line-height: 1.85;
+  }
+
+  .traits-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .trait-tag {
+    padding: 7px 18px;
+    background: var(--gold-wash);
+    border: 1px solid var(--gold-border);
+    border-radius: 100px;
+    font-size: 0.82rem;
+    color: var(--gold);
+    font-weight: 400;
+  }
+
+  /* Compatibility */
+  .compat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .compat-item {
+    background: var(--bg-warm);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+
+  .compat-symbol {
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+  }
+
+  .compat-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.88rem;
+    color: var(--text-dark);
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  .compat-label {
+    font-size: 0.7rem;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .compat-label.best { color: var(--sage); }
+  .compat-label.challenging { color: var(--rose); }
+
+  /* Ruling planet */
+  .planet-box {
+    background: var(--bg-warm);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 10px;
+  }
+
+  .planet-symbol {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+  }
+
+  .planet-info {
+    font-weight: 300;
+    font-size: 0.9rem;
+    color: var(--text-body);
+    line-height: 1.6;
+  }
+
+  .planet-name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 500;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+  }
+
+  /* Try again / share */
+  .ornament-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 32px 0;
+  }
+
+  .ornament-divider .line { flex: 1; max-width: 80px; height: 1px; background: var(--border); }
+  .ornament-divider .star { font-size: 10px; color: var(--gold-light); }
+
+  .try-again-btn {
+    display: block;
+    margin: 8px auto 24px;
+    padding: 13px 32px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-light);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.88rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .try-again-btn:hover {
+    border-color: var(--gold-light);
+    color: var(--gold);
+  }
+
+  .share-area { text-align: center; padding: 24px 0 8px; }
+
+  .share-label {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    margin-bottom: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .share-btns { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+
+  .share-btn {
+    padding: 9px 22px;
+    background: var(--bg-warm);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--text-light);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .share-btn:hover {
+    border-color: var(--gold-light);
+    color: var(--gold);
+    background: var(--gold-wash);
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 52px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .footer p {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  @keyframes softIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 520px) {
+    .container { padding: 56px 16px 60px; }
+    .form-card { padding: 32px 24px; }
+    .date-inputs { grid-template-columns: 1fr; }
+    .sign-card { padding: 40px 24px 36px; }
+    .detail-card { padding: 28px 24px; }
+    .compat-grid { grid-template-columns: 1fr; }
+  }
+</style>
+<meta property="og:title" content="Zodiac Profile — Celestial Self">
+<meta property="og:description" content="The stars don't control you. But if you were going to be described by a constellation, wouldn't you want to know which one?">
+<meta property="og:url" content="/zodiac.html">
+<meta property="og:site_name" content="Celestial Self">
+<meta property="og:type" content="website">
+<meta property="og:image" content="/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Zodiac Profile — Celestial Self">
+<meta name="twitter:description" content="The stars don't control you. But if you were going to be described by a constellation, wouldn't you want to know which one?">
+<meta name="twitter:image" content="/og-image.png">
+</head>
+<body>
+
+<div class="container">
+  <nav class="nav">
+    <a href="index.html">← Back to All Tools</a>
+  </nav>
+
+  <header class="header">
+    <div class="header-ornament">
+      <span class="line"></span>
+      <span class="diamond"></span>
+      <span class="line"></span>
+    </div>
+    <h1>Your <em>Zodiac</em> Profile</h1>
+    <p>The stars don't control you. But if you were going to be described by a constellation, wouldn't you want to know which one?</p>
+  </header>
+
+  <!-- Form -->
+  <div class="form-card" id="formSection">
+    <label class="form-label">Date of Birth</label>
+    <div class="date-inputs">
+      <div class="input-group">
+        <span>Month</span>
+        <select id="month">
+          <option value="" disabled selected>—</option>
+          <option value="1">January</option>
+          <option value="2">February</option>
+          <option value="3">March</option>
+          <option value="4">April</option>
+          <option value="5">May</option>
+          <option value="6">June</option>
+          <option value="7">July</option>
+          <option value="8">August</option>
+          <option value="9">September</option>
+          <option value="10">October</option>
+          <option value="11">November</option>
+          <option value="12">December</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <span>Day</span>
+        <select id="day">
+          <option value="" disabled selected>—</option>
+        </select>
+      </div>
+    </div>
+    <button class="calculate-btn" onclick="calculate()">Reveal Your Sign</button>
+  </div>
+
+  <!-- Result -->
+  <div class="result-section" id="resultSection">
+    <div class="sign-card">
+      <div class="sign-dates" id="signDates"></div>
+      <div class="sign-symbol" id="signSymbol"></div>
+      <div class="sign-glyph" id="signGlyph"></div>
+      <div class="sign-name" id="signName"></div>
+      <div class="sign-tagline" id="signTagline"></div>
+      <div class="element-badge" id="signElement"></div>
+    </div>
+
+    <div class="detail-card">
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Who You Are</span></div>
+        <div class="detail-text" id="signOverview"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Key Traits</span></div>
+        <div class="traits-grid" id="signTraits"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Strengths</span></div>
+        <div class="detail-text" id="signStrengths"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Challenges</span></div>
+        <div class="detail-text" id="signChallenges"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Ruling Planet</span></div>
+        <div class="planet-box">
+          <div class="planet-symbol" id="planetSymbol"></div>
+          <div class="planet-info"><span class="planet-name" id="planetName"></span><br><span id="planetDesc"></span></div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Love &amp; Relationships</span></div>
+        <div class="detail-text" id="signLove"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Career &amp; Purpose</span></div>
+        <div class="detail-text" id="signCareer"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Compatibility</span></div>
+        <div class="detail-text" id="signCompatText" style="margin-bottom:12px"></div>
+        <div class="compat-grid" id="signCompat"></div>
+      </div>
+    </div>
+
+    <div class="ornament-divider">
+      <span class="line"></span>
+      <span class="star">✦</span>
+      <span class="line"></span>
+    </div>
+
+    <button class="try-again-btn" onclick="reset()">Look Up Another Sign</button>
+
+    <div class="share-area">
+      <div class="share-label">Share your sign</div>
+      <div class="share-btns">
+        <button class="share-btn" onclick="shareTwitter()">𝕏 Post</button>
+        <button class="share-btn" onclick="shareFacebook()">Facebook</button>
+        <button class="share-btn" onclick="copyLink()">Copy Link</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>Astrology is a language, not a law. Take what resonates, leave what doesn't.<br>None of this is real. All of it is useful.</p>
+  </footer>
+</div>
+
+<script>
+const daySelect = document.getElementById('day');
+for (let i = 1; i <= 31; i++) {
+  const opt = document.createElement('option');
+  opt.value = i;
+  opt.textContent = i;
+  daySelect.appendChild(opt);
+}
+
+const zodiacData = {
+  aries: {
+    name: "Aries", symbol: "♈", emoji: "🐏", glyph: "♈︎",
+    dates: "March 21 – April 19",
+    element: "fire", elementName: "Fire",
+    tagline: "The one who walks through the door before checking if it's open",
+    planet: { name: "Mars", symbol: "♂️", desc: "The planet of drive, ambition, and action. Mars fuels your fire — your competitive spirit, your courage, and your occasionally reckless impulse to go first." },
+    overview: "Aries is the first sign of the zodiac, and you live like it. You are the initiator, the trailblazer, the person who would rather ask for forgiveness than permission. Your energy is infectious, your confidence is magnetic, and your impatience is legendary. You don't wait for life to happen — you charge at it.",
+    traits: ["Courageous", "Direct", "Energetic", "Competitive", "Impatient", "Passionate"],
+    strengths: "Your boldness opens doors that careful planning never could. You inspire others simply by being unapologetically yourself. When everyone else is still debating, you've already started — and that head start often proves decisive. Your honesty, while sometimes blunt, is deeply refreshing.",
+    challenges: "Your impatience can burn bridges. You start more things than you finish, and your directness sometimes lands as aggression rather than honesty. Learning that 'slow' is not the same as 'weak' is one of your life lessons.",
+    love: "You love with intensity and expect the same in return. You're attracted to confidence and independence — clingy need not apply. In relationships, you're passionate and generous, but you need a partner who can match your energy without trying to tame it.",
+    career: "You thrive in fast-paced environments where initiative is rewarded. Entrepreneurship, sports, emergency services, sales, and any field where being first matters. You wilt in bureaucracies and anything that moves at committee speed.",
+    compatText: "You burn brightest with fellow fire signs and adventurous air signs who can keep up with your pace.",
+    bestMatch: [{ sign: "Leo", symbol: "♌" }, { sign: "Sagittarius", symbol: "♐" }],
+    challengeMatch: [{ sign: "Cancer", symbol: "♋" }, { sign: "Capricorn", symbol: "♑" }]
+  },
+  taurus: {
+    name: "Taurus", symbol: "♉", emoji: "🐂", glyph: "♉︎",
+    dates: "April 20 – May 20",
+    element: "earth", elementName: "Earth",
+    tagline: "The one who turned patience into a superpower — and stubbornness into an art form",
+    planet: { name: "Venus", symbol: "♀️", desc: "The planet of beauty, pleasure, and value. Venus gives you your refined taste, your love of comfort, and your deep appreciation for things that are well-made and built to last." },
+    overview: "Taurus is the zodiac's anchor — grounded, sensual, and unapologetically committed to the good things in life. You understand that quality takes time, and you're willing to wait for it. Where others rush, you savor. Where others waver, you stand firm. Your reliability is your love language, and your stubbornness is your shield.",
+    traits: ["Patient", "Reliable", "Sensual", "Stubborn", "Loyal", "Practical"],
+    strengths: "Your patience and determination are almost superhuman. When you commit to something — a goal, a person, a vision — you see it through with quiet, relentless consistency. You create beauty and stability wherever you go, and people feel safe in your presence.",
+    challenges: "Stubbornness that crosses from admirable to self-defeating. Resistance to change even when change is clearly needed. A tendency to conflate comfort with happiness. Sometimes the thing you're holding onto is holding you back.",
+    love: "You love deeply, physically, and loyally. Touch, quality time, and shared pleasures are how you connect. You need stability and trust above all — once burned, you're slow to trust again. But when you're in, you're all in.",
+    career: "Finance, real estate, culinary arts, agriculture, luxury goods, music, and anything where patience and an eye for quality create value. You build wealth slowly and surely, and you rarely lose what you've earned.",
+    compatText: "You find deep connection with fellow earth signs and nurturing water signs who appreciate your steadfast nature.",
+    bestMatch: [{ sign: "Virgo", symbol: "♍" }, { sign: "Cancer", symbol: "♋" }],
+    challengeMatch: [{ sign: "Leo", symbol: "♌" }, { sign: "Aquarius", symbol: "♒" }]
+  },
+  gemini: {
+    name: "Gemini", symbol: "♊", emoji: "🪞", glyph: "♊︎",
+    dates: "May 21 – June 20",
+    element: "air", elementName: "Air",
+    tagline: "The one who's already thinking about three other things while reading this",
+    planet: { name: "Mercury", symbol: "☿️", desc: "The planet of communication, wit, and intellect. Mercury gives you your quick mind, your gift for language, and your occasionally exhausting ability to see every side of every argument." },
+    overview: "Gemini is the zodiac's most curious mind — restless, adaptable, and endlessly fascinated by everything. You are the conversationalist, the connector, the person who can talk to absolutely anyone about absolutely anything. Your mind moves faster than most people's mouths, and your versatility is both your greatest gift and your biggest challenge.",
+    traits: ["Curious", "Adaptable", "Witty", "Restless", "Social", "Versatile"],
+    strengths: "Your ability to learn quickly, connect diverse ideas, and communicate complex things simply is unmatched. You make people feel interesting because you genuinely find them interesting. Your adaptability means you thrive in change that would paralyze others.",
+    challenges: "Your restlessness can look like flakiness. You start conversations, projects, and relationships with enormous enthusiasm that sometimes fades just as fast. Depth is your growth edge — learning to stay when it gets boring is where your real rewards live.",
+    love: "You need mental stimulation above all. A beautiful face without an interesting mind will bore you within a week. You're flirtatious, fun, and genuinely hard to pin down — not because you're dishonest, but because you contain multitudes. Find someone who finds that exciting, not threatening.",
+    career: "Journalism, marketing, teaching, writing, sales, tech, translation, and anything that rewards verbal intelligence and adaptability. You need variety — a job that's the same every day will slowly destroy you.",
+    compatText: "You spark with fellow air signs and fiery personalities who can match your mental speed.",
+    bestMatch: [{ sign: "Libra", symbol: "♎" }, { sign: "Aquarius", symbol: "♒" }],
+    challengeMatch: [{ sign: "Virgo", symbol: "♍" }, { sign: "Pisces", symbol: "♓" }]
+  },
+  cancer: {
+    name: "Cancer", symbol: "♋", emoji: "🦀", glyph: "♋︎",
+    dates: "June 21 – July 22",
+    element: "water", elementName: "Water",
+    tagline: "The one who remembers how you take your coffee — and the thing you said in 2019",
+    planet: { name: "The Moon", symbol: "🌙", desc: "The celestial body of emotion, intuition, and memory. The Moon gives you your emotional depth, your nurturing instinct, and your uncanny ability to sense what people feel before they say it." },
+    overview: "Cancer is the heart of the zodiac — emotionally intelligent, fiercely protective, and quietly powerful. Beneath your hard outer shell lives one of the most sensitive and loving souls in the entire zodiac. You feel everything deeply, remember everything permanently, and love with a devotion that most people can only aspire to.",
+    traits: ["Nurturing", "Intuitive", "Protective", "Emotional", "Loyal", "Tenacious"],
+    strengths: "Your emotional intelligence is off the charts. You create home and belonging wherever you go — not just physical spaces, but emotional ones. People feel safe with you because you genuinely care, and your loyalty once earned is unwavering.",
+    challenges: "Moodiness, passive-aggression, and holding onto past hurts like treasured possessions. Your protective shell can become a prison if you never let anyone in. Learning to express needs directly instead of hoping people will intuit them is your ongoing work.",
+    love: "Love is your reason for being. You pour yourself into relationships with devotion and tenderness that can be overwhelming for the wrong partner. You need someone who makes you feel emotionally safe — without that foundation, nothing else matters.",
+    career: "Healthcare, counseling, food industry, real estate, childcare, social work, and any field where empathy and nurturing create value. You also have a surprisingly sharp business instinct — never underestimate a Cancer's ability to build wealth.",
+    compatText: "You find the deepest connection with fellow water signs and devoted earth signs who honor your emotional world.",
+    bestMatch: [{ sign: "Scorpio", symbol: "♏" }, { sign: "Taurus", symbol: "♉" }],
+    challengeMatch: [{ sign: "Aries", symbol: "♈" }, { sign: "Libra", symbol: "♎" }]
+  },
+  leo: {
+    name: "Leo", symbol: "♌", emoji: "🦁", glyph: "♌︎",
+    dates: "July 23 – August 22",
+    element: "fire", elementName: "Fire",
+    tagline: "The one who walks into a room and somehow the room notices",
+    planet: { name: "The Sun", symbol: "☀️", desc: "The center of our solar system. The Sun gives you your warmth, your magnetism, and your deep, non-negotiable need to be seen and appreciated for who you truly are." },
+    overview: "Leo is the zodiac's performer — warm, generous, and magnetically confident. You radiate a light that draws people in, and at your best, you use that light to illuminate everyone around you. Your generosity is legendary, your pride is formidable, and your need for appreciation is as natural as breathing.",
+    traits: ["Confident", "Generous", "Dramatic", "Warm", "Proud", "Creative"],
+    strengths: "Your warmth and generosity inspire fierce loyalty. You make people feel special simply by giving them your attention. Your creative energy and natural leadership mean you often end up at the center of things — not because you pushed, but because people gravitate to you.",
+    challenges: "Your need for recognition can become neediness. Pride can prevent you from admitting mistakes or asking for help. The gap between your public confidence and your private insecurity is larger than anyone suspects. Learning that you don't need applause to have value is your deepest lesson.",
+    love: "You love like a movie — grand gestures, passionate declarations, and a loyalty that borders on the heroic. You need a partner who admires you without flattering you, and who has enough of their own light not to be overshadowed by yours.",
+    career: "Entertainment, leadership, marketing, teaching, luxury brands, and any field where charisma and creative vision are rewarded. You're a natural leader — just remember that the best leaders also know how to follow.",
+    compatText: "You blaze brightest with fellow fire signs and stimulating air signs who celebrate rather than compete with your light.",
+    bestMatch: [{ sign: "Sagittarius", symbol: "♐" }, { sign: "Libra", symbol: "♎" }],
+    challengeMatch: [{ sign: "Taurus", symbol: "♉" }, { sign: "Scorpio", symbol: "♏" }]
+  },
+  virgo: {
+    name: "Virgo", symbol: "♍", emoji: "🌾", glyph: "♍︎",
+    dates: "August 23 – September 22",
+    element: "earth", elementName: "Earth",
+    tagline: "The one who noticed the typo in this sentence before finishing it",
+    planet: { name: "Mercury", symbol: "☿️", desc: "The planet of analysis, communication, and systems. Mercury gives you your razor-sharp mind, your love of order, and your gift for seeing what needs to be fixed — sometimes whether it needs fixing or not." },
+    overview: "Virgo is the zodiac's perfectionist — analytical, devoted, and quietly indispensable. You see the world in high definition while everyone else is watching in standard. Your attention to detail is almost supernatural, your work ethic is formidable, and your desire to be useful is the engine that drives everything you do.",
+    traits: ["Analytical", "Devoted", "Practical", "Perfectionist", "Modest", "Diligent"],
+    strengths: "Your ability to analyze, organize, and improve anything you touch is extraordinary. You are the person everyone turns to when things are falling apart because you actually know how to fix them. Your modesty and genuine desire to serve make you one of the most trustworthy signs in the zodiac.",
+    challenges: "Perfectionism that paralyzes rather than polishes. Self-criticism so harsh it would be cruelty if directed at anyone else. A tendency to focus on what's wrong rather than what's right. Learning to extend to yourself the same grace you extend to others is your life's work.",
+    love: "You show love through acts of service — the coffee made just right, the problem quietly solved, the detail remembered. You need a partner who notices these things and doesn't mistake your reserved exterior for a lack of passion. Underneath that practicality beats one of the most devoted hearts in the zodiac.",
+    career: "Healthcare, research, editing, data analysis, accounting, nutrition, engineering, and any field where precision and attention to detail create excellence. You don't need the spotlight — you need to know your work matters.",
+    compatText: "You connect deepest with fellow earth signs and emotional water signs who appreciate your quiet devotion.",
+    bestMatch: [{ sign: "Taurus", symbol: "♉" }, { sign: "Capricorn", symbol: "♑" }],
+    challengeMatch: [{ sign: "Gemini", symbol: "♊" }, { sign: "Sagittarius", symbol: "♐" }]
+  },
+  libra: {
+    name: "Libra", symbol: "♎", emoji: "⚖️", glyph: "♎︎",
+    dates: "September 23 – October 22",
+    element: "air", elementName: "Air",
+    tagline: "The one who can see both sides so clearly it takes forty minutes to choose a restaurant",
+    planet: { name: "Venus", symbol: "♀️", desc: "The planet of beauty, love, and harmony. Venus gives you your aesthetic sense, your diplomatic gifts, and your deep, almost physical need for balance in all things." },
+    overview: "Libra is the zodiac's diplomat — charming, fair-minded, and endlessly seeking balance. You move through the world with a grace that makes everything look effortless, even when it isn't. Your desire for harmony is genuine and powerful, and your ability to see all sides of a situation makes you invaluable — and occasionally indecisive.",
+    traits: ["Diplomatic", "Charming", "Fair-minded", "Indecisive", "Aesthetic", "Social"],
+    strengths: "Your ability to create harmony, mediate conflict, and make people feel valued is a genuine superpower. You have an eye for beauty that elevates everything you touch. Your charm is not manipulation — it's a real gift for making people feel at ease.",
+    challenges: "Indecisiveness that can be maddening — for you and everyone around you. People-pleasing that erodes your own identity. A tendency to avoid conflict even when conflict is exactly what's needed. Learning that peace at any price isn't actually peace is essential.",
+    love: "Partnership is your natural state. You thrive in relationships and genuinely become a better version of yourself through love. You need intellectual stimulation, shared aesthetics, and a partner who is both your equal and your complement. Beware of losing yourself in the name of harmony.",
+    career: "Law, diplomacy, design, art, public relations, counseling, mediation, and any field where beauty, fairness, or interpersonal skill creates value. You excel in partnerships and collaborative environments.",
+    compatText: "You harmonize beautifully with fellow air signs and expressive fire signs who bring the decisiveness you sometimes lack.",
+    bestMatch: [{ sign: "Gemini", symbol: "♊" }, { sign: "Leo", symbol: "♌" }],
+    challengeMatch: [{ sign: "Cancer", symbol: "♋" }, { sign: "Capricorn", symbol: "♑" }]
+  },
+  scorpio: {
+    name: "Scorpio", symbol: "♏", emoji: "🦂", glyph: "♏︎",
+    dates: "October 23 – November 21",
+    element: "water", elementName: "Water",
+    tagline: "The one who already knows your secret and is deciding what to do with it",
+    planet: { name: "Pluto", symbol: "🔮", desc: "The planet of transformation, power, and the hidden. Pluto gives you your intensity, your ability to see beneath surfaces, and your remarkable capacity for complete reinvention." },
+    overview: "Scorpio is the zodiac's most intense sign — penetrating, passionate, and utterly uninterested in anything superficial. You live at a depth that most people never reach, and your ability to transform yourself through crisis is almost mythical. You are not for the faint of heart, and you wouldn't want to be.",
+    traits: ["Intense", "Perceptive", "Passionate", "Secretive", "Resilient", "Magnetic"],
+    strengths: "Your ability to see through pretense is unmatched. You understand power, motivation, and human nature at a level that gives you extraordinary influence. Your resilience is legendary — you don't just survive difficulty, you emerge from it transformed and stronger.",
+    challenges: "Jealousy, control, and a tendency to hold grudges until the heat death of the universe. Your secrecy can become isolation, and your intensity can be exhausting — for you and everyone around you. Learning to trust, and to let go, is your lifelong challenge.",
+    love: "You love with an all-or-nothing intensity that can be both breathtaking and terrifying. You need emotional honesty, deep intimacy, and absolute loyalty. Betrayal is the one thing you cannot forgive. When you find someone worthy of your trust, the bond is unbreakable.",
+    career: "Psychology, research, surgery, investigation, finance, crisis management, and any field that requires going beneath the surface. You excel where others fear to look.",
+    compatText: "You forge the deepest bonds with fellow water signs and grounded earth signs who can handle your intensity.",
+    bestMatch: [{ sign: "Cancer", symbol: "♋" }, { sign: "Pisces", symbol: "♓" }],
+    challengeMatch: [{ sign: "Leo", symbol: "♌" }, { sign: "Aquarius", symbol: "♒" }]
+  },
+  sagittarius: {
+    name: "Sagittarius", symbol: "♐", emoji: "🏹", glyph: "♐︎",
+    dates: "November 22 – December 21",
+    element: "fire", elementName: "Fire",
+    tagline: "The one who booked a one-way ticket and figured out the rest on the plane",
+    planet: { name: "Jupiter", symbol: "🪐", desc: "The planet of expansion, luck, and philosophy. Jupiter gives you your optimism, your love of freedom, and your insatiable hunger to understand the big picture of life." },
+    overview: "Sagittarius is the zodiac's philosopher-adventurer — optimistic, free-spirited, and perpetually aimed at the next horizon. You believe that life is meant to be explored, not just survived, and your enthusiasm for experience is genuinely contagious. You are the friend who makes everyone braver.",
+    traits: ["Adventurous", "Optimistic", "Honest", "Restless", "Philosophical", "Generous"],
+    strengths: "Your optimism is not naivety — it's a genuine belief in possibility that opens doors everywhere you go. Your honesty, while sometimes tactless, is deeply refreshing. Your intellectual curiosity and love of learning make you a perpetual student of life in the best possible way.",
+    challenges: "Commitment-phobia disguised as 'freedom.' Bluntness that crosses the line into cruelty. A tendency to promise more than you deliver because everything sounds like a great idea in the moment. Learning that depth requires staying in one place is your essential lesson.",
+    love: "You need a partner who is also your adventure companion and intellectual equal. Jealousy and possessiveness will send you running. You're generous and fun in love, but you need space to breathe — the right person will understand that your need for freedom isn't a rejection of them.",
+    career: "Travel, education, publishing, philosophy, law, international business, and anything that expands horizons — yours or others'. You need meaning and freedom in your work. A cubicle is your kryptonite.",
+    compatText: "You ignite with fellow fire signs and intellectual air signs who share your hunger for meaning and adventure.",
+    bestMatch: [{ sign: "Aries", symbol: "♈" }, { sign: "Leo", symbol: "♌" }],
+    challengeMatch: [{ sign: "Virgo", symbol: "♍" }, { sign: "Pisces", symbol: "♓" }]
+  },
+  capricorn: {
+    name: "Capricorn", symbol: "♑", emoji: "🐐", glyph: "♑︎",
+    dates: "December 22 – January 19",
+    element: "earth", elementName: "Earth",
+    tagline: "The one who had a five-year plan at age twelve — and is ahead of schedule",
+    planet: { name: "Saturn", symbol: "🪐", desc: "The planet of discipline, structure, and time. Saturn gives you your ambition, your respect for hard work, and your understanding that anything worth having must be earned." },
+    overview: "Capricorn is the zodiac's architect — ambitious, disciplined, and playing a longer game than anyone realizes. You understand that real success is built brick by brick, and you have the patience and determination to lay every single one. Beneath your serious exterior lives a surprisingly dry wit and a deep well of quiet devotion.",
+    traits: ["Ambitious", "Disciplined", "Patient", "Reserved", "Strategic", "Loyal"],
+    strengths: "Your discipline and strategic thinking set you apart. While others are chasing shortcuts, you're building foundations. Your reliability is absolute — when you say you'll do something, it's already done. You age like fine wine, often hitting your stride when others are burning out.",
+    challenges: "Workaholism, emotional repression, and a fear of vulnerability that keeps people at arm's length. Your pragmatism can shade into pessimism, and your high standards — applied to yourself most harshly — can be crushing. Learning that you are more than your achievements is your deepest lesson.",
+    love: "You approach love with the same seriousness you bring to everything — which means you don't fall easily, but when you do, it's for keeps. You express love through loyalty, provision, and quiet acts of devotion. You need a partner who sees the warmth beneath the reserve.",
+    career: "Management, finance, law, government, architecture, engineering, and any field where long-term vision and disciplined execution create lasting results. You are built for positions of authority — and you'll get there through merit, not shortcuts.",
+    compatText: "You build strongest with fellow earth signs and emotionally deep water signs who see past your reserved exterior.",
+    bestMatch: [{ sign: "Virgo", symbol: "♍" }, { sign: "Taurus", symbol: "♉" }],
+    challengeMatch: [{ sign: "Aries", symbol: "♈" }, { sign: "Libra", symbol: "♎" }]
+  },
+  aquarius: {
+    name: "Aquarius", symbol: "♒", emoji: "🏺", glyph: "♒︎",
+    dates: "January 20 – February 18",
+    element: "air", elementName: "Air",
+    tagline: "The one who was thinking about the future while everyone else was still figuring out the present",
+    planet: { name: "Uranus", symbol: "⚡", desc: "The planet of innovation, rebellion, and sudden insight. Uranus gives you your originality, your humanitarian vision, and your instinctive resistance to anything that tries to put you in a box." },
+    overview: "Aquarius is the zodiac's visionary — independent, humanitarian, and thoroughly uninterested in doing things the way they've always been done. You see the world not as it is, but as it could be, and your commitment to progress is both inspiring and occasionally alienating. You are ahead of your time, and you always have been.",
+    traits: ["Independent", "Innovative", "Humanitarian", "Detached", "Original", "Rebellious"],
+    strengths: "Your originality and intellectual independence make you a genuine innovator. You see solutions that others can't because you refuse to be limited by conventional thinking. Your humanitarian instinct is real — you genuinely care about making the world better, not just for yourself, but for everyone.",
+    challenges: "Emotional detachment that can feel like coldness. A rebellious streak that sometimes rejects things simply because they're mainstream, not because they're wrong. Difficulty with intimacy and a tendency to intellectualize feelings rather than actually feeling them.",
+    love: "You need intellectual freedom and a partner who doesn't try to own you. Traditional relationship structures may feel confining. You're loyal in your own way, but your way doesn't always look like what people expect. Find someone who loves your weirdness — not someone who tolerates it.",
+    career: "Technology, science, humanitarian work, social activism, innovation, aviation, and anything at the cutting edge. You need to feel like your work is changing something. A job that maintains the status quo will never satisfy you.",
+    compatText: "You connect with fellow air signs and daring fire signs who share your independence and vision for the future.",
+    bestMatch: [{ sign: "Gemini", symbol: "♊" }, { sign: "Libra", symbol: "♎" }],
+    challengeMatch: [{ sign: "Taurus", symbol: "♉" }, { sign: "Scorpio", symbol: "♏" }]
+  },
+  pisces: {
+    name: "Pisces", symbol: "♓", emoji: "🐟", glyph: "♓︎",
+    dates: "February 19 – March 20",
+    element: "water", elementName: "Water",
+    tagline: "The one who felt your mood before you walked through the door",
+    planet: { name: "Neptune", symbol: "🔱", desc: "The planet of dreams, imagination, and transcendence. Neptune gives you your artistic vision, your empathy, and your connection to something larger and more mysterious than the everyday world." },
+    overview: "Pisces is the zodiac's dreamer — empathetic, imaginative, and operating on a frequency that most people can't quite tune into. You feel the world's beauty and pain with equal intensity, and your creative and spiritual gifts are among the most profound in the entire zodiac. You are the artist, the healer, the mystic.",
+    traits: ["Empathetic", "Imaginative", "Intuitive", "Escapist", "Compassionate", "Artistic"],
+    strengths: "Your empathy and imagination are limitless. You understand human emotion at a depth that allows you to create art, provide healing, and offer comfort that touches people's souls. Your intuition borders on the psychic, and your compassion is genuinely selfless.",
+    challenges: "Escapism through fantasy, substances, or avoidance of reality. Boundaries are your biggest struggle — you absorb other people's emotions and can lose yourself entirely. Learning to protect your energy without building walls is your essential, ongoing work.",
+    love: "You love with a transcendent, almost spiritual devotion. You see the best in people — sometimes the best that isn't there. You need a partner who protects your sensitivity without exploiting it, and who helps you stay grounded when your tendency to idealize takes over.",
+    career: "Art, music, film, photography, healing arts, psychology, spirituality, marine biology, and anything that channels your extraordinary imagination. You need work that feeds your soul — money alone will never motivate you.",
+    compatText: "You flow deepest with fellow water signs and stable earth signs who anchor your dreamlike nature in reality.",
+    bestMatch: [{ sign: "Scorpio", symbol: "♏" }, { sign: "Cancer", symbol: "♋" }],
+    challengeMatch: [{ sign: "Gemini", symbol: "♊" }, { sign: "Sagittarius", symbol: "♐" }]
+  }
+};
+
+function getZodiacSign(month, day) {
+  const m = parseInt(month), d = parseInt(day);
+  if ((m===3 && d>=21) || (m===4 && d<=19)) return 'aries';
+  if ((m===4 && d>=20) || (m===5 && d<=20)) return 'taurus';
+  if ((m===5 && d>=21) || (m===6 && d<=20)) return 'gemini';
+  if ((m===6 && d>=21) || (m===7 && d<=22)) return 'cancer';
+  if ((m===7 && d>=23) || (m===8 && d<=22)) return 'leo';
+  if ((m===8 && d>=23) || (m===9 && d<=22)) return 'virgo';
+  if ((m===9 && d>=23) || (m===10 && d<=22)) return 'libra';
+  if ((m===10 && d>=23) || (m===11 && d<=21)) return 'scorpio';
+  if ((m===11 && d>=22) || (m===12 && d<=21)) return 'sagittarius';
+  if ((m===12 && d>=22) || (m===1 && d<=19)) return 'capricorn';
+  if ((m===1 && d>=20) || (m===2 && d<=18)) return 'aquarius';
+  if ((m===2 && d>=19) || (m===3 && d<=20)) return 'pisces';
+  return 'aries';
+}
+
+function calculate() {
+  const month = document.getElementById('month').value;
+  const day = document.getElementById('day').value;
+  if (!month || !day) { alert('Please select your birth month and day.'); return; }
+
+  const signKey = getZodiacSign(month, day);
+  const sign = zodiacData[signKey];
+
+  document.getElementById('signDates').textContent = sign.dates;
+  document.getElementById('signSymbol').textContent = sign.emoji;
+  document.getElementById('signGlyph').textContent = sign.glyph;
+  document.getElementById('signName').textContent = sign.name;
+  document.getElementById('signTagline').textContent = sign.tagline;
+
+  const elBadge = document.getElementById('signElement');
+  elBadge.textContent = sign.elementName + ' Sign';
+  elBadge.className = 'element-badge element-' + sign.element;
+
+  document.getElementById('signOverview').textContent = sign.overview;
+  document.getElementById('signStrengths').textContent = sign.strengths;
+  document.getElementById('signChallenges').textContent = sign.challenges;
+  document.getElementById('signLove').textContent = sign.love;
+  document.getElementById('signCareer').textContent = sign.career;
+
+  document.getElementById('planetSymbol').textContent = sign.planet.symbol;
+  document.getElementById('planetName').textContent = sign.planet.name;
+  document.getElementById('planetDesc').textContent = sign.planet.desc;
+
+  const traitsEl = document.getElementById('signTraits');
+  traitsEl.innerHTML = '';
+  sign.traits.forEach(t => {
+    const tag = document.createElement('span');
+    tag.className = 'trait-tag';
+    tag.textContent = t;
+    traitsEl.appendChild(tag);
+  });
+
+  document.getElementById('signCompatText').textContent = sign.compatText;
+  const compatEl = document.getElementById('signCompat');
+  compatEl.innerHTML = '';
+  sign.bestMatch.forEach(m => {
+    compatEl.innerHTML += `<div class="compat-item"><div class="compat-symbol">${m.symbol}</div><div class="compat-name">${m.sign}</div><div class="compat-label best">Best Match</div></div>`;
+  });
+  sign.challengeMatch.forEach(m => {
+    compatEl.innerHTML += `<div class="compat-item"><div class="compat-symbol">${m.symbol}</div><div class="compat-name">${m.sign}</div><div class="compat-label challenging">Growth Edge</div></div>`;
+  });
+
+  window._currentSign = sign;
+
+  document.getElementById('formSection').style.display = 'none';
+  document.getElementById('resultSection').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function reset() {
+  document.getElementById('formSection').style.display = 'block';
+  document.getElementById('resultSection').classList.remove('visible');
+  document.getElementById('month').value = '';
+  document.getElementById('day').value = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function shareTwitter() {
+  const s = window._currentSign;
+  const text = `I'm a ${s.name} ${s.emoji} — "${s.tagline}" ✦ Discover your zodiac profile:`;
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`, '_blank');
+}
+
+function shareFacebook() {
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+</script>
+
+</body>
+</html>

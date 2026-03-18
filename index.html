@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8E1NGR4VSS"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-8E1NGR4VSS');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Celestial Self — Numerology, Tarot & Astrology</title>
+<meta name="description" content="This will not tell you your future. But it might tell you something about yourself. Free numerology, tarot, and astrology tools for self-discovery.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FDFBF7;
+    --bg-warm: #F8F4ED;
+    --bg-card: #FFFFFF;
+    --gold: #B8943E;
+    --gold-light: #D4B568;
+    --gold-pale: #EDE3CC;
+    --gold-wash: rgba(184,148,62,0.06);
+    --gold-border: rgba(184,148,62,0.18);
+    --text-dark: #2C2620;
+    --text-body: #5A5249;
+    --text-light: #8A8279;
+    --text-faint: #B5AFA7;
+    --border: #E8E3DA;
+    --border-light: #F0ECE4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--bg);
+    color: var(--text-body);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 5%, var(--gold-pale) 30%, var(--gold-light) 50%, var(--gold-pale) 70%, transparent 95%);
+    z-index: 100;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 80px 24px 80px;
+  }
+
+  /* Header */
+  .site-header {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+
+  .logo-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: softIn 1s ease forwards;
+  }
+
+  .logo-mark .line { width: 56px; height: 1px; background: var(--gold-pale); }
+
+  .logo-mark .mark {
+    width: 40px;
+    height: 40px;
+    border: 1.5px solid var(--gold-pale);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--gold-light);
+  }
+
+  .site-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 400;
+    font-size: clamp(2.4rem, 5.5vw, 3.2rem);
+    color: var(--text-dark);
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: softIn 1s ease 0.15s forwards;
+  }
+
+  .site-header h1 em { font-style: italic; color: var(--gold); }
+
+  .site-header p {
+    font-weight: 300;
+    font-size: 1.05rem;
+    color: var(--text-light);
+    line-height: 1.75;
+    max-width: 460px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: softIn 1s ease 0.3s forwards;
+  }
+
+  /* Tool Cards */
+  .tools-grid {
+    display: grid;
+    gap: 20px;
+    margin-bottom: 56px;
+  }
+
+  .tool-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    text-decoration: none;
+    color: inherit;
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 24px;
+    align-items: center;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 2px 20px rgba(44,38,32,0.03);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    animation: softIn 0.8s ease forwards;
+  }
+
+  .tool-card:nth-child(1) { animation-delay: 0.4s; }
+  .tool-card:nth-child(2) { animation-delay: 0.55s; }
+  .tool-card:nth-child(3) { animation-delay: 0.7s; }
+
+  .tool-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-pale), transparent);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .tool-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(44,38,32,0.06);
+    border-color: var(--gold-pale);
+  }
+
+  .tool-card:hover::before { opacity: 1; }
+
+  .tool-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 1.5px solid var(--gold-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    background: var(--gold-wash);
+    flex-shrink: 0;
+  }
+
+  .tool-info { min-width: 0; }
+
+  .tool-label {
+    font-size: 0.68rem;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-bottom: 5px;
+    font-weight: 400;
+  }
+
+  .tool-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+    letter-spacing: 0.01em;
+  }
+
+  .tool-desc {
+    font-weight: 300;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    line-height: 1.6;
+  }
+
+  .tool-arrow {
+    position: absolute;
+    right: 36px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.85rem;
+    color: var(--text-faint);
+    transition: all 0.3s;
+  }
+
+  .tool-card:hover .tool-arrow {
+    color: var(--gold);
+    right: 30px;
+  }
+
+  /* Coming soon badge */
+  .coming-soon {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--bg-warm);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 0.65rem;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .tool-card.disabled {
+    opacity: 0.65;
+    cursor: default;
+  }
+
+  .tool-card.disabled:hover {
+    transform: none;
+    box-shadow: 0 2px 20px rgba(44,38,32,0.03);
+    border-color: var(--border);
+  }
+
+  /* Divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 48px 0 40px;
+    opacity: 0;
+    animation: softIn 0.8s ease 0.85s forwards;
+  }
+
+  .divider .line { flex: 1; max-width: 100px; height: 1px; background: var(--border); }
+  .divider .star { font-size: 10px; color: var(--gold-light); }
+
+  /* About section */
+  .about-section {
+    text-align: center;
+    max-width: 480px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: softIn 0.8s ease 1s forwards;
+  }
+
+  .about-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 400;
+    font-size: 1.4rem;
+    color: var(--text-dark);
+    margin-bottom: 14px;
+  }
+
+  .about-section p {
+    font-weight: 300;
+    font-size: 0.92rem;
+    color: var(--text-light);
+    line-height: 1.8;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 56px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .footer p {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  @keyframes softIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 520px) {
+    .container { padding: 56px 16px 60px; }
+    .tool-card {
+      padding: 28px 24px;
+      grid-template-columns: 50px 1fr;
+      gap: 16px;
+    }
+    .tool-icon { width: 50px; height: 50px; font-size: 1.3rem; }
+    .tool-arrow { right: 20px; }
+    .tool-card:hover .tool-arrow { right: 16px; }
+  }
+</style>
+<meta property="og:title" content="Celestial Self — Numerology, Tarot & Astrology">
+<meta property="og:description" content="This will not tell you your future. But it might tell you something about yourself. Free numerology, tarot, and astrology tools for self-discovery.">
+<meta property="og:url" content="/">
+<meta property="og:site_name" content="Celestial Self">
+<meta property="og:type" content="website">
+<meta property="og:image" content="/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Celestial Self — Numerology, Tarot & Astrology">
+<meta name="twitter:description" content="This will not tell you your future. But it might tell you something about yourself. Free numerology, tarot, and astrology tools for self-discovery.">
+<meta name="twitter:image" content="/og-image.png">
+</head>
+<body>
+
+<div class="container">
+  <header class="site-header">
+    <div class="logo-mark">
+      <span class="line"></span>
+      <span class="mark">✦</span>
+      <span class="line"></span>
+    </div>
+    <h1>Celestial <em>Self</em></h1>
+    <p>This will not tell you your future. But it might tell you something about yourself. Free tools for the kind of self-discovery that doesn't require believing in anything — except, perhaps, curiosity.</p>
+  </header>
+
+  <div class="tools-grid">
+    <a href="numerology.html" class="tool-card">
+      <div class="tool-icon">🔢</div>
+      <div class="tool-info">
+        <div class="tool-label">Numerology</div>
+        <div class="tool-name">Life Path Number</div>
+        <div class="tool-desc">Your birth date won't decide your fate. But the number hiding inside it makes for surprisingly good conversation with yourself.</div>
+      </div>
+      <div class="tool-arrow">→</div>
+    </a>
+
+    <a href="tarot.html" class="tool-card">
+      <div class="tool-icon">🃏</div>
+      <div class="tool-info">
+        <div class="tool-label">Tarot</div>
+        <div class="tool-name">Daily Card Draw</div>
+        <div class="tool-desc">A card won't predict your day. But somehow, the right one always seems to show up. 78 cards. No psychic ability required.</div>
+      </div>
+      <div class="tool-arrow">→</div>
+    </a>
+
+    <a href="zodiac.html" class="tool-card">
+      <div class="tool-icon">⭐</div>
+      <div class="tool-info">
+        <div class="tool-label">Astrology</div>
+        <div class="tool-name">Zodiac Profile</div>
+        <div class="tool-desc">The stars don't control you. But if you were going to be described by a constellation, wouldn't you want to know which one?</div>
+      </div>
+      <div class="tool-arrow">→</div>
+    </a>
+  </div>
+
+  <div class="divider">
+    <span class="line"></span>
+    <span class="star">✦</span>
+    <span class="line"></span>
+  </div>
+
+  <div class="about-section">
+    <h2>Not a Fortune Teller</h2>
+    <p>Celestial Self doesn't claim to know your destiny. We're just a collection of ancient frameworks, wrapped in a beautiful interface, offered without charge or judgment. Think of it as a mirror, not a crystal ball. No sign-up. No data collected. Just you and a quiet moment of reflection.</p>
+  </div>
+
+  <footer class="footer">
+    <p>© 2026 Celestial Self. None of this is real. All of it is useful.<br>For entertainment and self-reflection — not professional advice.</p>
+  </footer>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8E1NGR4VSS"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-8E1NGR4VSS');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Tarot Draw — One Card Reading</title>
+<meta name="description" content="Draw a tarot card for your daily guidance. A free one-card tarot reading to illuminate your day with clarity and insight.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FDFBF7;
+    --bg-warm: #F8F4ED;
+    --bg-card: #FFFFFF;
+    --gold: #B8943E;
+    --gold-light: #D4B568;
+    --gold-pale: #EDE3CC;
+    --gold-wash: rgba(184,148,62,0.06);
+    --gold-border: rgba(184,148,62,0.18);
+    --text-dark: #2C2620;
+    --text-body: #5A5249;
+    --text-light: #8A8279;
+    --text-faint: #B5AFA7;
+    --border: #E8E3DA;
+    --border-light: #F0ECE4;
+    --rose: #C4927A;
+    --sage: #8FA68E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--bg);
+    color: var(--text-body);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 5%, var(--gold-pale) 30%, var(--gold-light) 50%, var(--gold-pale) 70%, transparent 95%);
+    z-index: 100;
+  }
+
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 72px 24px 80px;
+  }
+
+  /* Nav */
+  .nav {
+    text-align: center;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: softIn 0.8s ease forwards;
+  }
+
+  .nav a {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+
+  .nav a:hover { color: var(--gold); }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 52px;
+  }
+
+  .header-ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: softIn 1s ease forwards;
+  }
+
+  .header-ornament .line { width: 48px; height: 1px; background: var(--gold-pale); }
+  .header-ornament .diamond { width: 7px; height: 7px; background: var(--gold-light); transform: rotate(45deg); }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 400;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    color: var(--text-dark);
+    letter-spacing: 0.01em;
+    line-height: 1.25;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: softIn 1s ease 0.15s forwards;
+  }
+
+  .header h1 em { font-style: italic; color: var(--gold); }
+
+  .header p {
+    font-weight: 300;
+    font-size: 1.02rem;
+    color: var(--text-light);
+    line-height: 1.75;
+    max-width: 440px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: softIn 1s ease 0.3s forwards;
+  }
+
+  /* Draw section */
+  .draw-section {
+    text-align: center;
+    opacity: 0;
+    animation: softIn 0.8s ease 0.4s forwards;
+  }
+
+  /* Card deck spread */
+  .deck-area {
+    position: relative;
+    height: 320px;
+    margin: 0 auto 40px;
+    max-width: 400px;
+    perspective: 1000px;
+  }
+
+  .deck-prompt {
+    font-size: 0.82rem;
+    color: var(--text-faint);
+    letter-spacing: 0.06em;
+    margin-bottom: 20px;
+  }
+
+  /* Fanned cards */
+  .fan-card {
+    position: absolute;
+    width: 140px;
+    height: 220px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    transform-origin: bottom center;
+    left: 50%;
+    bottom: 20px;
+    background: linear-gradient(145deg, #F5F0E6, #EDE7DA);
+    border: 1px solid var(--gold-pale);
+    box-shadow: 0 2px 12px rgba(44,38,32,0.06);
+  }
+
+  .fan-card::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid var(--gold-border);
+    border-radius: 7px;
+    pointer-events: none;
+  }
+
+  .fan-card::after {
+    content: '✦';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.4rem;
+    color: var(--gold-light);
+    pointer-events: none;
+  }
+
+  .fan-card:hover {
+    box-shadow: 0 8px 28px rgba(184,148,62,0.15);
+    border-color: var(--gold-light);
+  }
+
+  .fan-card.selected {
+    animation: cardSelect 0.6s ease forwards;
+    z-index: 100 !important;
+    pointer-events: none;
+  }
+
+  .fan-card.dismissed {
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  /* Result */
+  .result-section {
+    display: none;
+    animation: softIn 0.7s ease forwards;
+  }
+
+  .result-section.visible { display: block; }
+
+  .tarot-card-display {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 48px 40px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 2px 20px rgba(44,38,32,0.03);
+  }
+
+  .card-numeral {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.82rem;
+    color: var(--text-faint);
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+  }
+
+  .card-visual {
+    width: 160px;
+    height: 250px;
+    margin: 0 auto 28px;
+    background: linear-gradient(145deg, #F5F0E6, #EDE7DA);
+    border: 1.5px solid var(--gold-pale);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-visual.reversed {
+    transform: rotate(180deg);
+  }
+
+  .card-visual-inner {
+    position: absolute;
+    inset: 10px;
+    border: 1px solid var(--gold-border);
+    border-radius: 7px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .card-symbol {
+    font-size: 3rem;
+    line-height: 1;
+  }
+
+  .card-roman {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.72rem;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+  }
+
+  .card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+  }
+
+  .card-orientation {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 400;
+    margin-bottom: 4px;
+  }
+
+  .card-orientation.upright {
+    background: rgba(143,166,142,0.12);
+    color: var(--sage);
+  }
+
+  .card-orientation.reversed-tag {
+    background: rgba(196,146,122,0.12);
+    color: var(--rose);
+  }
+
+  .card-keywords {
+    font-size: 0.92rem;
+    color: var(--text-light);
+    font-weight: 300;
+  }
+
+  /* Reading detail */
+  .reading-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 20px rgba(44,38,32,0.03);
+  }
+
+  .detail-section {
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .detail-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .detail-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .detail-icon .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--gold-light);
+  }
+
+  .detail-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    color: var(--text-dark);
+    font-weight: 500;
+  }
+
+  .detail-text {
+    font-weight: 300;
+    font-size: 0.94rem;
+    color: var(--text-body);
+    line-height: 1.85;
+  }
+
+  /* Ornament divider */
+  .ornament-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 32px 0;
+  }
+
+  .ornament-divider .line { flex: 1; max-width: 80px; height: 1px; background: var(--border); }
+  .ornament-divider .star { font-size: 10px; color: var(--gold-light); }
+
+  /* Buttons */
+  .draw-again-btn {
+    display: block;
+    margin: 8px auto 24px;
+    padding: 13px 32px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-light);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.88rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 400;
+  }
+
+  .draw-again-btn:hover {
+    border-color: var(--gold-light);
+    color: var(--gold);
+  }
+
+  .share-area { text-align: center; padding: 24px 0 8px; }
+
+  .share-label {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    margin-bottom: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .share-btns { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+
+  .share-btn {
+    padding: 9px 22px;
+    background: var(--bg-warm);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--text-light);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .share-btn:hover {
+    border-color: var(--gold-light);
+    color: var(--gold);
+    background: var(--gold-wash);
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 52px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .footer p {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  @keyframes softIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes cardSelect {
+    0% { transform: translateX(-50%) rotate(var(--rot)); }
+    50% { transform: translateX(-50%) translateY(-40px) rotate(0deg) scale(1.08); }
+    100% { transform: translateX(-50%) translateY(-20px) rotate(0deg) scale(1.05); opacity: 0; }
+  }
+
+  @media (max-width: 520px) {
+    .container { padding: 56px 16px 60px; }
+    .deck-area { height: 280px; }
+    .fan-card { width: 110px; height: 175px; }
+    .tarot-card-display { padding: 36px 24px; }
+    .card-visual { width: 130px; height: 200px; }
+    .reading-card { padding: 28px 24px; }
+  }
+</style>
+<meta property="og:title" content="Daily Tarot Draw — Celestial Self">
+<meta property="og:description" content="A card can't tell you what to do. But the one you choose has a strange habit of saying exactly what you needed to hear.">
+<meta property="og:url" content="/tarot.html">
+<meta property="og:site_name" content="Celestial Self">
+<meta property="og:type" content="website">
+<meta property="og:image" content="/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Daily Tarot Draw — Celestial Self">
+<meta name="twitter:description" content="A card can't tell you what to do. But the one you choose has a strange habit of saying exactly what you needed to hear.">
+<meta name="twitter:image" content="/og-image.png">
+</head>
+<body>
+
+<div class="container">
+  <nav class="nav">
+    <a href="index.html">← Back to All Tools</a>
+  </nav>
+
+  <header class="header">
+    <div class="header-ornament">
+      <span class="line"></span>
+      <span class="diamond"></span>
+      <span class="line"></span>
+    </div>
+    <h1>Daily <em>Tarot</em> Draw</h1>
+    <p>A card can't tell you what to do. But the one you choose has a strange habit of saying exactly what you needed to hear. Don't think too hard — just pick.</p>
+  </header>
+
+  <!-- Draw Section -->
+  <div class="draw-section" id="drawSection">
+    <div class="deck-prompt">Trust your instinct. Or don't. It works either way.</div>
+    <div class="deck-area" id="deckArea"></div>
+  </div>
+
+  <!-- Result -->
+  <div class="result-section" id="resultSection">
+    <div class="tarot-card-display">
+      <div class="card-numeral" id="cardNumeral"></div>
+      <div class="card-visual" id="cardVisual">
+        <div class="card-visual-inner">
+          <div class="card-symbol" id="cardSymbol"></div>
+          <div class="card-roman" id="cardRoman"></div>
+        </div>
+      </div>
+      <div class="card-name" id="cardName"></div>
+      <div class="card-orientation" id="cardOrientation"></div>
+      <div class="card-keywords" id="cardKeywords"></div>
+    </div>
+
+    <div class="reading-card">
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Your Message</span></div>
+        <div class="detail-text" id="cardMessage"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Love &amp; Relationships</span></div>
+        <div class="detail-text" id="cardLove"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Career &amp; Finance</span></div>
+        <div class="detail-text" id="cardCareer"></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-icon"><span class="dot"></span><span class="detail-heading">Advice</span></div>
+        <div class="detail-text" id="cardAdvice"></div>
+      </div>
+    </div>
+
+    <div class="ornament-divider">
+      <span class="line"></span>
+      <span class="star">✦</span>
+      <span class="line"></span>
+    </div>
+
+    <button class="draw-again-btn" onclick="resetDraw()">Draw Another Card</button>
+
+    <div class="share-area">
+      <div class="share-label">Share your reading</div>
+      <div class="share-btns">
+        <button class="share-btn" onclick="shareTwitter()">𝕏 Post</button>
+        <button class="share-btn" onclick="shareFacebook()">Facebook</button>
+        <button class="share-btn" onclick="copyLink()">Copy Link</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>Tarot is a mirror, not a crystal ball. Take what resonates, leave what doesn't.<br>None of this is real. All of it is useful.</p>
+  </footer>
+</div>
+
+<script>
+// === MAJOR ARCANA (22 cards) ===
+const majorArcana = [
+  { name: "The Fool", numeral: "0", roman: "0", symbol: "🌀",
+    upright: { keywords: "New beginnings · Innocence · Spontaneity", message: "The Fool arrives to tell you that a fresh chapter is opening. This is a time to trust the unknown, take a leap of faith, and embrace the adventure ahead with an open heart. You don't need to have every answer — just the courage to begin.", love: "A new relationship or a completely fresh energy entering your love life is on the horizon. If you're in a partnership, it's time to let go of old patterns and rediscover each other with beginner's eyes.", career: "An unexpected opportunity may present itself. Don't overthink it. This card encourages you to take a risk, start the project, or make the move you've been hesitating on.", advice: "Trust your instincts. The universe is inviting you to step into the unknown. Pack light — you don't need your baggage where you're going." },
+    reversed: { keywords: "Recklessness · Fear · Holding back", message: "The Fool reversed suggests you may be holding back out of fear, or rushing forward without thinking. Find the balance between caution and courage. Are you avoiding a necessary leap, or jumping without looking?", love: "Fear of commitment or reckless behavior in love may be at play. Take a breath and consider whether you're sabotaging something good, or wisely protecting yourself.", career: "You may be hesitating on an important career move, or making impulsive decisions without a plan. Slow down just enough to think clearly, then act.", advice: "Check in with yourself — is this fear speaking, or wisdom? There's a difference between healthy caution and being paralyzed. Find it." }
+  },
+  { name: "The Magician", numeral: "I", roman: "I", symbol: "✨",
+    upright: { keywords: "Manifestation · Skill · Willpower", message: "The Magician tells you that you already have everything you need to create what you desire. Your skills, resources, and willpower are aligned. This is a moment of immense creative potential — focus your intention and make it happen.", love: "You have the power to transform your love life. Whether attracting a new partner or deepening a current bond, your energy and intention are magnetic right now.", career: "A powerful moment for manifesting career goals. You have the tools and talent — now channel them with clear focus. Success is within reach if you commit fully.", advice: "Stop waiting for the perfect moment. You are the perfect moment. Focus your energy, set your intention, and take decisive action." },
+    reversed: { keywords: "Manipulation · Untapped potential · Deception", message: "The Magician reversed warns of untapped potential or misdirected energy. You may be doubting your abilities, or someone around you may not be what they seem. Reconnect with your authentic power.", love: "Be cautious of manipulation — either your own or someone else's. Honest communication is essential. If something feels off, trust that instinct.", career: "You may be underutilizing your skills or feeling like an imposter. Alternatively, watch for dishonesty in business dealings. Trust your gut.", advice: "Realign with your true intentions. If you've been scattered or dishonest with yourself, now is the time to course-correct." }
+  },
+  { name: "The High Priestess", numeral: "II", roman: "II", symbol: "🌙",
+    upright: { keywords: "Intuition · Mystery · Inner wisdom", message: "The High Priestess asks you to go inward. The answers you seek are not in the external world right now — they are within you. Trust your intuition, pay attention to your dreams, and honor the wisdom that arises in stillness.", love: "There may be things unsaid or hidden in your love life. Trust your intuition about what's happening beneath the surface. Patience and inner knowing will guide you better than words.", career: "Not everything is as it appears in your professional life. Hold back on major decisions and gather more information. Your gut feeling about a situation is likely correct.", advice: "Be still. Listen to the quiet voice within. The High Priestess doesn't shout — she whispers. Make space for silence and the truth will emerge." },
+    reversed: { keywords: "Secrets · Ignoring intuition · Disconnection", message: "You may be ignoring your inner voice or disconnected from your intuition. Secrets — your own or others' — may be creating confusion. It's time to reconnect with your deeper self and face what you've been avoiding.", love: "A secret or unspoken truth may be affecting your relationship. Alternatively, you may be suppressing your own feelings. Honesty, starting with yourself, is the path forward.", career: "You might be overlooking important information or ignoring red flags. Step back from the noise and reconnect with what you intuitively know to be true.", advice: "Stop drowning out your inner voice with distractions. Whatever you've been avoiding — face it. Your intuition has been trying to tell you something." }
+  },
+  { name: "The Empress", numeral: "III", roman: "III", symbol: "🌿",
+    upright: { keywords: "Abundance · Nurturing · Creativity", message: "The Empress brings a message of abundance, beauty, and creative fertility. This is a time to nurture yourself and your projects. Allow things to grow organically. Sensuality, comfort, and connection to nature will restore you.", love: "Love is flourishing or about to. The Empress signals deep emotional connection, sensuality, and nurturing energy in your relationships. If single, you're radiating magnetic warmth.", career: "Creative projects will thrive now. Abundance is flowing toward you, but it requires patience and care — like tending a garden. Don't force; nurture.", advice: "Slow down and savor life. Nurture your body, your relationships, and your creative impulses. Abundance flows when you stop chasing and start receiving." },
+    reversed: { keywords: "Neglect · Creative block · Dependence", message: "The Empress reversed suggests you may be neglecting yourself — your body, your creativity, or your emotional needs. You might be giving too much to others while starving yourself, or feeling creatively blocked.", love: "You may be neglecting your own needs in a relationship, or feeling emotionally drained. Codependency or smothering behavior could be an issue. Reclaim your own center.", career: "Creative stagnation or burnout from over-giving at work. You need to replenish before you can produce. Rest is not laziness — it's preparation.", advice: "You cannot pour from an empty cup. Turn that nurturing energy inward. Take care of yourself first, and everything else will follow." }
+  },
+  { name: "The Emperor", numeral: "IV", roman: "IV", symbol: "👑",
+    upright: { keywords: "Authority · Structure · Stability", message: "The Emperor brings structure, authority, and grounded power into your life. This is a time to establish order, set clear boundaries, and take responsibility. Leadership — of your own life or others — is called for now.", love: "Stability and commitment are the themes. If you're seeking a partner, someone dependable and strong may enter your life. In existing relationships, building a solid foundation is key.", career: "Take charge. Establish systems, set goals, and lead with confidence. This is a time for strategic thinking and disciplined execution. Structure will be your greatest ally.", advice: "Own your authority. Set boundaries firmly but fairly. The world respects those who respect themselves enough to create order in their lives." },
+    reversed: { keywords: "Rigidity · Control · Tyranny", message: "The Emperor reversed warns against excessive control — either yours or someone else's. Rigidity, domination, or an inability to adapt may be causing problems. True strength includes flexibility.", love: "Power struggles, controlling behavior, or emotional rigidity may be undermining your relationship. Ask yourself: are you leading with love, or ruling with fear?", career: "A controlling boss, rigid systems, or your own inflexibility may be blocking progress. Sometimes the strongest move is knowing when to bend.", advice: "Examine where you're gripping too tightly. Control is an illusion — the more you try to force things, the more they resist. Lead with wisdom, not fear." }
+  },
+  { name: "The Hierophant", numeral: "V", roman: "V", symbol: "🔑",
+    upright: { keywords: "Tradition · Guidance · Wisdom", message: "The Hierophant points you toward tradition, mentorship, and established wisdom. Seek guidance from someone you trust — a teacher, counselor, or spiritual advisor. There is value in time-tested paths and structured learning.", love: "Commitment, tradition, and shared values take center stage. This could signal a deepening of commitment, a wedding, or finding a partner through conventional channels.", career: "Formal education, mentorship, or following established protocols will serve you well. This isn't the time to reinvent the wheel — learn from those who came before.", advice: "Seek wisdom from trusted sources. Sometimes the conventional path exists because it works. Honor tradition while keeping your mind open." },
+    reversed: { keywords: "Rebellion · Nonconformity · Freedom", message: "The reversed Hierophant encourages you to question conventions and forge your own spiritual or philosophical path. Rules that once served you may now be limiting your growth.", love: "You may be questioning traditional relationship structures or feeling confined by expectations. It's okay to define love and partnership on your own terms.", career: "Breaking from convention may be necessary for your growth. A traditional approach isn't working — try something unconventional.", advice: "Trust your own inner authority. Not all traditions serve you, and not all rules deserve your obedience. Find your own truth." }
+  },
+  { name: "The Lovers", numeral: "VI", roman: "VI", symbol: "💫",
+    upright: { keywords: "Love · Harmony · Alignment", message: "The Lovers represent a profound choice — one that aligns your heart, values, and actions. This isn't just about romance; it's about choosing what truly resonates with your soul. When you align with your deepest values, everything falls into place.", love: "A deeply significant romantic connection — new or existing — is highlighted. This card speaks of soulful love, mutual respect, and the choice to commit wholeheartedly.", career: "A major career decision awaits that must align with your values. Choose the path that feels right in your heart, not just your head.", advice: "Choose love — in all its forms. Align your actions with your values. When heart and mind agree, you've found your answer." },
+    reversed: { keywords: "Disharmony · Misalignment · Temptation", message: "The Lovers reversed signals inner conflict or a relationship out of alignment. You may be avoiding a difficult choice, or your actions are not matching your values.", love: "Disharmony, temptation, or avoiding a difficult conversation in your love life. Something is out of alignment and needs honest attention.", career: "You may be in a role that conflicts with your values, or facing a choice between what's easy and what's right.", advice: "Stop avoiding the choice you know you need to make. Discomfort now prevents deeper pain later. Align with your truth." }
+  },
+  { name: "The Chariot", numeral: "VII", roman: "VII", symbol: "⚡",
+    upright: { keywords: "Determination · Victory · Willpower", message: "The Chariot signals a time of focused determination and forward movement. You have the willpower to overcome obstacles and achieve your goals. Stay disciplined, keep your eyes on the prize, and charge ahead.", love: "Take the reins in your love life. If you've been passive, it's time to pursue what you want with confidence. A relationship may be moving to the next level through mutual effort.", career: "Victory through determination. A promotion, successful project, or breakthrough is within reach. Your discipline and drive will be rewarded.", advice: "Harness your willpower. You are stronger than you think, and the obstacles ahead are smaller than they appear. Move forward with confidence." },
+    reversed: { keywords: "Lack of direction · Aggression · Defeat", message: "The Chariot reversed suggests a loss of direction or control. You may be pushing too hard, fighting the wrong battles, or feeling scattered. Reassess your approach before charging ahead.", love: "Controlling behavior or a power struggle may be undermining your relationship. Alternatively, a lack of direction in love is leaving you feeling stuck.", career: "Burnout from pushing too hard, or scattered energy preventing progress. Step back, recalibrate, and choose your battles wisely.", advice: "Pause. You can't win every battle, and not every hill is worth dying on. Redirect your energy toward what truly matters." }
+  },
+  { name: "Strength", numeral: "VIII", roman: "VIII", symbol: "🦁",
+    upright: { keywords: "Courage · Compassion · Inner strength", message: "Strength reminds you that true power comes from within — from patience, compassion, and quiet courage, not force. You have the inner resources to handle whatever challenges you face. Lead with your heart.", love: "Patience, understanding, and gentle strength will transform your love life. This card speaks of taming difficulties with compassion rather than force.", career: "Quiet confidence and perseverance will serve you better than aggression. A challenge at work requires patience and emotional intelligence, not brute force.", advice: "Be gentle with yourself and others. True strength is not about domination — it's about the courage to stay soft in a hard world." },
+    reversed: { keywords: "Self-doubt · Weakness · Insecurity", message: "Strength reversed suggests you may be doubting yourself or feeling overwhelmed. Your inner critic may be louder than your inner warrior right now. Remember: you have survived everything that has come before this.", love: "Insecurity or self-doubt may be affecting your relationships. You might be tolerating treatment you don't deserve, or projecting your fears onto your partner.", career: "Imposter syndrome or fear of failure may be holding you back. You are more capable than you believe. Trust your abilities.", advice: "Reconnect with your inner strength. It hasn't gone anywhere — it's just been drowned out by doubt. You are resilient. Remember that." }
+  },
+  { name: "The Hermit", numeral: "IX", roman: "IX", symbol: "🏔️",
+    upright: { keywords: "Solitude · Reflection · Inner guidance", message: "The Hermit invites you to withdraw from the noise and go within. This is a time for soul-searching, quiet reflection, and reconnecting with your inner truth. The answers are not out there — they're within you.", love: "You may need time alone to understand what you truly want in love. If in a relationship, some personal space will bring clarity and renewed appreciation.", career: "Step back from the hustle. Reflect on your path, your goals, and whether your current direction aligns with your deeper purpose.", advice: "Embrace solitude. Not as loneliness, but as sacred space for self-discovery. The light you carry within will illuminate the path ahead." },
+    reversed: { keywords: "Isolation · Loneliness · Withdrawal", message: "The Hermit reversed warns against excessive isolation or avoidance of necessary inner work. You may be withdrawing from life out of fear, or refusing to look inward.", love: "Withdrawing from your partner or potential connections out of fear. Isolation isn't protecting you — it's preventing growth.", career: "You may be too disconnected from your team or avoiding the self-reflection needed to grow. Re-engage with purpose.", advice: "There's a difference between healthy solitude and hiding. Be honest about which one you're choosing right now." }
+  },
+  { name: "Wheel of Fortune", numeral: "X", roman: "X", symbol: "☸️",
+    upright: { keywords: "Change · Cycles · Destiny", message: "The Wheel of Fortune signals a turning point. Change is coming — and it's largely positive. The cycles of life are shifting in your favor. Embrace the movement and trust that the universe is rearranging things for your highest good.", love: "A significant shift in your love life — for the better. A fated meeting, a relationship leveling up, or a cycle of difficulty finally ending.", career: "Luck and opportunity are turning your way. Be ready to seize the moment when it arrives. Doors that were closed are about to open.", advice: "Trust the process. Life moves in cycles, and this one is turning in your favor. Stay open, stay grateful, and ride the wave." },
+    reversed: { keywords: "Bad luck · Resistance · Stagnation", message: "The reversed Wheel suggests resistance to change or a period of bad luck. Remember: even this will pass. Fighting the current only exhausts you — learn to flow with what is.", love: "A rough patch or feeling like love is not on your side. This is temporary. Focus on what you can control — your own growth and openness.", career: "Setbacks or stagnation at work. This isn't permanent. Use this time to prepare so you're ready when the wheel turns again.", advice: "Stop fighting the current. Some things are beyond your control. Acceptance is not defeat — it's wisdom." }
+  },
+  { name: "Justice", numeral: "XI", roman: "XI", symbol: "⚖️",
+    upright: { keywords: "Truth · Fairness · Accountability", message: "Justice brings clarity, truth, and fair outcomes. The decisions you've made — and the ones ahead — will be governed by cause and effect. Be honest, take responsibility, and trust that fairness will prevail.", love: "Honesty and fairness are essential in your relationship. A decision about commitment, boundaries, or truth-telling is at hand. Choose with integrity.", career: "Legal matters, contracts, or important decisions require careful, fair consideration. The truth will come to light — make sure you're on the right side of it.", advice: "Be impeccably honest — with yourself and others. Karma is real, and Justice ensures that what you put out comes back. Act with integrity." },
+    reversed: { keywords: "Injustice · Dishonesty · Avoidance", message: "Justice reversed points to unfairness, dishonesty, or avoiding accountability. Someone may not be playing fair — and that someone might be you.", love: "An imbalance or dishonesty in your relationship needs addressing. If you're avoiding a difficult truth, it will only grow heavier.", career: "Unfair treatment at work, or a decision that doesn't go your way. Stand up for what's right, but pick your battles wisely.", advice: "Face the truth you've been avoiding. Accountability isn't punishment — it's freedom. Own your choices." }
+  },
+  { name: "The Hanged Man", numeral: "XII", roman: "XII", symbol: "🔮",
+    upright: { keywords: "Surrender · New perspective · Letting go", message: "The Hanged Man invites you to pause, surrender, and see things from a completely new angle. What feels like suspension is actually a profound shift in perspective. Stop fighting and allow.", love: "Let go of how you think things should be. A shift in perspective will reveal something beautiful about your relationship that you've been missing.", career: "A pause at work isn't failure — it's incubation. Use this waiting period to see your situation from an entirely new angle.", advice: "Stop trying to force an outcome. Surrender to the pause. The insight you need will arrive the moment you stop chasing it." },
+    reversed: { keywords: "Stalling · Resistance · Martyrdom", message: "You may be resisting a necessary sacrifice or stuck in a pattern of martyrdom. The Hanged Man reversed asks: are you suffering for a purpose, or just suffering?", love: "Staying in a painful situation out of martyrdom rather than love. Ask yourself honestly: is this sacrifice meaningful, or is it just inertia?", career: "You may be stalling on a decision or clinging to a situation that's no longer serving you. Let go.", advice: "Stop glamorizing your own suffering. There's a difference between meaningful sacrifice and unnecessary pain. Know which one you're in." }
+  },
+  { name: "Death", numeral: "XIII", roman: "XIII", symbol: "🦋",
+    upright: { keywords: "Transformation · Endings · New beginnings", message: "Death does not mean literal death — it signals profound transformation. Something must end for something new to begin. This is one of the most powerful cards in the deck: the promise that from every ending, new life emerges.", love: "A relationship is transforming — either ending to make way for something better, or shedding old patterns to reach a deeper level. Trust the process.", career: "A chapter is closing in your career. A role, project, or way of working is ending. Embrace it — what comes next will be a significant upgrade.", advice: "Let go. Whatever is falling away is making room for what's meant to be. Transformation is never comfortable, but it is always necessary." },
+    reversed: { keywords: "Resistance · Fear of change · Stagnation", message: "You are resisting a transformation that needs to happen. Fear of the unknown is keeping you trapped in something that has already run its course.", love: "Clinging to a relationship or dynamic that has expired. Letting go is not failure — it's an act of self-love and courage.", career: "Refusing to accept that a situation has changed. Holding on to the old is preventing the new from arriving.", advice: "What are you clinging to that needs to be released? The ending you fear is actually the beginning you've been praying for." }
+  },
+  { name: "Temperance", numeral: "XIV", roman: "XIV", symbol: "🌊",
+    upright: { keywords: "Balance · Patience · Moderation", message: "Temperance brings a message of balance, harmony, and patient blending. This is a time for moderation, finding your center, and allowing things to integrate naturally. Rushing will only delay the outcome.", love: "Harmony and balance are returning to your love life. Practice patience with your partner and yourself. The right pace will reveal the right path.", career: "Balance your ambition with patience. A measured, moderate approach will yield better results than forcing things. Trust the process.", advice: "Find your center. Life is asking you to blend opposites — work and rest, giving and receiving, action and patience. Balance is your superpower right now." },
+    reversed: { keywords: "Imbalance · Excess · Impatience", message: "Temperance reversed signals imbalance, excess, or a lack of harmony. You may be overdoing it in one area of life while neglecting another.", love: "Imbalance in your relationship — one person giving too much, or an unhealthy dynamic that needs correction. Recalibrate.", career: "Overworking, burnout, or a lack of alignment between your values and your actions. Something is off-center.", advice: "Where in your life are you out of balance? Identify it, name it, and begin the process of restoring equilibrium." }
+  },
+  { name: "The Devil", numeral: "XV", roman: "XV", symbol: "⛓️",
+    upright: { keywords: "Attachment · Addiction · Shadow self", message: "The Devil reveals the chains that bind you — habits, relationships, or beliefs that feel inescapable but are actually within your power to break. This card is a wake-up call to confront your shadow.", love: "Unhealthy attachment, codependency, or a toxic dynamic may be at play. The chains are looser than they appear — you can choose freedom.", career: "Feeling trapped in a job or financial situation. Remember: you have more power than you think. The prison door is unlocked — you just haven't tried it.", advice: "Face your shadow honestly. What are you addicted to — a person, a habit, a belief? Awareness is the first step to liberation." },
+    reversed: { keywords: "Release · Breaking free · Reclaiming power", message: "The Devil reversed is a powerful sign of liberation. You are breaking free from something that has held you captive. Congratulations — this takes immense courage.", love: "Leaving a toxic relationship or breaking a destructive pattern in love. Freedom is on the other side of this difficult choice.", career: "Breaking free from a soul-crushing job or financial trap. You're reclaiming your power and autonomy.", advice: "You've already begun the hardest part — recognizing the chains. Keep going. Freedom is closer than you think." }
+  },
+  { name: "The Tower", numeral: "XVI", roman: "XVI", symbol: "🗼",
+    upright: { keywords: "Upheaval · Revelation · Sudden change", message: "The Tower brings sudden, dramatic change — the kind that shakes your foundation. While shocking, this destruction clears away what was built on a false premise. From the rubble, you will build something truer.", love: "A sudden revelation or upheaval in your love life. While painful, this is clearing away illusions so real love can emerge.", career: "A dramatic shift — a job loss, a failed project, or a sudden change of direction. This is the universe redirecting you toward your true path.", advice: "Don't try to rebuild the tower. Let it fall. What was built on a weak foundation had to crumble. What you build next will be unshakeable." },
+    reversed: { keywords: "Avoidance · Fear of change · Delayed disaster", message: "You may be sensing that something is about to collapse but trying desperately to hold it together. The Tower reversed asks: is it worth preserving, or are you just delaying the inevitable?", love: "You know something isn't right but you're avoiding the reckoning. Delaying the truth will only make the eventual crash harder.", career: "A structure at work is crumbling but you're pretending everything is fine. Face it now on your own terms, before it collapses on you.", advice: "The warning signs are clear. Choosing to act now, on your own terms, is far better than being forced to react later." }
+  },
+  { name: "The Star", numeral: "XVII", roman: "XVII", symbol: "⭐",
+    upright: { keywords: "Hope · Renewal · Inspiration", message: "After the destruction of the Tower, the Star arrives with healing light. This is a time of hope, renewal, and quiet faith. You are being restored. Trust that the universe has not forgotten you — your brightest chapter is being written.", love: "Hope is returning to your love life. Healing, openness, and a renewed sense of faith in love are emerging. Stay open to receiving.", career: "Inspiration and clarity are flowing into your professional life. Creative projects shine now. Trust your unique vision.", advice: "Breathe. The worst is behind you. The Star says: you are exactly where you need to be, and the best is yet to come." },
+    reversed: { keywords: "Despair · Disconnection · Lost faith", message: "The Star reversed suggests you've lost hope or disconnected from your sense of purpose. The light is still there — you've just temporarily lost sight of it.", love: "Feeling hopeless about love or disconnected from your partner. This is a season, not a sentence. Hope will return.", career: "Creative block or a loss of inspiration at work. You're in a valley, but the climb out is already beginning.", advice: "Even stars are sometimes hidden by clouds. Your light hasn't gone out — it's just obscured. Be patient with yourself." }
+  },
+  { name: "The Moon", numeral: "XVIII", roman: "XVIII", symbol: "🌕",
+    upright: { keywords: "Illusion · Intuition · The subconscious", message: "The Moon casts a light that illuminates and deceives in equal measure. Things are not as they seem. Trust your intuition over appearances, and be willing to sit with uncertainty. The truth is emerging slowly.", love: "Confusion, mixed signals, or hidden feelings in your love life. Don't make major decisions right now — wait for clarity to emerge.", career: "Something at work isn't what it appears to be. Trust your gut over what you're being told. More information will surface soon.", advice: "Sit with the uncertainty. Not everything needs to be resolved today. Your intuition is your most reliable guide in this foggy terrain." },
+    reversed: { keywords: "Clarity · Release of fear · Truth revealed", message: "The Moon reversed brings clarity after confusion. Fears and illusions that have been plaguing you are dissolving. The truth is finally becoming clear.", love: "Clarity is arriving in your love life. Misunderstandings are clearing up, and you can finally see the situation — and your partner — clearly.", career: "The fog is lifting at work. You can now see the path forward with much greater clarity.", advice: "The confusion is ending. Trust what is now being revealed, and release the anxiety that served no purpose." }
+  },
+  { name: "The Sun", numeral: "XIX", roman: "XIX", symbol: "☀️",
+    upright: { keywords: "Joy · Success · Vitality", message: "The Sun is one of the most positive cards in the entire deck. It brings warmth, joy, success, and the pure energy of life. Everything it touches flourishes. Celebrate — you've earned this light.", love: "Pure joy and warmth in your love life. A beautiful time for romance, connection, and shared happiness. If single, love is shining brightly on you.", career: "Success, recognition, and achievement. Your hard work is paying off beautifully. Enjoy this moment — you've earned it.", advice: "Let yourself be happy. You don't need to look over your shoulder or wait for the other shoe to drop. This joy is real and it is yours." },
+    reversed: { keywords: "Temporary setback · Inner child · Delayed success", message: "The Sun reversed is still a positive card, but the brightness may be temporarily dimmed. A delay, a small setback, or an inability to fully enjoy your success may be present.", love: "Happiness is available but you may be struggling to fully embrace it. Are you sabotaging your own joy?", career: "Success is coming but slightly delayed. Don't lose faith — the outcome is still positive, just slower than expected.", advice: "You're blocking your own sunshine. What belief or fear is preventing you from fully enjoying what's right in front of you?" }
+  },
+  { name: "Judgement", numeral: "XX", roman: "XX", symbol: "🔔",
+    upright: { keywords: "Awakening · Rebirth · Calling", message: "Judgement sounds the call of awakening. You are being summoned to rise, to answer your calling, and to step into a higher version of yourself. This is a moment of profound personal reckoning and rebirth.", love: "A major decision or realization about your love life. You're being called to a higher standard in your relationships — answer that call.", career: "A calling is becoming clear. Your purpose is revealing itself. This may involve a major career shift aligned with your true self.", advice: "Answer the call. You know what you're being asked to do. Stop hesitating and rise." },
+    reversed: { keywords: "Self-doubt · Refusal · Stagnation", message: "You may be ignoring a calling or refusing to acknowledge a truth about yourself. Judgement reversed asks: what are you refusing to see or accept?", love: "Refusing to learn from past relationship patterns. You're repeating a cycle that can only break through honest self-reflection.", career: "Ignoring your true calling in favor of comfort or security. The safe path is slowly suffocating you.", advice: "The call hasn't stopped — you've just stopped listening. Quiet the noise and hear what your soul has been trying to tell you." }
+  },
+  { name: "The World", numeral: "XXI", roman: "XXI", symbol: "🌍",
+    upright: { keywords: "Completion · Achievement · Wholeness", message: "The World represents the completion of a major cycle. You have arrived. This is a moment of wholeness, accomplishment, and integration. Celebrate this achievement before the next cycle begins.", love: "A relationship reaching a beautiful milestone — or a profound sense of wholeness within yourself that makes you magnetic to the right partner.", career: "A major goal achieved. A project completed. A chapter closed with honor. Take a moment to appreciate how far you've come.", advice: "You did it. Before rushing to the next goal, pause and truly absorb this moment of completion. You deserve to celebrate." },
+    reversed: { keywords: "Incompletion · Shortcuts · Lack of closure", message: "Something feels unfinished. You may be seeking shortcuts or trying to close a chapter before its natural conclusion. Complete what you started.", love: "Unresolved issues preventing closure or progress. You need to finish one chapter before opening the next.", career: "A project or goal that remains incomplete. Don't abandon it at the final hurdle. See it through.", advice: "Don't leave things half-done. The final stretch is often the hardest, but completion is where the real reward lives." }
+  }
+];
+
+// === MINOR ARCANA (56 cards) ===
+const suits = {
+  Wands: { element: "Fire", symbol: "🔥", domain: "Passion, creativity, ambition" },
+  Cups: { element: "Water", symbol: "💧", domain: "Emotions, relationships, intuition" },
+  Swords: { element: "Air", symbol: "🗡️", domain: "Intellect, truth, conflict" },
+  Pentacles: { element: "Earth", symbol: "🪙", domain: "Material world, finances, health" }
+};
+
+const minorCards = {
+  Wands: [
+    { rank: "Ace", upright: { kw: "Inspiration · New passion · Creative spark", msg: "A burst of creative energy and inspiration is igniting within you. A new passion project, idea, or adventure is calling. Say yes.", love: "A new spark of attraction or renewed passion in your relationship. Exciting beginnings.", career: "An exciting new opportunity or creative idea is arriving. Act on it with enthusiasm.", advice: "Strike while the fire is hot. This inspiration won't wait forever." }, reversed: { kw: "Delays · Lack of motivation · False starts", msg: "Creative energy is blocked or misdirected. You may be struggling to find your spark or starting things you can't finish.", love: "Passion is fading or a promising connection fizzles. Rekindle your own fire first.", career: "A project stalls or inspiration runs dry. Don't force it — rest and the spark will return.", advice: "The fire isn't out — it just needs fuel. What reignites your passion? Go find it." }},
+    { rank: "Two", upright: { kw: "Planning · Future vision · Discovery", msg: "You're at a crossroads of possibility. The world is open to you — now is the time to plan, explore, and dream big before taking action.", love: "Exploring possibilities in love — deciding whether to commit or explore. Both options have merit.", career: "Planning your next move. Big decisions about your career direction are at hand.", advice: "Dream big, but don't get lost in dreaming. The plan needs action to become real." }, reversed: { kw: "Fear of the unknown · Poor planning · Restlessness", msg: "Indecision or fear is preventing you from moving forward. You may be overthinking your options.", love: "Fear of commitment or restlessness in your relationship. Make a choice.", career: "Poor planning or inability to decide on a direction. Analysis paralysis.", advice: "Stop overthinking. Pick a direction and go. You can adjust as you learn." }},
+    { rank: "Three", upright: { kw: "Progress · Expansion · Foresight", msg: "Your plans are taking shape and the horizon is expanding. Your efforts are gaining momentum — keep your vision broad and your actions consistent.", love: "A relationship is growing and moving forward. Shared visions for the future are aligning.", career: "Expansion and progress. Your work is gaining recognition and new opportunities are opening.", advice: "You're on the right track. Stay the course and keep your eyes on the bigger picture." }, reversed: { kw: "Delays · Frustration · Obstacles", msg: "Progress is slower than expected. Obstacles or delays are testing your patience. Don't lose faith.", love: "Plans together may be stalling. Patience and open communication will get you through.", career: "Delays in projects or frustrated ambitions. Reassess your strategy but don't quit.", advice: "Delays are not denials. Adjust your approach and keep moving." }},
+    { rank: "Four", upright: { kw: "Celebration · Harmony · Homecoming", msg: "A moment of joy, stability, and celebration. You've reached a milestone worth honoring. Gather with loved ones and appreciate what you've built.", love: "A beautiful time of harmony and celebration in your relationship. A milestone like moving in together or an engagement may arise.", career: "A project milestone or team achievement. Celebrate the wins before moving on.", advice: "Pause and celebrate. You don't have to keep climbing every second. Enjoy the view." }, reversed: { kw: "Instability · Transition · Feeling unsettled", msg: "A sense of unease beneath the surface. You may be in transition or feeling like you don't quite belong.", love: "Feeling unsettled in your relationship or home life. Communicate your needs.", career: "Workplace instability or feeling disconnected from your team. Seek grounding.", advice: "Home isn't just a place — it's a feeling. If something feels off, address it gently." }},
+    { rank: "Five", upright: { kw: "Conflict · Competition · Tension", msg: "Conflict and competition are in the air. This isn't necessarily negative — healthy competition and passionate debate can drive growth. Channel the fire constructively.", love: "Arguments or tension in your relationship. Address issues directly but with compassion.", career: "Competition, disagreements, or office politics. Stand your ground but pick your battles.", advice: "Conflict is natural. It's how you handle it that defines you. Fight fair." }, reversed: { kw: "Resolution · Avoidance · Inner conflict", msg: "Conflict is resolving, or you're avoiding necessary confrontation. Peace is coming — but only if you face what needs facing.", love: "Avoiding a difficult conversation will only make things worse. Clear the air.", career: "A workplace conflict is resolving, or you're suppressing frustration that needs an outlet.", advice: "Don't confuse avoidance with peace. Real harmony requires honest conversations." }},
+    { rank: "Six", upright: { kw: "Victory · Recognition · Triumph", msg: "A well-deserved victory is at hand. Your efforts are being recognized and celebrated. Stand tall — you've earned this moment of triumph.", love: "Your relationship is thriving and others admire what you've built together. Mutual pride.", career: "Public recognition, a promotion, or a major win. Accept the praise graciously.", advice: "Accept the victory with grace. You worked hard for this — own it without apology." }, reversed: { kw: "Ego · Self-doubt · Delayed recognition", msg: "Your achievements may go unrecognized, or ego may be distorting your perspective. True victory doesn't need an audience.", love: "Ego or pride is affecting your relationship. Remember that love isn't a competition.", career: "Lack of recognition or feeling undervalued. Your worth isn't determined by others' applause.", advice: "If the praise isn't coming from outside, give it to yourself. You know what you've accomplished." }},
+    { rank: "Seven", upright: { kw: "Perseverance · Defense · Standing ground", msg: "You're being challenged from all sides but you have the strength and position to hold your ground. Don't give up — perseverance will see you through.", love: "Defending your relationship or personal boundaries. Stand firm in what matters to you.", career: "Competition and pressure at work. You're in a strong position — don't be intimidated.", advice: "You're being tested. This is about resilience, not surrender. Hold your ground." }, reversed: { kw: "Overwhelm · Giving up · Exhaustion", msg: "The fight is becoming too much. You may need to reassess whether this battle is worth the cost.", love: "Exhaustion from constant relationship battles. Some fights aren't worth winning.", career: "Burnout from defending your position. Consider if compromise might actually serve you better.", advice: "Not every battle needs a hero. Sometimes the bravest thing is knowing when to step back." }},
+    { rank: "Eight", upright: { kw: "Speed · Movement · Swift action", msg: "Things are moving fast. News, travel, or rapid progress is incoming. Stay nimble and ready to act. The momentum is in your favor.", love: "A whirlwind romance or rapid development in your relationship. Enjoy the ride.", career: "Fast-moving projects, travel, or rapid career advancement. Strike while the momentum is with you.", advice: "Speed is your ally right now. Don't overthink — act decisively and trust the flow." }, reversed: { kw: "Delays · Frustration · Slowdown", msg: "Expected speed has stalled. Delays, miscommunications, or setbacks are slowing your progress.", love: "A relationship that's moving too slowly or stalled communication. Patience is needed.", career: "Project delays, travel disruptions, or stalled negotiations. Breathe — this will pass.", advice: "Delays aren't the end. Use the pause productively instead of fighting it." }},
+    { rank: "Nine", upright: { kw: "Resilience · Persistence · Last stand", msg: "You've been through a lot and you're weary, but the finish line is in sight. One more push. You have more strength than you know.", love: "Past hurts are weighing on you but you're still standing. Healing is closer than you think.", career: "Feeling beaten down by work challenges. Keep going — you're closer to breakthrough than you realize.", advice: "You are battle-tested and stronger for it. The final push requires everything you have — and you have enough." }, reversed: { kw: "Overwhelm · Paranoia · Refusal to let go", msg: "You're carrying unnecessary burdens. Some of the battles you're fighting are already over — you just haven't realized it yet.", love: "Carrying old wounds into your current relationship. It's time to put down what no longer serves you.", career: "Overprotecting yourself from threats that no longer exist. Let your guard down — you're safe.", advice: "Look around. Is the threat still real, or are you fighting ghosts? Let go of what's already passed." }},
+    { rank: "Ten", upright: { kw: "Burden · Responsibility · Hard work", msg: "You're carrying a heavy load. Responsibilities and obligations are weighing you down. While your determination is admirable, ask yourself: do you need to carry all of this alone?", love: "The relationship feels heavy with responsibility. Share the load with your partner.", career: "Overwhelmed with work responsibilities. Delegate, prioritize, or something will have to give.", advice: "Strength isn't doing everything yourself. It's knowing when to ask for help." }, reversed: { kw: "Release · Delegation · Lightening the load", msg: "You're finally releasing some of the burdens you've been carrying. Relief is on the way.", love: "Letting go of relationship pressures or finding a better balance of responsibility.", career: "Successfully delegating or releasing unnecessary obligations. The weight is lifting.", advice: "Put it down. Not everything is yours to carry. Freedom comes from release." }},
+    { rank: "Page", upright: { kw: "Enthusiasm · Exploration · New ideas", msg: "Fresh creative energy and enthusiasm are entering your life. Approach new experiences with curiosity and an open mind.", love: "A new, exciting connection full of potential. Youthful energy and flirtation.", career: "A new project or learning opportunity that excites you. Say yes to exploration.", advice: "Channel your inner beginner. Curiosity and enthusiasm will take you further than expertise right now." }, reversed: { kw: "Immaturity · Hasty decisions · Lack of direction", msg: "Enthusiasm without focus is leading to scattered energy or hasty decisions.", love: "Immaturity or lack of commitment in a connection. Are you ready for what you're pursuing?", career: "Jumping into things without preparation. Slow down and do your research.", advice: "Excitement is wonderful, but it needs direction. Channel it — don't scatter it." }},
+    { rank: "Knight", upright: { kw: "Action · Adventure · Passion", msg: "Bold, passionate action is called for. The Knight of Wands charges forward with confidence and charisma. Take the risk, start the adventure.", love: "A passionate, adventurous connection. Someone bold may enter your life — or it's time to be that bold person yourself.", career: "Charge forward on a passion project. Your confidence and energy are magnetic right now.", advice: "Be bold. Fortune favors the courageous, and you have fire in your veins." }, reversed: { kw: "Recklessness · Impatience · Burnout", msg: "Passion without direction is becoming reckless. You may be burning too hot and heading for burnout.", love: "Impulsive or hot-headed behavior in love. Cool down before you say something you'll regret.", career: "Rushing without strategy. Slow down — speed without direction is just chaos.", advice: "Fire is powerful but must be controlled. Direct your passion before it consumes you." }},
+    { rank: "Queen", upright: { kw: "Confidence · Warmth · Determination", msg: "The Queen of Wands embodies magnetic confidence, warmth, and creative power. Step into your full presence. You are radiant and capable.", love: "You're attracting love through your authentic confidence and warmth. Be yourself — it's more than enough.", career: "Lead with charisma and warmth. Your confidence inspires others and opens doors.", advice: "Own your power. Your warmth and confidence are gifts — share them generously." }, reversed: { kw: "Insecurity · Jealousy · Self-doubt", msg: "Confidence has dipped into insecurity or jealousy. Remember who you are at your core.", love: "Jealousy or insecurity is affecting your relationship. Reconnect with your own worth.", career: "Self-doubt is dimming your light at work. You are more capable than you're allowing yourself to believe.", advice: "Your fire hasn't gone out. Someone or something dimmed it. Reignite your confidence from within." }},
+    { rank: "King", upright: { kw: "Leadership · Vision · Boldness", msg: "The King of Wands is a visionary leader — bold, inspiring, and masterful. Take charge of your situation with courage and a clear vision.", love: "A strong, passionate partner — or it's time for you to lead your love life with vision and purpose.", career: "Visionary leadership is your role right now. Think big, inspire your team, and execute boldly.", advice: "Lead from the front. Your vision is clear and your courage is tested. Step into your authority." }, reversed: { kw: "Tyranny · Arrogance · Impulsiveness", msg: "Leadership has tilted into arrogance or impulsive decision-making. Power without humility becomes tyranny.", love: "Domineering or selfish behavior in love. True leadership in a relationship means serving, not ruling.", career: "Being too aggressive or impulsive in your leadership. Listen to your team.", advice: "Power without wisdom is dangerous. Check your ego and lead with integrity." }}
+  ],
+  Cups: [
+    { rank: "Ace", upright: { kw: "New love · Emotional awakening · Compassion", msg: "A new emotional beginning is arriving — a fresh wave of love, compassion, or creative inspiration. Your heart is opening.", love: "The beginning of a beautiful love story or a renewal of deep emotional connection.", career: "A project that truly touches your heart. Creative inspiration is flowing.", advice: "Open your heart. Something beautiful is trying to reach you." }, reversed: { kw: "Emotional block · Emptiness · Repression", msg: "You're blocking your emotions or feeling empty. Something is preventing you from fully feeling.", love: "Emotional walls are up. You're protecting yourself but also preventing love from entering.", career: "Creative block or lack of emotional engagement with your work.", advice: "Let yourself feel. The vulnerability you're avoiding is the doorway to what you want." }},
+    { rank: "Two", upright: { kw: "Partnership · Mutual attraction · Unity", msg: "A beautiful connection is forming or deepening. Mutual respect, attraction, and understanding flow between you.", love: "A perfect card for love — deep mutual attraction, a new relationship, or renewed romance.", career: "A valuable partnership or collaboration. Two minds creating something greater together.", advice: "Open yourself to this connection. What's forming between you and another is real." }, reversed: { kw: "Imbalance · Miscommunication · Disharmony", msg: "A relationship is out of balance. One person is giving more, or communication has broken down.", love: "Imbalance in your relationship. Address it before resentment builds.", career: "A partnership isn't working as well as it should. Realign expectations.", advice: "Balance requires honesty. If something feels off, name it." }},
+    { rank: "Three", upright: { kw: "Celebration · Friendship · Community", msg: "Joy, celebration, and community surround you. This is a time to gather with loved ones and celebrate life together.", love: "Joyful social connections that may lead to romance, or celebrating love with your community.", career: "Team success and celebration. Your work relationships are thriving.", advice: "Celebrate. Life isn't all struggle — savor the sweet moments with people you love." }, reversed: { kw: "Overindulgence · Gossip · Isolation", msg: "Social excess, gossip, or feeling excluded from your community.", love: "Third-party interference or social drama affecting your relationship.", career: "Office gossip or feeling left out of important circles.", advice: "Not every party deserves your energy. Choose your social circles wisely." }},
+    { rank: "Four", upright: { kw: "Apathy · Contemplation · Dissatisfaction", msg: "Something is being offered to you but you're too focused on what's wrong to see what's right. Dissatisfaction is blinding you to opportunity.", love: "Taking your partner for granted or feeling bored in a relationship. Look again with fresh eyes.", career: "Feeling unmotivated or bored at work despite good opportunities. Gratitude might shift your perspective.", advice: "Before looking for something new, truly see what's already in front of you." }, reversed: { kw: "Renewed motivation · Acceptance · Moving forward", msg: "You're finally ready to accept what's being offered or to move on from stagnation.", love: "Renewed appreciation for your partner, or the courage to finally move on.", career: "Motivation returning after a period of apathy. New opportunities look appealing again.", advice: "The fog is lifting. Act on this renewed energy before it fades." }},
+    { rank: "Five", upright: { kw: "Loss · Grief · Regret", msg: "You're mourning something — a loss, a missed opportunity, or a broken expectation. The grief is real, but not everything is lost. Look at what remains.", love: "Heartbreak or disappointment in love. Grieve, but don't miss what's still standing.", career: "A professional setback or loss. It stings, but it's not the end of your story.", advice: "Feel the loss fully — then lift your eyes. Not everything is gone. What remains may be exactly what you need." }, reversed: { kw: "Acceptance · Moving on · Recovery", msg: "You're beginning to heal from a loss. Acceptance is arriving and the path forward is clearing.", love: "Healing from heartbreak. You're ready to love again, even if tentatively.", career: "Recovering from a professional disappointment. Lessons learned are now assets.", advice: "The worst is behind you. Carry the lesson, leave the pain." }},
+    { rank: "Six", upright: { kw: "Nostalgia · Innocence · Happy memories", msg: "Sweet memories and a sense of nostalgia are present. Reconnecting with your roots, childhood, or simpler times brings comfort.", love: "A past love may resurface, or nostalgia for happier times. Reconnect with what made you happy.", career: "An old colleague, mentor, or opportunity from the past may return. Welcome it.", advice: "Honor where you've been. Your past holds wisdom and sweetness worth revisiting." }, reversed: { kw: "Living in the past · Unrealistic memories · Moving forward", msg: "You're idealizing the past or struggling to let go of what was. The future needs your attention.", love: "Stuck on an ex or comparing current love to past relationships. Let the past be the past.", career: "Clinging to outdated methods or past glory. Innovate.", advice: "The past is a place of reference, not residence. It's time to look forward." }},
+    { rank: "Seven", upright: { kw: "Fantasy · Choices · Wishful thinking", msg: "Many options shimmer before you but not all are real. Some are fantasies, some are distractions. Discernment is needed.", love: "Temptation or confusion about what you truly want in love. Get clear before you choose.", career: "Multiple opportunities but not all are as good as they seem. Research carefully.", advice: "Not everything that glitters is gold. Choose with your deepest values, not your momentary desires." }, reversed: { kw: "Clarity · Decision-making · Focus", msg: "The fog of illusion is clearing. You're finally seeing your options clearly and ready to choose.", love: "Clarity about what you want in a partner. The right choice is becoming obvious.", career: "Focus is returning. You know which opportunity to pursue.", advice: "Trust the clarity that's arriving. You know what's real now — act on it." }},
+    { rank: "Eight", upright: { kw: "Walking away · Disillusionment · Seeking truth", msg: "You're leaving behind something that no longer fulfills you. This walking away, while painful, is an act of courage and self-honesty.", love: "Leaving a relationship that's no longer serving you. It's hard, but necessary.", career: "Walking away from a comfortable but unfulfilling career path. Your soul is calling you elsewhere.", advice: "Sometimes the bravest thing is leaving what's familiar. Trust that what you're walking toward is worth it." }, reversed: { kw: "Fear of change · Staying too long · Avoidance", msg: "You know you should leave but fear is keeping you stuck. The comfort of the familiar is a trap.", love: "Staying in a relationship out of fear rather than love. You deserve more.", career: "Remaining in an unfulfilling job because change is scary. The cost of staying is higher than the cost of leaving.", advice: "What you're afraid to leave is already leaving you. Have the courage to go first." }},
+    { rank: "Nine", upright: { kw: "Wish fulfilled · Contentment · Satisfaction", msg: "The Nine of Cups is the wish card. Emotional fulfillment, satisfaction, and contentment are yours. Enjoy this moment of having exactly what you need.", love: "Deep romantic satisfaction. Your heart's desire in love is manifesting.", career: "Professional fulfillment and recognition. You've created something you're truly proud of.", advice: "Make a wish — and believe it can come true. The universe is in a generous mood." }, reversed: { kw: "Dissatisfaction · Materialism · Unfulfilled wishes", msg: "Getting what you wanted hasn't brought the happiness you expected. Something deeper is missing.", love: "A relationship looks good on paper but feels empty inside. Seek deeper connection.", career: "Achievement without fulfillment. Success means nothing if it doesn't feed your soul.", advice: "Reassess what you truly want. The thing you're chasing might not be the thing you need." }},
+    { rank: "Ten", upright: { kw: "Harmony · Family · Emotional fulfillment", msg: "Complete emotional fulfillment and family harmony. This is the happily-ever-after card — love, peace, and contentment in your closest relationships.", love: "The most beautiful card for love and family. Deep, lasting happiness with your loved ones.", career: "Work-life balance achieved. Your career supports your happiness rather than undermining it.", advice: "This is what it's all about. Love, connection, peace. Soak it in." }, reversed: { kw: "Broken home · Disharmony · Misaligned values", msg: "Family tension or a disconnect between your life and your values. Something in your inner circle needs attention.", love: "Relationship strain or family conflict. Address it with love and honesty.", career: "Work is disrupting your family life. Rebalance before something breaks.", advice: "The people who matter most need your attention. Don't let the urgent crowd out the important." }},
+    { rank: "Page", upright: { kw: "Creative message · Intuition · New feelings", msg: "A tender new emotion or creative inspiration is emerging. Stay open and receptive.", love: "A sweet new connection or a heartfelt message from someone you care about.", career: "A creative opportunity or emotionally meaningful project is arriving.", advice: "Follow your feelings. Something soft and true is trying to reach you." }, reversed: { kw: "Emotional immaturity · Blocked creativity · Mood swings", msg: "Emotional fluctuations or creative blocks. You may be acting from a place of emotional immaturity.", love: "Unrequited feelings or emotionally unavailable behavior.", career: "Creative block or difficulty connecting emotionally with your work.", advice: "Grow through what you're feeling, don't just react to it." }},
+    { rank: "Knight", upright: { kw: "Romance · Charm · Following your heart", msg: "A romantic, charming energy is sweeping through your life. Follow your heart — it knows where it's going.", love: "A romantic proposal, grand gesture, or deeply emotional connection. Love is in the air.", career: "Pursuing a career path that aligns with your passions. Lead with your heart.", advice: "Be the romantic. Make the gesture. Say the thing. Life is too short for unexpressed love." }, reversed: { kw: "Moodiness · Unrealistic expectations · Emotional manipulation", msg: "Romantic idealism has gone too far, or emotional manipulation is at play.", love: "Unrealistic expectations or moodiness are straining your relationship.", career: "Letting emotions cloud professional judgment.", advice: "Love is beautiful, but it must be grounded in reality. Come back down to earth." }},
+    { rank: "Queen", upright: { kw: "Compassion · Emotional security · Intuition", msg: "Deep emotional intelligence, compassion, and nurturing energy. You are a source of comfort and wisdom for those around you.", love: "Being a deeply loving, intuitive partner. Your emotional depth is your greatest gift.", career: "Leading with empathy and emotional intelligence. People trust and confide in you.", advice: "Your heart is your compass. Trust its wisdom — it rarely leads you astray." }, reversed: { kw: "Codependency · Emotional insecurity · Martyrdom", msg: "Over-giving or emotional insecurity is draining you. Your compassion has become self-sacrifice.", love: "Codependency or losing yourself in a relationship. Reclaim your emotional center.", career: "People-pleasing at work to the detriment of your own needs.", advice: "You can't pour from an empty cup. Fill yours first." }},
+    { rank: "King", upright: { kw: "Emotional maturity · Wisdom · Generosity", msg: "Emotional mastery and generous wisdom. You balance heart and mind with grace.", love: "A mature, emotionally generous partner — or it's time to embody that energy yourself.", career: "Leading with emotional intelligence and calm wisdom. Others look to you for guidance.", advice: "True emotional strength is being deeply feeling and deeply grounded at the same time." }, reversed: { kw: "Emotional manipulation · Moodiness · Volatility", msg: "Emotional volatility or manipulation. Using feelings as weapons rather than bridges.", love: "Emotional manipulation or volatility in your relationship. This isn't love — it's control.", career: "Moody leadership or emotional outbursts at work undermining your credibility.", advice: "Master your emotions before they master you. Maturity is the goal." }}
+  ],
+  Swords: [
+    { rank: "Ace", upright: { kw: "Clarity · Truth · Breakthrough", msg: "A mental breakthrough is arriving. Clarity cuts through confusion like a blade. The truth, however sharp, will set you free.", love: "A moment of clarity about your relationship. The truth may be uncomfortable but it's liberating.", career: "An intellectual breakthrough or a new idea that changes everything.", advice: "Embrace the truth, even if it cuts. Clarity is a gift." }, reversed: { kw: "Confusion · Misinformation · Clouded judgment", msg: "Mental fog or misinformation is clouding your judgment. Don't make major decisions right now.", love: "Confusion or miscommunication in your relationship. Wait for clarity.", career: "Bad information or clouded thinking leading to poor decisions.", advice: "Your mind isn't clear right now. Wait before acting on any major conclusions." }},
+    { rank: "Two", upright: { kw: "Difficult decision · Stalemate · Avoidance", msg: "A difficult choice is before you and you're avoiding it. But indecision is itself a decision — and it's costing you.", love: "A relationship decision you've been avoiding. Neither option is painless, but choosing is essential.", career: "Stuck between two options at work. Gather information, then commit.", advice: "Remove the blindfold. Face the decision with open eyes. Both paths have merit — but you must choose one." }, reversed: { kw: "Information overload · Anxiety · Indecision", msg: "Too much information is paralyzing you. Analysis paralysis at its peak.", love: "Overthinking your relationship into a spiral. Step back from the mental noise.", career: "Information overload preventing action. Simplify.", advice: "Stop researching and start deciding. You already know enough." }},
+    { rank: "Three", upright: { kw: "Heartbreak · Sorrow · Grief", msg: "Pain — emotional, mental, or both — is present. A betrayal, separation, or deep disappointment has pierced your heart. Allow yourself to grieve.", love: "Heartbreak or a painful separation. This wound is real and deserves to be felt.", career: "A painful professional disappointment or betrayal. Give yourself time to process.", advice: "Feel this. Don't rush through the grief. Healing begins with honesty about the pain." }, reversed: { kw: "Recovery · Forgiveness · Releasing pain", msg: "You're beginning to heal from a deep wound. The pain is softening and forgiveness — of yourself or others — is becoming possible.", love: "Healing from heartbreak. You're not fully there yet, but the worst has passed.", career: "Recovering from a professional blow. Lessons learned are becoming strengths.", advice: "The wound is closing. Be gentle with yourself as you heal." }},
+    { rank: "Four", upright: { kw: "Rest · Recovery · Contemplation", msg: "You need rest — mental, emotional, and physical. This is not laziness; it's necessary recovery. Step back and recharge.", love: "Take a break from relationship stress. Solitude will bring clarity.", career: "Step away from work to recover. Burnout is real and rest is productive.", advice: "Rest is not retreat. It's how you gather strength for what's ahead." }, reversed: { kw: "Restlessness · Burnout · Forced activity", msg: "You're refusing to rest, or being forced back into action before you're ready.", love: "Jumping back into dating or relationship drama before you've healed.", career: "Returning to work too soon or being unable to switch off. Your mind needs quiet.", advice: "You're not ready. Give yourself more time, even if others say you should be fine by now." }},
+    { rank: "Five", upright: { kw: "Conflict · Defeat · Winning at all costs", msg: "A conflict where winning has come at a cost. Someone may have been defeated — perhaps even you. Was the victory worth it?", love: "A fight that has left both sides wounded. Even the winner is losing.", career: "Workplace conflict or competition that has turned ugly.", advice: "Is this battle worth the cost? Sometimes the wisest victory is walking away." }, reversed: { kw: "Resolution · Reconciliation · Moving past conflict", msg: "A conflict is ending. There's space for reconciliation if both sides are willing.", love: "Making peace after a fight. Humility and honesty can repair what was broken.", career: "Resolving a workplace dispute. Extend the olive branch.", advice: "The fight is over. Choose peace." }},
+    { rank: "Six", upright: { kw: "Transition · Moving on · Healing journey", msg: "You're moving toward calmer waters. A difficult period is ending and you're transitioning to something better. The journey may feel uncertain but it leads somewhere good.", love: "Leaving a painful chapter behind. The next one will be kinder.", career: "Transitioning to a better situation. Trust the process.", advice: "You're on the right boat, heading to the right shore. Be patient." }, reversed: { kw: "Stuck · Resistance · Unresolved issues", msg: "You're struggling to move on or unresolved issues are preventing forward movement.", love: "Baggage from the past keeping you stuck. Deal with it so you can move on.", career: "Unable to leave a bad situation or carrying old problems into new roles.", advice: "You can't sail forward with an anchor dragging behind you. Cut it loose." }},
+    { rank: "Seven", upright: { kw: "Deception · Strategy · Stealth", msg: "Someone may not be playing fair — or you may need to use strategic thinking rather than brute force. Be clever, but stay ethical.", love: "Dishonesty or hidden agendas in your relationship. Trust your instincts.", career: "Office politics or the need for strategic maneuvering. Be smart, not just honest.", advice: "Not every truth needs to be broadcast. Be strategic — but never betray your integrity." }, reversed: { kw: "Coming clean · Confession · Getting caught", msg: "Secrets are coming to light. It's better to come clean on your own terms than to be exposed.", love: "A lie or secret is about to surface. Get ahead of it with honesty.", career: "Deception at work is unraveling. Choose transparency.", advice: "The truth is coming out whether you like it or not. Be the one to tell it." }},
+    { rank: "Eight", upright: { kw: "Restriction · Self-imprisonment · Victim mentality", msg: "You feel trapped, but the constraints are largely self-imposed. The blindfold can be removed. The ropes are loose. Your prison has no lock.", love: "Feeling trapped in a relationship dynamic that you actually have the power to change.", career: "Feeling stuck in your career but failing to see the exit that's right in front of you.", advice: "Open your eyes. You have more freedom than you realize. The only cage is in your mind." }, reversed: { kw: "Liberation · New perspective · Self-acceptance", msg: "The blindfold is coming off. You're breaking free from self-imposed limitations and seeing new possibilities.", love: "Breaking free from a toxic pattern or limiting belief about love.", career: "Seeing your situation clearly and taking steps toward freedom.", advice: "Welcome to the other side of the cage. It was always open — you just couldn't see it." }},
+    { rank: "Nine", upright: { kw: "Anxiety · Worry · Nightmares", msg: "Anxiety and worry are overwhelming you. The fears that haunt you at 3 AM are likely far worse than reality. Your mind is creating monsters.", love: "Anxiety about your relationship is causing more harm than any actual problem.", career: "Work anxiety and catastrophic thinking. Most of what you fear will never happen.", advice: "Your mind is not your friend right now. The worries are louder than the truth. Breathe." }, reversed: { kw: "Release · Recovery · Light at the end", msg: "The anxiety is beginning to lift. You're finding ways to cope and the worst fears are proving unfounded.", love: "Relationship anxiety is easing. You're learning to trust again.", career: "Work stress is decreasing. The nightmare scenario didn't happen.", advice: "The dawn always comes. You're proof that you can survive the dark." }},
+    { rank: "Ten", upright: { kw: "Rock bottom · Endings · Surrender", msg: "This is rock bottom — the definitive end of a painful cycle. While this card is intense, it carries a paradoxical gift: when you've hit the floor, the only direction left is up.", love: "A devastating end to a relationship or pattern. This is the end — truly. And from here, rebirth.", career: "A total collapse of a situation at work. The old way is done. Start fresh.", advice: "Surrender. This cycle is complete. It's over. And that, believe it or not, is the beginning of your freedom." }, reversed: { kw: "Recovery · Survival · Worst is over", msg: "You survived the worst. The Ten of Swords reversed says: the darkest night is ending. Recovery begins now.", love: "Surviving heartbreak and beginning to heal. You're stronger than you knew.", career: "Emerging from a professional crisis. The rebuilding has begun.", advice: "You made it through. The scars will become your greatest source of wisdom." }},
+    { rank: "Page", upright: { kw: "Curiosity · New ideas · Vigilance", msg: "A sharp mind and curious nature are your assets right now. New information is arriving — stay alert.", love: "New conversations or intellectual connection sparking interest.", career: "A fresh idea or important information arriving. Pay attention.", advice: "Stay curious and observant. The insight you need is hiding in plain sight." }, reversed: { kw: "Gossip · Deception · All talk", msg: "Gossip, empty promises, or someone who talks more than they act.", love: "Watch for dishonesty or gossip affecting your relationship.", career: "Someone isn't following through on promises. Verify before you trust.", advice: "Listen to actions, not words. Talk is cheap." }},
+    { rank: "Knight", upright: { kw: "Ambition · Speed · Assertiveness", msg: "Charge forward with intellectual confidence. Your mind is sharp and your arguments are strong. Take decisive action.", love: "Direct communication — sometimes too direct. Balance honesty with tact.", career: "Moving quickly on an idea with full intellectual confidence.", advice: "Be bold in your thinking but kind in your delivery." }, reversed: { kw: "Aggression · Haste · Ruthlessness", msg: "Your sharp mind has become a weapon. Slow down before you cut someone — or yourself.", love: "Harsh words or aggressive communication damaging your relationship.", career: "Rushing decisions or being ruthless in pursuit of goals.", advice: "Sharpen your sword, but choose carefully when to draw it." }},
+    { rank: "Queen", upright: { kw: "Perception · Independence · Clear boundaries", msg: "Razor-sharp perception and strong boundaries. You see through illusions and communicate truth with precision.", love: "Setting clear boundaries in love. Your standards are high — and they should be.", career: "Analytical brilliance and clear decision-making. Trust your mind.", advice: "Your clarity is your power. Set boundaries without apology." }, reversed: { kw: "Coldness · Bitterness · Overly critical", msg: "Your sharp mind has turned bitter or cold. Criticism has replaced compassion.", love: "Being overly critical or emotionally closed off in your relationship.", career: "Cold, cutting behavior at work alienating colleagues.", advice: "Intelligence without warmth is just cruelty. Soften your edges." }},
+    { rank: "King", upright: { kw: "Authority · Intellect · Truth", msg: "Intellectual authority and clear, fair judgment. You are respected for your mind and your integrity.", love: "A partner who values honesty and intellectual connection — or it's time to embody that.", career: "Leading with intelligence, fairness, and clear communication.", advice: "Speak the truth clearly and fairly. Your words carry weight — use them wisely." }, reversed: { kw: "Tyranny · Manipulation · Abuse of power", msg: "Using intellect as a weapon or manipulating others with words. Power without ethics.", love: "Verbal manipulation or intellectual bullying in your relationship.", career: "Abuse of authority or using intelligence to control rather than lead.", advice: "A brilliant mind without a moral compass is the most dangerous thing in the world. Check yours." }}
+  ],
+  Pentacles: [
+    { rank: "Ace", upright: { kw: "New opportunity · Prosperity · Manifestation", msg: "A tangible new opportunity for prosperity is arriving — financial, career, or health-related. This seed, if nurtured, will grow into something substantial.", love: "A relationship with real long-term potential. Building something solid together.", career: "A new financial opportunity, job offer, or business idea with real substance.", advice: "This opportunity is real and grounded. Nurture it with patience and practical action." }, reversed: { kw: "Missed opportunity · Poor planning · Instability", msg: "A financial or practical opportunity may be slipping through your fingers due to poor planning or hesitation.", love: "Practical issues or financial stress undermining your relationship.", career: "A missed opportunity or shaky financial ground. Get your foundations in order.", advice: "The opportunity is there but you're not ready for it. Prepare, then seize." }},
+    { rank: "Two", upright: { kw: "Balance · Adaptability · Multitasking", msg: "You're juggling multiple priorities and doing it well. Flexibility and adaptability are your greatest skills right now.", love: "Balancing love with other life demands. You're managing, but don't forget to be present.", career: "Successfully managing multiple projects or roles. Stay flexible.", advice: "You can handle more than you think — but don't mistake juggling for thriving. Prioritize." }, reversed: { kw: "Overwhelm · Imbalance · Overcommitment", msg: "Too many balls in the air. Something is about to drop. Prioritize before you burn out.", love: "Neglecting your relationship because you're overcommitted elsewhere.", career: "Overcommitted and heading for a crash. Something has to give.", advice: "You can't do everything. Choose what matters most and let the rest go." }},
+    { rank: "Three", upright: { kw: "Teamwork · Craftsmanship · Mastery", msg: "Your skills are being recognized and your work is gaining value. Collaboration with skilled people elevates everyone.", love: "Building something lasting together — a home, a future, a shared dream.", career: "Mastery of your craft being recognized. Collaboration with talented people leads to great results.", advice: "Invest in your skills. Mastery takes time but it pays for itself many times over." }, reversed: { kw: "Mediocrity · Lack of teamwork · Shortcuts", msg: "Cutting corners or working with the wrong people is producing mediocre results.", love: "Not investing enough effort in your relationship. Quality requires work.", career: "Poor teamwork or sloppy work undermining your reputation.", advice: "There are no shortcuts to mastery. Put in the work or accept the results." }},
+    { rank: "Four", upright: { kw: "Security · Savings · Control", msg: "Financial security and stability, but perhaps held too tightly. Saving and protecting your resources is wise — but not at the expense of living.", love: "Stability in love but perhaps a fear of vulnerability. Security isn't the same as intimacy.", career: "Financial stability achieved. Protect it wisely but don't become paralyzed by fear of loss.", advice: "Save and protect what's yours — but remember that a life lived in fear of loss is already lost." }, reversed: { kw: "Greed · Hoarding · Financial insecurity", msg: "Either hoarding resources out of fear or experiencing financial instability. Your relationship with money needs examination.", love: "Financial issues or possessiveness straining your relationship.", career: "Financial insecurity or an unhealthy obsession with money and status.", advice: "Money is a tool, not a security blanket. Examine your fears around scarcity." }},
+    { rank: "Five", upright: { kw: "Hardship · Loss · Poverty", msg: "Financial or material hardship is weighing on you. This is a difficult period, but help is available if you're willing to seek it. You are not alone.", love: "Financial stress is straining your relationship. Face it together rather than hiding from it.", career: "Job loss, financial setback, or career hardship. This is temporary, not permanent.", advice: "This too shall pass. Seek help, accept support, and remember that your worth is not your wallet." }, reversed: { kw: "Recovery · Improving finances · Finding help", msg: "Financial recovery is beginning. Help is arriving and the worst of the hardship is passing.", love: "Financial stress is easing, allowing your relationship to breathe again.", career: "A new opportunity or financial recovery after a difficult period.", advice: "The tide is turning. Stay hopeful and keep moving forward." }},
+    { rank: "Six", upright: { kw: "Generosity · Sharing · Giving and receiving", msg: "A balance of giving and receiving. Generosity — yours or someone else's — creates abundance for everyone.", love: "Generous, balanced energy in your relationship. Give and receive with equal grace.", career: "Financial generosity or mentorship. Sharing knowledge creates more opportunity for all.", advice: "Generosity creates abundance. Give freely and watch how life gives back." }, reversed: { kw: "Debt · Selfishness · Strings attached", msg: "Generosity with strings attached, or an imbalance of giving and receiving. Check the true motives.", love: "A power dynamic based on money or resources. True love isn't transactional.", career: "Unfair compensation or generosity that comes with hidden expectations.", advice: "Give because it's right, not because you want something back. And accept help without shame." }},
+    { rank: "Seven", upright: { kw: "Patience · Long-term investment · Perseverance", msg: "You've planted the seeds and now must wait for the harvest. This is a time of patience and trust in the process.", love: "A relationship that's growing slowly but steadily. Trust the timeline.", career: "Long-term career investments beginning to show promise. Keep nurturing.", advice: "The harvest is coming. Your patience will be rewarded — don't dig up the seeds to check on them." }, reversed: { kw: "Impatience · Poor returns · Wasted effort", msg: "Impatience with results or realizing that your investment isn't paying off as expected.", love: "Frustration with the pace of your relationship. Are your expectations realistic?", career: "A project isn't delivering expected returns. Reassess your strategy.", advice: "Not every seed grows into a tree. It's okay to redirect your energy." }},
+    { rank: "Eight", upright: { kw: "Mastery · Dedication · Skill development", msg: "Deep focus and dedication to your craft. You are honing your skills through patient, disciplined practice. This dedication will pay off handsomely.", love: "Putting focused effort into your relationship. The work you're doing matters.", career: "A period of deep skill development and focused work. Mastery is being built.", advice: "Keep going. The daily discipline that feels invisible is building something extraordinary." }, reversed: { kw: "Perfectionism · Monotony · Lack of passion", msg: "Work has become joyless or perfectionism is paralyzing your progress.", love: "Going through the motions without passion. Reconnect with why you fell in love.", career: "Burnout or losing passion for your craft. Find the spark again.", advice: "Mastery without joy is just slavery. Reconnect with what makes this meaningful." }},
+    { rank: "Nine", upright: { kw: "Luxury · Self-sufficiency · Abundance", msg: "You've created a life of abundance and comfort through your own efforts. Enjoy the fruits of your labor. You deserve this.", love: "Independence and self-sufficiency making you an attractive, confident partner.", career: "Financial independence and professional success. You've built this yourself.", advice: "Enjoy what you've created. You worked hard for this abundance — savor it." }, reversed: { kw: "Over-dependence · Superficiality · Financial setback", msg: "Material comfort masking deeper dissatisfaction, or financial setback threatening your lifestyle.", love: "Staying in a relationship for material comfort rather than love.", career: "Living beyond your means or facing a financial reality check.", advice: "True wealth isn't just financial. Make sure your inner life is as rich as your outer one." }},
+    { rank: "Ten", upright: { kw: "Legacy · Wealth · Family prosperity", msg: "Lasting wealth, family prosperity, and a legacy that endures. This is the ultimate card of material and family success.", love: "A love that creates lasting family prosperity and generational blessings.", career: "Building a legacy. Your work will outlast you and benefit those who come after.", advice: "Think beyond yourself. What are you building that will last? Legacy is the ultimate achievement." }, reversed: { kw: "Family disputes · Financial loss · Instability", msg: "Family conflict over money or a threat to long-term financial security.", love: "Family dynamics or financial issues creating relationship stress.", career: "Financial instability or a threat to what you've built. Protect your assets.", advice: "Wealth without harmony is just expensive misery. Prioritize relationships over resources." }},
+    { rank: "Page", upright: { kw: "New financial opportunity · Study · Ambition", msg: "A new opportunity for learning, growth, or financial gain. Approach it with diligence and eagerness.", love: "A grounded, practical new connection with real potential.", career: "A new job, course, or financial opportunity. Study hard and seize it.", advice: "This opportunity rewards effort. Show up prepared and eager." }, reversed: { kw: "Lack of progress · Procrastination · Unrealistic goals", msg: "Procrastination or unrealistic expectations preventing progress.", love: "Not putting in the practical effort your relationship needs.", career: "All planning, no execution. Start doing the work.", advice: "Dreams without discipline are just fantasies. Take the first practical step today." }},
+    { rank: "Knight", upright: { kw: "Reliability · Hard work · Routine", msg: "Steady, reliable progress through hard work and routine. Not glamorous, but deeply effective.", love: "A reliable, committed partner. Stability and consistency in love.", career: "Consistent hard work paying off. Stay the course.", advice: "Slow and steady wins this race. Trust the process and keep showing up." }, reversed: { kw: "Stagnation · Laziness · Perfectionism", msg: "Stuck in a rut or paralyzed by perfectionism. Movement, even imperfect, is better than standstill.", love: "A relationship stuck in routine without growth. Shake things up.", career: "Stagnation from overthinking or laziness. Just start.", advice: "Done is better than perfect. Move." }},
+    { rank: "Queen", upright: { kw: "Abundance · Nurturing · Practical wisdom", msg: "Grounded abundance and practical wisdom. You create comfort and security for yourself and those you love.", love: "A nurturing, grounded partner who creates a beautiful, stable home.", career: "Practical business sense and the ability to create abundance. Trust your instincts.", advice: "Your practical wisdom is a rare gift. Use it to build something lasting and beautiful." }, reversed: { kw: "Financial insecurity · Self-neglect · Possessiveness", msg: "Neglecting your own needs while managing everyone else's, or financial insecurity causing anxiety.", love: "Possessiveness or financial anxiety affecting your relationship.", career: "Overworking yourself or neglecting your financial health.", advice: "Take care of yourself first. You can't manage the world if you're falling apart." }},
+    { rank: "King", upright: { kw: "Wealth · Business success · Discipline", msg: "Mastery of the material world through discipline, intelligence, and strategic thinking. You are building an empire.", love: "A provider and protector — or it's time to step into that stable, generous energy.", career: "Business success, financial mastery, and strategic leadership. You've earned this position.", advice: "Lead with generosity and wisdom. Your material success is a platform — use it to lift others." }, reversed: { kw: "Greed · Materialism · Corruption", msg: "Material obsession or corruption. Wealth without ethics or generosity becomes a prison.", love: "Valuing wealth over emotional connection in your relationship.", career: "Greed, corruption, or letting financial success erode your integrity.", advice: "What good is an empire built on a rotten foundation? Integrity first, always." }}
+  ]
+};
+
+// Build full deck
+const allCards = [];
+majorArcana.forEach(card => {
+  allCards.push({ ...card, arcana: 'major' });
+});
+Object.entries(minorCards).forEach(([suit, cards]) => {
+  cards.forEach(card => {
+    allCards.push({
+      name: `${card.rank} of ${suit}`,
+      numeral: card.rank,
+      roman: card.rank,
+      symbol: suits[suit].symbol,
+      arcana: 'minor',
+      suit: suit,
+      upright: card.upright,
+      reversed: card.reversed
+    });
+  });
+});
+
+// Create fanned deck
+const deckArea = document.getElementById('deckArea');
+const totalFanCards = 9;
+const fanSpread = 60; // degrees total spread
+
+for (let i = 0; i < totalFanCards; i++) {
+  const card = document.createElement('div');
+  card.className = 'fan-card';
+  const angle = -fanSpread/2 + (fanSpread / (totalFanCards - 1)) * i;
+  card.style.setProperty('--rot', angle + 'deg');
+  card.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+  card.style.zIndex = i;
+  card.addEventListener('click', () => drawCard(card));
+  deckArea.appendChild(card);
+}
+
+function drawCard(selectedCard) {
+  // Animate selected card
+  selectedCard.classList.add('selected');
+
+  // Dismiss other cards
+  document.querySelectorAll('.fan-card').forEach(c => {
+    if (c !== selectedCard) c.classList.add('dismissed');
+  });
+
+  // Pick random card and orientation
+  const randomIndex = Math.floor(Math.random() * allCards.length);
+  const card = allCards[randomIndex];
+  const isReversed = Math.random() < 0.35; // 35% chance reversed
+  const reading = isReversed ? card.reversed : card.upright;
+
+  setTimeout(() => {
+    // Populate result
+    document.getElementById('cardNumeral').textContent =
+      card.arcana === 'major' ? `Major Arcana · ${card.roman}` : `${card.suit} · ${card.numeral}`;
+    document.getElementById('cardSymbol').textContent = card.symbol;
+    document.getElementById('cardRoman').textContent =
+      card.arcana === 'major' ? card.roman : card.suit;
+
+    const visual = document.getElementById('cardVisual');
+    visual.className = 'card-visual' + (isReversed ? ' reversed' : '');
+
+    document.getElementById('cardName').textContent = card.name;
+
+    const orientEl = document.getElementById('cardOrientation');
+    orientEl.textContent = isReversed ? 'Reversed' : 'Upright';
+    orientEl.className = 'card-orientation ' + (isReversed ? 'reversed-tag' : 'upright');
+
+    document.getElementById('cardKeywords').textContent = reading.kw || reading.keywords;
+    document.getElementById('cardMessage').textContent = reading.msg || reading.message;
+    document.getElementById('cardLove').textContent = reading.love;
+    document.getElementById('cardCareer').textContent = reading.career;
+    document.getElementById('cardAdvice').textContent = reading.advice;
+
+    // Store for sharing
+    window._currentCard = { name: card.name, isReversed };
+
+    // Show result
+    document.getElementById('drawSection').style.display = 'none';
+    document.getElementById('resultSection').classList.add('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 700);
+}
+
+function resetDraw() {
+  document.getElementById('drawSection').style.display = 'block';
+  document.getElementById('resultSection').classList.remove('visible');
+
+  // Reset fan cards
+  document.querySelectorAll('.fan-card').forEach(c => {
+    c.classList.remove('selected', 'dismissed');
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function shareTwitter() {
+  const c = window._currentCard;
+  const text = `I drew ${c.name}${c.isReversed ? ' (Reversed)' : ''} in my daily tarot reading ✦`;
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`, '_blank');
+}
+
+function shareFacebook() {
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+</script>
+
+</body>
+</html>
