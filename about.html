@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Celestial Self</title>
+<meta name="description" content="Celestial Self is a free collection of divination tools for self-reflection. No sign-up, no data collection, no fortune-telling — just ancient frameworks in a modern interface.">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8E1NGR4VSS"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-8E1NGR4VSS');
+</script>
+<meta property="og:title" content="About — Celestial Self">
+<meta property="og:description" content="Celestial Self is a free collection of divination tools for self-reflection. No fortune-telling — just ancient frameworks in a modern interface.">
+<meta property="og:url" content="https://celestial-self.vercel.app/about.html">
+<meta property="og:site_name" content="Celestial Self">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://celestial-self.vercel.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="About — Celestial Self">
+<meta name="twitter:description" content="Free divination tools for self-reflection. No fortune-telling — just ancient frameworks in a modern interface.">
+<meta name="twitter:image" content="https://celestial-self.vercel.app/og-image.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FDFBF7; --bg-warm: #F8F4ED; --bg-card: #FFFFFF;
+    --gold: #B8943E; --gold-light: #D4B568; --gold-pale: #EDE3CC;
+    --gold-wash: rgba(184,148,62,0.06); --gold-border: rgba(184,148,62,0.18);
+    --text-dark: #2C2620; --text-body: #5A5249; --text-light: #8A8279; --text-faint: #B5AFA7;
+    --border: #E8E3DA; --border-light: #F0ECE4;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text-body); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent 5%, var(--gold-pale) 30%, var(--gold-light) 50%, var(--gold-pale) 70%, transparent 95%); z-index: 100; }
+  .container { max-width: 640px; margin: 0 auto; padding: 72px 24px 80px; }
+  .nav { text-align: center; margin-bottom: 40px; opacity: 0; animation: softIn 0.8s ease forwards; }
+  .nav a { font-size: 0.78rem; color: var(--text-faint); text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; }
+  .nav a:hover { color: var(--gold); }
+  .header { text-align: center; margin-bottom: 48px; }
+  .header-ornament { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 24px; opacity: 0; animation: softIn 1s ease forwards; }
+  .header-ornament .line { width: 48px; height: 1px; background: var(--gold-pale); }
+  .header-ornament .diamond { width: 7px; height: 7px; background: var(--gold-light); transform: rotate(45deg); }
+  .header h1 { font-family: 'Playfair Display', serif; font-weight: 400; font-size: clamp(2rem, 5vw, 2.6rem); color: var(--text-dark); line-height: 1.25; margin-bottom: 16px; opacity: 0; animation: softIn 1s ease 0.15s forwards; }
+  .header h1 em { font-style: italic; color: var(--gold); }
+  .content-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 44px 40px; margin-bottom: 24px; box-shadow: 0 2px 20px rgba(44,38,32,0.03); opacity: 0; animation: softIn 0.8s ease 0.3s forwards; }
+  .content-card h2 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 500; color: var(--text-dark); margin-bottom: 14px; }
+  .content-card p { font-weight: 300; font-size: 0.94rem; color: var(--text-body); line-height: 1.85; margin-bottom: 16px; }
+  .content-card p:last-child { margin-bottom: 0; }
+  .content-card .highlight { color: var(--gold); font-weight: 400; }
+  .values-list { list-style: none; padding: 0; margin: 12px 0 0; }
+  .values-list li { font-weight: 300; font-size: 0.94rem; color: var(--text-body); line-height: 1.85; padding: 8px 0; padding-left: 20px; position: relative; }
+  .values-list li::before { content: '✦'; position: absolute; left: 0; color: var(--gold-light); font-size: 0.7rem; top: 12px; }
+  .footer { text-align: center; margin-top: 52px; padding-top: 28px; border-top: 1px solid var(--border-light); }
+  .footer p { font-size: 0.78rem; color: var(--text-faint); line-height: 1.7; font-weight: 300; }
+  .footer-links { margin-top: 12px; }
+  .footer-links a { font-size: 0.75rem; color: var(--text-faint); text-decoration: none; letter-spacing: 0.06em; transition: color 0.3s; margin: 0 10px; }
+  .footer-links a:hover { color: var(--gold); }
+  @keyframes softIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 520px) { .container { padding: 56px 16px 60px; } .content-card { padding: 32px 24px; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <nav class="nav"><a href="index.html">← Back to All Tools</a></nav>
+
+  <header class="header">
+    <div class="header-ornament">
+      <span class="line"></span>
+      <span class="diamond"></span>
+      <span class="line"></span>
+    </div>
+    <h1>About <em>Celestial Self</em></h1>
+  </header>
+
+  <div class="content-card">
+    <h2>What This Is</h2>
+    <p>Celestial Self is a free collection of divination tools — numerology, tarot, and astrology — built for one purpose: <span class="highlight">self-reflection</span>.</p>
+    <p>We don't claim to predict your future. We don't pretend the stars are making your decisions. What we do believe is that ancient frameworks, when presented honestly and beautifully, can serve as surprisingly useful mirrors. Sometimes the most valuable thing isn't an answer — it's a better question about yourself.</p>
+  </div>
+
+  <div class="content-card">
+    <h2>What This Isn't</h2>
+    <p>This is not a psychic service. There is no "premium reading" behind a paywall. No one here is channeling spirits or guaranteeing outcomes. The tools on this site use well-documented systems — numerology calculations, traditional tarot interpretations, and standard astrological frameworks — presented in a way that's accessible, thoughtful, and free.</p>
+    <p>Our tagline says it all: <span class="highlight">None of this is real. All of it is useful.</span></p>
+  </div>
+
+  <div class="content-card">
+    <h2>Our Values</h2>
+    <ul class="values-list">
+      <li><strong>Honesty over mystique.</strong> We'd rather be upfront about what divination can and can't do than pretend we have powers we don't.</li>
+      <li><strong>Beauty matters.</strong> If you're going to spend time reflecting on yourself, the space you do it in should feel good.</li>
+      <li><strong>Free means free.</strong> No sign-up, no email capture, no hidden upsells. The tools work without giving us anything.</li>
+      <li><strong>Privacy is non-negotiable.</strong> We use Google Analytics to understand traffic patterns. We don't collect, store, or sell any personal data you enter into our tools. Your birth date stays in your browser.</li>
+    </ul>
+  </div>
+
+  <div class="content-card">
+    <h2>Who Made This</h2>
+    <p>Celestial Self was created by a small independent team interested in the intersection of ancient wisdom and modern design. We believe that self-knowledge is the most underrated skill in the world — and that sometimes, a number, a card, or a constellation can start a conversation with yourself that you didn't know you needed.</p>
+    <p>Questions, feedback, or ideas? We'd love to hear from you at our <a href="contact.html" style="color:var(--gold);text-decoration:none;border-bottom:1px solid var(--gold-pale)">contact page</a>.</p>
+  </div>
+
+  <footer class="footer">
+    <p>None of this is real. All of it is useful.</p>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </footer>
+</div>
+</body>
+</html>
