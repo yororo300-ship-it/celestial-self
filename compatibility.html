@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Celestial Self — Zodiac Compatibility</title>
+<meta name="description" content="All 144 zodiac pairings. Discover the cosmic connection between you and someone special through the stars.">
+<link rel="canonical" href="https://celestial-self.vercel.app/compatibility.html">
+
+<!-- GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8E1NGR4VSS"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-8E1NGR4VSS');
+</script>
+
+<!-- AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3778226195749260" crossorigin="anonymous"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#09090F;--bg2:#0F0F18;--bg3:#161622;--bg4:#1E1E2E;
+  --gold:#C9A84C;--gold-light:#E0C872;--gold-dim:#8A7333;
+  --text:#E8E6E1;--text-dim:#9994A8;--text-faint:#5C5770;
+  --accent-red:#C75050;--accent-blue:#5070C7;--accent-green:#50A870;
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'Jost','Helvetica Neue',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-weight:300;line-height:1.7;min-height:100vh;overflow-x:hidden}
+
+body::before{content:'';position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(1px 1px at 10% 20%,rgba(255,255,255,.4),transparent),
+    radial-gradient(1px 1px at 30% 70%,rgba(255,255,255,.3),transparent),
+    radial-gradient(1.5px 1.5px at 50% 10%,rgba(201,168,76,.4),transparent),
+    radial-gradient(1px 1px at 70% 40%,rgba(255,255,255,.35),transparent),
+    radial-gradient(1px 1px at 90% 80%,rgba(255,255,255,.3),transparent),
+    radial-gradient(1.2px 1.2px at 15% 90%,rgba(201,168,76,.3),transparent),
+    radial-gradient(1px 1px at 85% 15%,rgba(255,255,255,.25),transparent),
+    radial-gradient(1px 1px at 45% 55%,rgba(255,255,255,.3),transparent),
+    radial-gradient(1.5px 1.5px at 60% 85%,rgba(201,168,76,.35),transparent),
+    radial-gradient(1px 1px at 25% 45%,rgba(255,255,255,.2),transparent);
+  pointer-events:none}
+
+body::after{content:'';position:fixed;inset:0;z-index:0;opacity:.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events:none}
+
+.container{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:2rem 1.5rem}
+
+header{text-align:center;padding:3rem 0 2rem}
+.site-tag{font-family:var(--font-body);font-weight:500;font-size:.75rem;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;display:block}
+h1{font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,5vw,3.2rem);color:var(--text);line-height:1.15;margin-bottom:.5rem}
+h1 em{font-style:italic;color:var(--gold)}
+.subtitle{font-size:1rem;color:var(--text-dim);max-width:480px;margin:0 auto;font-weight:300}
+
+.divider{display:flex;align-items:center;gap:1rem;margin:2.5rem auto;max-width:300px}
+.divider span{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent)}
+.divider svg{color:var(--gold);flex-shrink:0}
+
+.selection-area{display:grid;grid-template-columns:1fr auto 1fr;gap:1.5rem;align-items:start;margin:2rem 0}
+@media(max-width:640px){.selection-area{grid-template-columns:1fr;gap:2rem}}
+
+.person-col{text-align:center}
+.person-label{font-family:var(--font-display);font-size:1.1rem;color:var(--gold-light);margin-bottom:1.2rem;font-weight:600}
+
+.zodiac-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem}
+@media(max-width:640px){.zodiac-grid{grid-template-columns:repeat(6,1fr);gap:.4rem}}
+
+.zodiac-btn{
+  aspect-ratio:1;border:1px solid var(--bg4);border-radius:12px;background:var(--bg2);
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:.2rem;transition:all .3s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden}
+.zodiac-btn::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,var(--gold) 0%,transparent 70%);opacity:0;transition:opacity .3s}
+.zodiac-btn:hover{border-color:var(--gold-dim);transform:translateY(-2px)}
+.zodiac-btn:hover::before{opacity:.06}
+.zodiac-btn .symbol{font-size:1.4rem;line-height:1;transition:transform .3s}
+.zodiac-btn .name{font-size:.55rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);transition:color .3s}
+.zodiac-btn:hover .symbol{transform:scale(1.15)}
+.zodiac-btn.selected{border-color:var(--gold);background:linear-gradient(145deg,var(--bg3),var(--bg2));box-shadow:0 0 20px rgba(201,168,76,.15),inset 0 0 15px rgba(201,168,76,.05)}
+.zodiac-btn.selected .name{color:var(--gold-light)}
+.zodiac-btn.selected .symbol{transform:scale(1.2)}
+
+.connector{display:flex;align-items:center;justify-content:center;align-self:center;color:var(--gold-dim);font-size:1.6rem;font-family:var(--font-display)}
+@media(max-width:640px){.connector{margin:-.5rem 0}}
+
+.cta-wrap{text-align:center;margin:2.5rem 0}
+.cta-btn{
+  font-family:var(--font-body);font-weight:500;font-size:1rem;letter-spacing:.1em;
+  padding:.9rem 3rem;border:1px solid var(--gold);border-radius:50px;
+  background:transparent;color:var(--gold);cursor:pointer;position:relative;overflow:hidden;
+  transition:all .4s cubic-bezier(.22,1,.36,1)}
+.cta-btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.22,1,.36,1)}
+.cta-btn:hover{color:var(--bg);border-color:var(--gold)}
+.cta-btn:hover::before{transform:scaleX(1)}
+.cta-btn span{position:relative;z-index:1}
+.cta-btn:disabled{opacity:.35;cursor:not-allowed}
+.cta-btn:disabled:hover::before{transform:scaleX(0)}
+.cta-btn:disabled:hover{color:var(--gold)}
+
+.result-area{display:none;animation:fadeUp .8s cubic-bezier(.22,1,.36,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+.result-header{text-align:center;margin-bottom:2rem}
+.result-pair{font-family:var(--font-display);font-size:1.8rem;color:var(--text);margin-bottom:.5rem}
+.result-pair .sym{color:var(--gold);font-size:2rem}
+
+.score-ring{width:160px;height:160px;margin:1.5rem auto;position:relative}
+.score-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.score-ring .track{fill:none;stroke:var(--bg4);stroke-width:6}
+.score-ring .fill{fill:none;stroke:var(--gold);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1.5s cubic-bezier(.22,1,.36,1)}
+.score-number{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-number .val{font-family:var(--font-display);font-size:2.8rem;font-weight:700;color:var(--gold-light);line-height:1}
+.score-number .lbl{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);margin-top:.25rem}
+
+.result-keyword{text-align:center;font-family:var(--font-display);font-style:italic;font-size:1.15rem;color:var(--gold);margin:1rem 0 2rem}
+
+.cat-grid{display:grid;gap:1rem;margin:1.5rem 0 2rem}
+.cat-item{display:grid;grid-template-columns:120px 1fr 40px;align-items:center;gap:1rem}
+@media(max-width:480px){.cat-item{grid-template-columns:90px 1fr 32px}}
+.cat-label{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);text-align:right}
+.cat-bar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.cat-bar-fill{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(.22,1,.36,1)}
+.cat-val{font-family:var(--font-display);font-size:.9rem;color:var(--text)}
+
+.result-desc{background:var(--bg2);border:1px solid rgba(201,168,76,.1);border-radius:16px;padding:2rem;margin:1.5rem 0}
+.result-desc h3{font-family:var(--font-display);font-size:1.1rem;color:var(--gold-light);margin-bottom:.8rem;font-weight:600}
+.result-desc p{font-size:.95rem;color:var(--text-dim);line-height:1.8}
+
+.advice-box{background:linear-gradient(135deg,rgba(201,168,76,.06),rgba(201,168,76,.02));border:1px solid rgba(201,168,76,.15);border-radius:16px;padding:2rem;margin:1.5rem 0;text-align:center}
+.advice-box h3{font-family:var(--font-display);color:var(--gold);margin-bottom:.6rem}
+.advice-box p{font-size:.92rem;color:var(--text-dim)}
+
+.reset-btn{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--font-body);font-size:.85rem;color:var(--text-faint);background:none;border:1px solid var(--bg4);padding:.6rem 1.5rem;border-radius:50px;cursor:pointer;transition:all .3s;margin-top:1rem}
+.reset-btn:hover{border-color:var(--text-dim);color:var(--text-dim)}
+
+.ad-slot{margin:2rem auto;text-align:center;min-height:100px;background:var(--bg2);border:1px dashed var(--bg4);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--text-faint);font-size:.75rem}
+
+footer{text-align:center;padding:3rem 0 2rem;border-top:1px solid var(--bg3);margin-top:3rem}
+footer p{font-size:.78rem;color:var(--text-faint)}
+footer a{color:var(--gold-dim);text-decoration:none}
+footer a:hover{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <span class="site-tag">Celestial Self</span>
+    <h1>Zodiac <em>Compatibility</em></h1>
+    <p class="subtitle">Explore all 144 star pairings and uncover the cosmic thread between two souls</p>
+  </header>
+
+  <div class="divider">
+    <span></span>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.09 6.26L20.18 9l-5.09 3.74L16.18 19 12 15.27 7.82 19l1.09-6.26L3.82 9l6.09-.74z"/></svg>
+    <span></span>
+  </div>
+
+  <div class="selection-area" id="selectionArea">
+    <div class="person-col">
+      <div class="person-label">Person A</div>
+      <div class="zodiac-grid" id="gridA"></div>
+    </div>
+    <div class="connector">&times;</div>
+    <div class="person-col">
+      <div class="person-label">Person B</div>
+      <div class="zodiac-grid" id="gridB"></div>
+    </div>
+  </div>
+
+  <div class="cta-wrap">
+    <button class="cta-btn" id="ctaBtn" disabled onclick="showResult()"><span>Read the Stars</span></button>
+  </div>
+
+  <div class="ad-slot">
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3778226195749260" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  </div>
+
+  <div class="result-area" id="resultArea">
+    <div class="result-header">
+      <div class="result-pair"><span class="sym" id="rSymA"></span> <span id="rNameA"></span> &times; <span id="rNameB"></span> <span class="sym" id="rSymB"></span></div>
+    </div>
+
+    <div class="score-ring">
+      <svg viewBox="0 0 120 120">
+        <circle class="track" cx="60" cy="60" r="52"/>
+        <circle class="fill" id="scoreArc" cx="60" cy="60" r="52"/>
+      </svg>
+      <div class="score-number">
+        <span class="val" id="scoreVal">0</span>
+        <span class="lbl">compatibility</span>
+      </div>
+    </div>
+
+    <div class="result-keyword" id="resultKeyword"></div>
+
+    <div class="cat-grid" id="catGrid"></div>
+
+    <div class="result-desc" id="descOverview">
+      <h3>Your Connection</h3>
+      <p id="descOverviewText"></p>
+    </div>
+    <div class="result-desc" id="descStrength">
+      <h3>Strengths</h3>
+      <p id="descStrengthText"></p>
+    </div>
+    <div class="result-desc" id="descChallenge">
+      <h3>Challenges</h3>
+      <p id="descChallengeText"></p>
+    </div>
+    <div class="advice-box">
+      <h3>Advice from the Stars</h3>
+      <p id="adviceText"></p>
+    </div>
+
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3778226195749260" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    </div>
+
+    <div style="text-align:center">
+      <button class="reset-btn" onclick="resetAll()">&#10022; Try Another Pairing</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 <a href="https://celestial-self.vercel.app">Celestial Self</a> &mdash; The stars tell your story</p>
+  </footer>
+</div>
+
+<script>
+const SIGNS=[
+  {id:'aries',sym:'♈',name:'Aries',element:'fire',mode:'cardinal'},
+  {id:'taurus',sym:'♉',name:'Taurus',element:'earth',mode:'fixed'},
+  {id:'gemini',sym:'♊',name:'Gemini',element:'air',mode:'mutable'},
+  {id:'cancer',sym:'♋',name:'Cancer',element:'water',mode:'cardinal'},
+  {id:'leo',sym:'♌',name:'Leo',element:'fire',mode:'fixed'},
+  {id:'virgo',sym:'♍',name:'Virgo',element:'earth',mode:'mutable'},
+  {id:'libra',sym:'♎',name:'Libra',element:'air',mode:'cardinal'},
+  {id:'scorpio',sym:'♏',name:'Scorpio',element:'water',mode:'fixed'},
+  {id:'sagittarius',sym:'♐',name:'Sagittarius',element:'fire',mode:'mutable'},
+  {id:'capricorn',sym:'♑',name:'Capricorn',element:'earth',mode:'cardinal'},
+  {id:'aquarius',sym:'♒',name:'Aquarius',element:'air',mode:'fixed'},
+  {id:'pisces',sym:'♓',name:'Pisces',element:'water',mode:'mutable'}
+];
+
+function elemCompat(e1,e2){
+  if(e1===e2) return 90;
+  const good={fire:'air',air:'fire',earth:'water',water:'earth'};
+  if(good[e1]===e2) return 80;
+  const neutral=[['fire','earth'],['air','water']];
+  for(const p of neutral) if((p[0]===e1&&p[1]===e2)||(p[0]===e2&&p[1]===e1)) return 50;
+  return 60;
+}
+
+function modeCompat(m1,m2){
+  if(m1===m2) return 65;
+  const pairs={cardinal:'mutable',mutable:'fixed',fixed:'cardinal'};
+  if(pairs[m1]===m2||pairs[m2]===m1) return 75;
+  return 70;
+}
+
+function aspect(i,j){
+  const d=Math.abs(i-j);
+  return Math.min(d,12-d);
+}
+
+function aspectScore(a){
+  return{0:75,1:55,2:85,3:60,4:90,5:45,6:70}[a]||60;
+}
+
+function genCats(i,j){
+  const s1=SIGNS[i],s2=SIGNS[j];
+  const base=elemCompat(s1.element,s2.element);
+  const mode=modeCompat(s1.mode,s2.mode);
+  const asp=aspectScore(aspect(i,j));
+  const seed=(i*13+j*7+3)%17;
+  const love=Math.round(Math.min(98,Math.max(30,(base*0.4+asp*0.45+mode*0.15)+(seed%7-3))));
+  const comm=Math.round(Math.min(98,Math.max(30,(base*0.3+asp*0.3+mode*0.4)+((seed*3)%9-4))));
+  const vals=Math.round(Math.min(98,Math.max(30,(base*0.45+asp*0.35+mode*0.2)+((seed*5)%8-3))));
+  const trust=Math.round(Math.min(98,Math.max(30,(base*0.35+asp*0.4+mode*0.25)+((seed*2)%7-3))));
+  return[love,comm,vals,trust];
+}
+
+function genOverall(cats){return Math.round(cats.reduce((a,b)=>a+b,0)/cats.length)}
+
+function getKeyword(e1,e2,asp){
+  return{0:'Mirror Souls',1:'Whispering Neighbors',2:'Harmonious Flow',3:'The Crucible of Growth',4:'Destined Trine',5:'The Unseen Bridge',6:'Magnetic Opposites'}[asp]||'Written in the Stars';
+}
+
+function getOverview(i,j){
+  const s1=SIGNS[i],s2=SIGNS[j],a=aspect(i,j);
+  return{
+    0:`Two ${s1.name} souls together — you understand each other on a profound level, yet being so alike can amplify both your best qualities and your blind spots. This mirror-like bond reflects back everything you are, inviting deep self-awareness.`,
+    1:`${s1.name} and ${s2.name} sit side by side in the zodiac, creating a relationship colored by subtle differences and unexpected freshness. Your neighboring energies share an underlying rhythm, yet each of you brings a distinct texture the other lacks.`,
+    2:`${s1.name} and ${s2.name} form a sextile — a 60° angle of natural support. Sharing the same polarity, you communicate with ease and instinctively encourage each other's growth. Conversation flows freely and collaboration feels effortless.`,
+    3:`${s1.name} and ${s2.name} form a square — a 90° angle of creative tension. This aspect brings friction, but it's the kind of friction that sharpens both of you. You challenge each other to grow beyond comfort zones and become stronger together.`,
+    4:`${s1.name} and ${s2.name} form a trine — a 120° angle of effortless harmony. Sharing the same element, you have an intuitive understanding that often needs no words. There's a deep, unspoken comfort in simply being together.`,
+    5:`${s1.name} and ${s2.name} form a quincunx — a 150° angle with no obvious common ground. Yet this very disconnect is what makes the pairing so illuminating. You each shine a light into the other's blind spots, offering perspectives neither would find alone.`,
+    6:`${s1.name} and ${s2.name} sit in opposition — 180° apart on the zodiac wheel. Like two poles of a magnet, you're drawn to each other precisely because you embody what the other lacks. Together you can form a complete circle, balancing and completing one another.`
+  }[a]||'A unique cosmic connection that defies easy categorization — lean into curiosity and let the relationship reveal itself over time.';
+}
+
+function getStrength(i,j){
+  const elemPair=[SIGNS[i].element,SIGNS[j].element].sort().join('-');
+  return{
+    'fire-fire':'You fuel each other\'s passion like kindling on a bonfire. Together, your decisiveness and drive create a sense that anything is possible. Adventure and bold action define this pairing.',
+    'air-fire':'Intellectual spark meets passionate energy in perfect tandem. Like wind feeding a flame, ideas quickly become action — you inspire each other to dream bigger and move faster.',
+    'earth-earth':'Stability and reliability are your superpowers. You build toward long-term goals with quiet determination, and each of you finds deep comfort in the other\'s steadfast nature.',
+    'earth-water':'A profound emotional connection meets practical support. Like rain nourishing the soil, sensitivity and groundedness merge beautifully — you create a safe space that also gets things done.',
+    'air-air':'Your intellectual chemistry is extraordinary. Conversations never run dry, social energy is abundant, and together you explore new ideas and worlds with tireless curiosity.',
+    'water-water':'An ocean-deep emotional resonance flows between you. Intuition replaces words, and you sense each other\'s moods and needs with an almost telepathic sensitivity.',
+    'air-earth':'You balance vision with execution. One dreams it up, the other builds it — together you turn abstract ideas into tangible reality, adapting plans with both flexibility and discipline.',
+    'air-water':'Feeling and thought interweave in a unique dance. Intuition and logic become complementary lenses, giving you two paths to every solution and a rich inner world to share.',
+    'earth-fire':'Passion meets steadiness in a grounding embrace. Fire warms the earth while earth gives fire a hearth — you provide each other exactly what\'s needed to thrive.',
+    'fire-water':'Passion and sensitivity collide, creating transformative steam. It looks unlikely on paper, but this pairing generates a rare alchemical energy that can change both of you at the deepest level.'
+  }[elemPair]||'A unique blend of energies that creates something neither of you could achieve alone.';
+}
+
+function getChallenge(i,j){
+  const a=aspect(i,j);
+  return{
+    0:'When two of the same sign come together, similarities can amplify weaknesses as easily as strengths. Consciously carving out individual space and seeking outside perspectives will keep the relationship fresh.',
+    1:'Subtle value misalignments can accumulate quietly over time. The key is addressing small frictions early through open dialogue, before they deepen into resentment.',
+    2:'The ease of this connection can lead to complacency. Without intentional growth and new challenges, the relationship risks settling into a comfortable plateau. Keep pushing each other forward.',
+    3:'Clashes are part of the deal with a square aspect — but every collision is also a chance to refine yourselves. The secret is respecting your differences instead of trying to change each other.',
+    4:'Because everything feels so natural, you may lack the push to grow. Comfort can become a trap. Seek shared adventures outside your routine to keep the spark of evolution alive.',
+    5:'Your fundamental approaches to life differ in ways that can feel baffling. Understanding takes patience, but the reward is enormous — your differences become your greatest teachers.',
+    6:'Opposite natures are magnetic but can also spark daily friction. Embracing your differences as complementary forces, rather than flaws to fix, is the path to lasting harmony.'
+  }[a]||'Every pairing has its growing edges — stay curious and communicative.';
+}
+
+function getAdvice(i,j){
+  const a=aspect(i,j);
+  return[
+    'Honor each other\'s pace and protect your alone time. A little breathing room isn\'t distance — it\'s the space where longing and appreciation grow.',
+    'Don\'t be afraid to speak your truth plainly. Let go of the expectation that your partner should just know. Honest, direct words deepen intimacy far more than silence.',
+    'Find a shared project or passion to pour yourselves into. Building something together — however small — weaves your stories into one and makes the bond irreplaceable.',
+    'Stay curious about each other\'s differences. Even when you can\'t fully understand, the act of trying is itself a powerful expression of love.',
+    'Express gratitude out loud, especially for the things you take for granted. What feels ordinary today may be the very thing you treasure most.',
+    'Welcome change instead of fearing it. A relationship is a living thing — it grows and reshapes itself. The two of you tomorrow don\'t have to look like the two of you today.',
+    'Champion each other\'s dreams without reservation. Your partner\'s light doesn\'t dim yours — it makes the whole sky brighter.'
+  ][a%7];
+}
+
+let selA=null,selB=null;
+
+function buildGrid(containerId,person){
+  const grid=document.getElementById(containerId);
+  SIGNS.forEach((s,idx)=>{
+    const btn=document.createElement('button');
+    btn.className='zodiac-btn';
+    btn.innerHTML=`<span class="symbol">${s.sym}</span><span class="name">${s.name}</span>`;
+    btn.setAttribute('aria-label',s.name);
+    btn.onclick=()=>selectSign(person,idx,btn,containerId);
+    grid.appendChild(btn);
+  });
+}
+
+function selectSign(person,idx,btn,containerId){
+  document.querySelectorAll(`#${containerId} .zodiac-btn`).forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  if(person==='A') selA=idx; else selB=idx;
+  document.getElementById('ctaBtn').disabled=!(selA!==null&&selB!==null);
+}
+
+function showResult(){
+  if(selA===null||selB===null) return;
+  if(typeof gtag==='function'){
+    gtag('event','compatibility_check',{sign_a:SIGNS[selA].name,sign_b:SIGNS[selB].name});
+  }
+
+  const cats=genCats(selA,selB);
+  const overall=genOverall(cats);
+  const asp=aspect(selA,selB);
+
+  document.getElementById('rSymA').textContent=SIGNS[selA].sym;
+  document.getElementById('rNameA').textContent=SIGNS[selA].name;
+  document.getElementById('rSymB').textContent=SIGNS[selB].sym;
+  document.getElementById('rNameB').textContent=SIGNS[selB].name;
+
+  const circ=2*Math.PI*52;
+  const arc=document.getElementById('scoreArc');
+  arc.style.strokeDasharray=circ;
+  arc.style.strokeDashoffset=circ;
+  setTimeout(()=>{arc.style.strokeDashoffset=circ-(circ*overall/100)},100);
+
+  const scoreEl=document.getElementById('scoreVal');
+  let current=0;
+  const step=Math.ceil(overall/40);
+  const timer=setInterval(()=>{
+    current=Math.min(current+step,overall);
+    scoreEl.textContent=current+'%';
+    if(current>=overall) clearInterval(timer);
+  },30);
+
+  document.getElementById('resultKeyword').textContent='✦ '+getKeyword(SIGNS[selA].element,SIGNS[selB].element,asp)+' ✦';
+
+  const catNames=['Romance','Communication','Values','Trust'];
+  const catColors=['#C75050','#5070C7','#50A870','#C9A84C'];
+  const catGrid=document.getElementById('catGrid');
+  catGrid.innerHTML='';
+  cats.forEach((v,idx)=>{
+    const item=document.createElement('div');
+    item.className='cat-item';
+    item.innerHTML=`<span class="cat-label">${catNames[idx]}</span><div class="cat-bar"><div class="cat-bar-fill" style="width:0%;background:${catColors[idx]}"></div></div><span class="cat-val">${v}%</span>`;
+    catGrid.appendChild(item);
+    setTimeout(()=>{item.querySelector('.cat-bar-fill').style.width=v+'%'},200+idx*150);
+  });
+
+  document.getElementById('descOverviewText').textContent=getOverview(selA,selB);
+  document.getElementById('descStrengthText').textContent=getStrength(selA,selB);
+  document.getElementById('descChallengeText').textContent=getChallenge(selA,selB);
+  document.getElementById('adviceText').textContent=getAdvice(selA,selB);
+
+  const resultArea=document.getElementById('resultArea');
+  resultArea.style.display='block';
+  resultArea.scrollIntoView({behavior:'smooth',block:'start'});
+
+  try{(adsbygoogle=window.adsbygoogle||[]).push({})}catch(e){}
+}
+
+function resetAll(){
+  selA=null;selB=null;
+  document.querySelectorAll('.zodiac-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('ctaBtn').disabled=true;
+  document.getElementById('resultArea').style.display='none';
+  document.getElementById('selectionArea').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+buildGrid('gridA','A');
+buildGrid('gridB','B');
+</script>
+
+</body>
+</html>
