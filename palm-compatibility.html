@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Palm Compatibility — Celestial Self</title>
+<meta name="description" content="Upload two palm photos and discover what the lines reveal about your connection. AI-powered palm compatibility reading.">
+<link rel="canonical" href="https://celestial-self.vercel.app/palm-compatibility.html">
+
+<!-- GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8E1NGR4VSS"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-8E1NGR4VSS');
+</script>
+
+<!-- AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3778226195749260" crossorigin="anonymous"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#09090F;--bg2:#0F0F18;--bg3:#161622;--bg4:#1E1E2E;
+  --gold:#C9A84C;--gold-light:#E0C872;--gold-dim:#8A7333;
+  --text:#E8E6E1;--text-dim:#9994A8;--text-faint:#5C5770;
+  --accent-green:#50A870;--accent-red:#C75050;--accent-rose:#C7508A;
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'Jost','Helvetica Neue',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-weight:300;line-height:1.7;min-height:100vh;overflow-x:hidden}
+
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(1px 1px at 10% 20%,rgba(255,255,255,.35),transparent),
+    radial-gradient(1.5px 1.5px at 50% 10%,rgba(201,168,76,.35),transparent),
+    radial-gradient(1px 1px at 70% 40%,rgba(255,255,255,.3),transparent),
+    radial-gradient(1px 1px at 90% 80%,rgba(255,255,255,.25),transparent),
+    radial-gradient(1.2px 1.2px at 15% 90%,rgba(201,168,76,.25),transparent),
+    radial-gradient(1px 1px at 45% 55%,rgba(255,255,255,.2),transparent)}
+
+.container{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:2rem 1.5rem}
+
+.back-link{display:inline-block;font-size:.85rem;color:var(--text-faint);text-decoration:none;margin-bottom:2rem;transition:color .3s}
+.back-link:hover{color:var(--gold)}
+
+h1{font-family:var(--font-display);font-weight:700;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text);line-height:1.15;margin-bottom:.5rem;text-align:center}
+h1 em{font-style:italic;color:var(--gold)}
+.subtitle{text-align:center;font-size:1rem;color:var(--text-dim);max-width:500px;margin:0 auto 2rem;font-weight:300}
+
+/* Two-column upload */
+.upload-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:start;margin:1.5rem 0}
+@media(max-width:580px){.upload-grid{grid-template-columns:1fr;gap:1.5rem}}
+
+.person-col{text-align:center}
+.person-label{font-family:var(--font-display);font-size:1rem;color:var(--gold-light);margin-bottom:.8rem;font-weight:600}
+
+.upload-zone{border:2px dashed var(--bg4);border-radius:16px;padding:2rem 1rem;text-align:center;cursor:pointer;transition:all .3s;background:var(--bg2);min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.upload-zone:hover{border-color:var(--gold-dim);background:rgba(201,168,76,.03)}
+.upload-zone.has-image{border-style:solid;border-color:var(--gold-dim)}
+.upload-zone .icon{font-size:2.2rem;margin-bottom:.5rem}
+.upload-zone .label{font-size:.85rem;color:var(--text-dim)}
+.upload-zone .hint{font-size:.72rem;color:var(--text-faint);margin-top:.3rem}
+.upload-zone input{display:none}
+
+.preview-img{width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-top:.75rem;display:none}
+.preview-img.visible{display:block}
+
+.change-btn{font-family:var(--font-body);font-size:.75rem;padding:.35rem .9rem;border:1px solid var(--bg4);border-radius:50px;background:transparent;color:var(--text-faint);cursor:pointer;margin-top:.5rem;transition:all .3s;display:none}
+.change-btn.visible{display:inline-block}
+.change-btn:hover{border-color:var(--gold-dim);color:var(--gold)}
+
+.connector{display:flex;align-items:center;justify-content:center;align-self:center;color:var(--gold-dim);font-size:1.8rem;font-family:var(--font-display)}
+@media(max-width:580px){.connector{margin:-.5rem 0}}
+
+.tips{background:var(--bg2);border-radius:12px;padding:1rem 1.25rem;margin:1.5rem 0;font-size:.82rem;color:var(--text-dim)}
+.tips strong{color:var(--text);font-weight:500;display:block;margin-bottom:.3rem}
+
+/* CTA */
+.cta-btn{display:block;width:100%;font-family:var(--font-body);font-weight:500;font-size:1.05rem;letter-spacing:.08em;
+  padding:1rem;border:1px solid var(--gold);border-radius:50px;background:transparent;color:var(--gold);
+  cursor:pointer;position:relative;overflow:hidden;transition:all .4s cubic-bezier(.22,1,.36,1);margin:1.5rem 0}
+.cta-btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.22,1,.36,1)}
+.cta-btn:hover{color:var(--bg);border-color:var(--gold)}
+.cta-btn:hover::before{transform:scaleX(1)}
+.cta-btn span{position:relative;z-index:1}
+.cta-btn:disabled{opacity:.35;cursor:not-allowed}
+.cta-btn:disabled:hover::before{transform:scaleX(0)}
+.cta-btn:disabled:hover{color:var(--gold)}
+
+/* Loading */
+.loading{display:none;text-align:center;padding:2.5rem 0}
+.loading.visible{display:block}
+.spinner{width:44px;height:44px;border:3px solid var(--bg4);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{font-size:.9rem;color:var(--text-dim)}
+
+/* Results */
+.free-result,.paywall,.premium-result{display:none;animation:fadeUp .6s ease-out}
+.free-result.visible,.paywall.visible,.premium-result.visible{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.result-badge{display:inline-block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;padding:.3rem .8rem;border-radius:50px;margin-bottom:1rem}
+.badge-free{background:rgba(80,168,112,.12);color:var(--accent-green);border:1px solid rgba(80,168,112,.25)}
+.badge-premium{background:rgba(201,168,76,.12);color:var(--gold);border:1px solid rgba(201,168,76,.25)}
+
+.result-card{background:var(--bg2);border:1px solid rgba(201,168,76,.1);border-radius:16px;padding:1.75rem;margin:1rem 0}
+.result-card h3{font-family:var(--font-display);font-size:1.1rem;color:var(--gold-light);margin-bottom:.6rem;font-weight:600}
+.result-card p{font-size:.95rem;color:var(--text-dim);line-height:1.8}
+
+/* Paywall */
+.paywall-box{background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02));border:1px solid rgba(201,168,76,.2);border-radius:20px;padding:2rem;margin:1.5rem 0;text-align:center}
+.paywall-box h2{font-family:var(--font-display);font-size:1.35rem;color:var(--text);margin-bottom:.5rem}
+.paywall-box h2 em{color:var(--gold)}
+.paywall-box .desc{font-size:.9rem;color:var(--text-dim);margin-bottom:1.5rem}
+
+.pricing-options{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+@media(max-width:480px){.pricing-options{grid-template-columns:1fr}}
+
+.price-card{background:var(--bg3);border:1px solid var(--bg4);border-radius:14px;padding:1.25rem;cursor:pointer;transition:all .3s;position:relative}
+.price-card:hover{border-color:var(--gold-dim);transform:translateY(-2px)}
+.price-card.popular{border-color:var(--gold-dim)}
+.price-card.popular::after{content:'best value';position:absolute;top:-.6rem;right:1rem;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;background:var(--gold);color:var(--bg);padding:.15rem .6rem;border-radius:50px}
+.price-card.selected{border-color:var(--gold);box-shadow:0 0 20px rgba(201,168,76,.15)}
+.price-name{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:.3rem}
+.price-amount{font-family:var(--font-display);font-size:1.6rem;color:var(--text);font-weight:700}
+.price-amount small{font-size:.75rem;font-weight:300;color:var(--text-dim)}
+.price-detail{font-size:.78rem;color:var(--text-faint);margin-top:.3rem}
+
+.pay-btn{display:block;width:100%;font-family:var(--font-body);font-weight:500;font-size:1rem;letter-spacing:.08em;
+  padding:1rem;border:none;border-radius:50px;background:var(--gold);color:var(--bg);cursor:pointer;transition:all .3s}
+.pay-btn:hover{background:var(--gold-light);transform:translateY(-1px)}
+.pay-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+.paywall-features{text-align:left;margin:1.5rem 0;padding:0}
+.paywall-features li{list-style:none;font-size:.88rem;color:var(--text-dim);padding:.35rem 0 .35rem 1.5rem;position:relative}
+.paywall-features li::before{content:'✦';position:absolute;left:0;color:var(--gold)}
+
+.secure-note{font-size:.75rem;color:var(--text-faint);margin-top:.75rem}
+
+/* Premium */
+.premium-content{background:var(--bg2);border:1px solid rgba(201,168,76,.15);border-radius:16px;padding:2rem;margin:1rem 0}
+.premium-content h2{font-family:var(--font-display);font-size:1.15rem;color:var(--gold-light);margin:1.5rem 0 .6rem;font-weight:600}
+.premium-content h2:first-child{margin-top:0}
+.premium-content p{font-size:.95rem;color:var(--text-dim);line-height:1.8;margin-bottom:1rem}
+.premium-content em{color:var(--text);font-style:italic}
+.premium-content strong{color:var(--text);font-weight:500}
+
+/* Shared */
+.reset-btn{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--font-body);font-size:.85rem;color:var(--text-faint);background:none;border:1px solid var(--bg4);padding:.6rem 1.5rem;border-radius:50px;cursor:pointer;transition:all .3s;margin-top:1rem}
+.reset-btn:hover{border-color:var(--text-dim);color:var(--text-dim)}
+
+.share-row{display:flex;gap:.5rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap}
+.share-btn{font-family:var(--font-body);font-size:.78rem;padding:.45rem 1rem;border:1px solid var(--bg4);border-radius:50px;background:transparent;color:var(--text-dim);cursor:pointer;text-decoration:none;transition:all .3s}
+.share-btn:hover{border-color:var(--gold-dim);color:var(--gold)}
+
+.ad-slot{margin:2rem auto;text-align:center;min-height:90px;background:var(--bg2);border:1px dashed var(--bg4);border-radius:12px;display:flex;align-items:center;justify-content:center}
+
+.error-msg{background:rgba(199,80,80,.1);border:1px solid rgba(199,80,80,.25);border-radius:12px;padding:1rem 1.25rem;color:var(--accent-red);font-size:.9rem;margin:1rem 0;display:none}
+.error-msg.visible{display:block}
+
+footer{text-align:center;padding:2rem 0;margin-top:2rem}
+footer p{font-size:.78rem;color:var(--text-faint)}
+footer a{color:var(--gold-dim);text-decoration:none;margin:0 .5rem}
+footer a:hover{color:var(--gold)}
+
+.cross-link{text-align:center;margin:2rem 0;padding:1.25rem;background:var(--bg2);border-radius:12px;border:1px solid var(--bg4)}
+.cross-link p{font-size:.85rem;color:var(--text-dim);margin-bottom:.5rem}
+.cross-link a{color:var(--gold);text-decoration:none;font-weight:500;font-size:.9rem}
+.cross-link a:hover{color:var(--gold-light)}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <a href="https://celestial-self.vercel.app/index.html" class="back-link">&larr; Back to All Tools</a>
+
+  <h1>Palm <em>Compatibility</em></h1>
+  <p class="subtitle">two palms, one reading. upload both hands and see what the lines say about your connection.</p>
+
+  <!-- STEP 1: Upload -->
+  <div id="step-upload">
+    <div class="upload-grid">
+      <div class="person-col">
+        <div class="person-label">Person A</div>
+        <div class="upload-zone" id="zoneA" onclick="document.getElementById('fileA').click()">
+          <span class="icon">&#9995;</span>
+          <div class="label">upload palm</div>
+          <div class="hint">tap or drag</div>
+          <input type="file" id="fileA" accept="image/*" capture="environment">
+        </div>
+        <img class="preview-img" id="previewA" alt="Person A palm">
+        <button class="change-btn" id="changeBtnA" onclick="document.getElementById('fileA').click()">change photo</button>
+      </div>
+
+      <div class="connector">&times;</div>
+
+      <div class="person-col">
+        <div class="person-label">Person B</div>
+        <div class="upload-zone" id="zoneB" onclick="document.getElementById('fileB').click()">
+          <span class="icon">&#9995;</span>
+          <div class="label">upload palm</div>
+          <div class="hint">tap or drag</div>
+          <input type="file" id="fileB" accept="image/*" capture="environment">
+        </div>
+        <img class="preview-img" id="previewB" alt="Person B palm">
+        <button class="change-btn" id="changeBtnB" onclick="document.getElementById('fileB').click()">change photo</button>
+      </div>
+    </div>
+
+    <div class="tips">
+      <strong>for the best reading</strong>
+      each person should open their dominant hand flat, fingers slightly apart. good lighting helps — natural light works best. get the whole palm in frame.
+    </div>
+
+    <button class="cta-btn" id="readBtn" disabled onclick="startFreeReading()">
+      <span>read our palms</span>
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>comparing your palms...</p>
+    <p style="font-size:.8rem;color:var(--text-faint);margin-top:.5rem">finding the patterns between two hands</p>
+  </div>
+
+  <!-- Error -->
+  <div class="error-msg" id="errorMsg"></div>
+
+  <!-- Free result -->
+  <div class="free-result" id="freeResult">
+    <span class="result-badge badge-free">free preview</span>
+    <div class="result-card">
+      <h3>your palms at a glance</h3>
+      <p id="freeText"></p>
+    </div>
+
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3778226195749260" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    </div>
+  </div>
+
+  <!-- Paywall -->
+  <div class="paywall" id="paywall">
+    <div class="paywall-box">
+      <h2>unlock the <em>full compatibility reading</em></h2>
+      <p class="desc">your palms have more to say together. get a detailed comparison of every line and what it means for your connection.</p>
+
+      <ul class="paywall-features">
+        <li>Heart line compatibility — emotional patterns</li>
+        <li>Head line comparison — thinking styles</li>
+        <li>Life line analysis — energy and rhythm</li>
+        <li>Chemistry, strengths, and growth edges</li>
+        <li>700-1000 word personalized reading</li>
+      </ul>
+
+      <div class="pricing-options">
+        <div class="price-card" id="cardOnetime" onclick="selectPlan('one_time')">
+          <div class="price-name">one reading</div>
+          <div class="price-amount">$2.99</div>
+          <div class="price-detail">single compatibility reading</div>
+        </div>
+        <div class="price-card popular" id="cardSub" onclick="selectPlan('subscription')">
+          <div class="price-name">unlimited</div>
+          <div class="price-amount">$4.99<small>/mo</small></div>
+          <div class="price-detail">all readings, cancel anytime</div>
+        </div>
+      </div>
+
+      <button class="pay-btn" id="payBtn" onclick="startCheckout()" disabled>unlock full reading</button>
+      <p class="secure-note">&#128274; secure payment via Stripe</p>
+    </div>
+  </div>
+
+  <!-- Premium result -->
+  <div class="premium-result" id="premiumResult">
+    <span class="result-badge badge-premium">detailed compatibility reading</span>
+    <div class="premium-content" id="premiumContent"></div>
+
+    <div class="share-row">
+      <a class="share-btn" id="shareX" href="#" target="_blank" rel="noopener">&#120143; post</a>
+      <a class="share-btn" id="shareFB" href="#" target="_blank" rel="noopener">facebook</a>
+      <button class="share-btn" onclick="copyLink()">copy link</button>
+    </div>
+  </div>
+
+  <!-- Reset -->
+  <div style="text-align:center;display:none" id="resetWrap">
+    <button class="reset-btn" onclick="resetAll()">&#10022; try another pairing</button>
+  </div>
+
+  <!-- Cross-link -->
+  <div class="cross-link">
+    <p>want a solo reading?</p>
+    <a href="https://celestial-self.vercel.app/palmreading.html">&#9995; Individual Palm Reading</a>
+  </div>
+
+  <footer>
+    <p>palm reading is an ancient practice, not a science. your hands are unique — and so is this reading.</p>
+    <p style="margin-top:.5rem"><em>none of this is real. all of it is useful.</em></p>
+    <p style="margin-top:1rem">
+      <a href="https://celestial-self.vercel.app/index.html">Home</a>
+      <a href="https://celestial-self.vercel.app/about.html">About</a>
+      <a href="https://celestial-self.vercel.app/privacy.html">Privacy</a>
+      <a href="https://celestial-self.vercel.app/contact.html">Contact</a>
+    </p>
+  </footer>
+</div>
+
+<script>
+const API_BASE = '';
+let imageA = null, mimeA = null;
+let imageB = null, mimeB = null;
+let selectedPlan = null;
+
+// ─── File handling ───
+
+function setupZone(zoneId, fileId, previewId, changeBtnId, person) {
+  const zone = document.getElementById(zoneId);
+  const input = document.getElementById(fileId);
+  const preview = document.getElementById(previewId);
+  const changeBtn = document.getElementById(changeBtnId);
+
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = 'var(--gold)'; });
+  zone.addEventListener('dragleave', () => { zone.style.borderColor = ''; });
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.style.borderColor = '';
+    if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0], person, zone, preview, changeBtn);
+  });
+
+  input.addEventListener('change', e => {
+    if (e.target.files.length) handleFile(e.target.files[0], person, zone, preview, changeBtn);
+  });
+}
+
+function handleFile(file, person, zone, preview, changeBtn) {
+  if (!file.type.startsWith('image/')) { showError('Please upload an image file.'); return; }
+  if (file.size > 10 * 1024 * 1024) { showError('Image too large. Please use a file under 10MB.'); return; }
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dataUrl = e.target.result;
+    const base64 = dataUrl.split(',')[1];
+
+    if (person === 'A') { imageA = base64; mimeA = file.type; }
+    else { imageB = base64; mimeB = file.type; }
+
+    preview.src = dataUrl;
+    preview.classList.add('visible');
+    changeBtn.classList.add('visible');
+    zone.classList.add('has-image');
+    zone.querySelector('.icon').textContent = '✓';
+    zone.querySelector('.label').textContent = 'photo ready';
+    zone.querySelector('.hint').textContent = '';
+
+    document.getElementById('readBtn').disabled = !(imageA && imageB);
+    hideError();
+  };
+  reader.readAsDataURL(file);
+}
+
+setupZone('zoneA', 'fileA', 'previewA', 'changeBtnA', 'A');
+setupZone('zoneB', 'fileB', 'previewB', 'changeBtnB', 'B');
+
+// ─── Free Reading ───
+
+const FREE_TEXTS = [
+  "Looking at these two palms side by side, there's an interesting dynamic at play. Person A's heart line shows a strong upward curve, suggesting someone who leads with warmth and emotional openness. Person B's heart line, by contrast, runs straighter and deeper — pointing to someone who feels just as intensely, but holds those feelings closer to the chest.",
+  "The head lines tell a complementary story: one bends toward creativity and intuition, while the other maintains a more analytical, measured path. This isn't a conflict — it's a conversation. Where one brings imagination, the other brings structure.",
+  "There's a natural balance visible in these two hands that suggests a pairing where differences become strengths rather than friction points. The full reading will reveal how each line interacts — and where the real magic between these two palms lives."
+];
+
+function startFreeReading() {
+  if (!imageA || !imageB) return;
+
+  if (typeof gtag === 'function') gtag('event', 'palm_compatibility_free');
+
+  document.getElementById('step-upload').style.display = 'none';
+  document.getElementById('loading').classList.add('visible');
+  hideError();
+
+  setTimeout(() => {
+    document.getElementById('loading').classList.remove('visible');
+    document.getElementById('freeText').textContent = FREE_TEXTS.join('\n\n');
+    document.getElementById('freeResult').classList.add('visible');
+    document.getElementById('paywall').classList.add('visible');
+    document.getElementById('resetWrap').style.display = 'block';
+    try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+  }, 2500);
+}
+
+// ─── Plan / Checkout ───
+
+function selectPlan(plan) {
+  selectedPlan = plan;
+  document.getElementById('cardOnetime').classList.toggle('selected', plan === 'one_time');
+  document.getElementById('cardSub').classList.toggle('selected', plan === 'subscription');
+  document.getElementById('payBtn').disabled = false;
+  document.getElementById('payBtn').textContent = plan === 'subscription' ? 'unlock unlimited readings' : 'unlock full reading — $2.99';
+}
+
+async function startCheckout() {
+  if (!selectedPlan) return;
+  const payBtn = document.getElementById('payBtn');
+  payBtn.disabled = true;
+  payBtn.textContent = 'redirecting to checkout...';
+
+  if (typeof gtag === 'function') gtag('event', 'begin_checkout', { plan: selectedPlan, product: 'palm_compatibility' });
+
+  try {
+    const res = await fetch(`${API_BASE}/api/create-checkout`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: selectedPlan, imageHash: 'compat' })
+    });
+    const data = await res.json();
+    if (data.url) {
+      try {
+        sessionStorage.setItem('compat_imageA', imageA);
+        sessionStorage.setItem('compat_mimeA', mimeA);
+        sessionStorage.setItem('compat_imageB', imageB);
+        sessionStorage.setItem('compat_mimeB', mimeB);
+        sessionStorage.setItem('compat_return', 'true');
+      } catch(e) {}
+      window.location.href = data.url;
+    } else throw new Error(data.error || 'Checkout failed');
+  } catch (err) {
+    showError('Something went wrong starting checkout. Please try again.');
+    payBtn.disabled = false;
+    payBtn.textContent = 'unlock full reading';
+  }
+}
+
+// ─── Post-payment ───
+
+async function handleReturn() {
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session_id');
+  const canceled = params.get('canceled');
+
+  if (canceled) {
+    showError('Payment was canceled. You can still try the free preview or try again.');
+    window.history.replaceState({}, '', window.location.pathname);
+    return;
+  }
+
+  if (!sessionId) return;
+  window.history.replaceState({}, '', window.location.pathname);
+
+  const storedA = sessionStorage.getItem('compat_imageA');
+  const storedB = sessionStorage.getItem('compat_imageB');
+
+  if (!storedA || !storedB) {
+    showError('Welcome back! Payment successful. Please re-upload both palm photos to get your detailed reading.');
+    sessionStorage.setItem('paid_session_id', sessionId);
+    return;
+  }
+
+  imageA = storedA; mimeA = sessionStorage.getItem('compat_mimeA') || 'image/jpeg';
+  imageB = storedB; mimeB = sessionStorage.getItem('compat_mimeB') || 'image/jpeg';
+
+  document.getElementById('step-upload').style.display = 'none';
+  document.getElementById('loading').classList.add('visible');
+  document.querySelector('#loading p').textContent = 'verifying payment & generating your compatibility reading...';
+
+  try {
+    const verifyRes = await fetch(`${API_BASE}/api/verify-payment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId })
+    });
+    const verifyData = await verifyRes.json();
+    if (!verifyData.paid) throw new Error('Payment not verified');
+
+    if (typeof gtag === 'function') gtag('event', 'purchase', { plan: verifyData.mode, product: 'palm_compatibility' });
+
+    const readingRes = await fetch(`${API_BASE}/api/palm-compatibility`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${verifyData.token}`
+      },
+      body: JSON.stringify({
+        imageA_base64: imageA, imageA_mime: mimeA,
+        imageB_base64: imageB, imageB_mime: mimeB
+      })
+    });
+    const readingData = await readingRes.json();
+    if (!readingData.reading) throw new Error('Reading generation failed');
+
+    document.getElementById('loading').classList.remove('visible');
+    showPremiumResult(readingData.reading);
+
+    sessionStorage.removeItem('compat_imageA');
+    sessionStorage.removeItem('compat_mimeA');
+    sessionStorage.removeItem('compat_imageB');
+    sessionStorage.removeItem('compat_mimeB');
+    sessionStorage.removeItem('compat_return');
+  } catch (err) {
+    document.getElementById('loading').classList.remove('visible');
+    showError('There was an issue generating your reading. Please contact us or try again.');
+    document.getElementById('step-upload').style.display = 'block';
+    console.error('Post-payment error:', err);
+  }
+}
+
+function showPremiumResult(md) {
+  const html = typeof marked !== 'undefined' ? marked.parse(md) : md.replace(/\n/g, '<br>');
+  document.getElementById('premiumContent').innerHTML = html;
+  document.getElementById('premiumResult').classList.add('visible');
+  document.getElementById('resetWrap').style.display = 'block';
+
+  const shareText = encodeURIComponent('Just compared our palms with AI ✋✋✨ celestial-self.vercel.app/palm-compatibility.html');
+  document.getElementById('shareX').href = `https://x.com/intent/tweet?text=${shareText}`;
+  document.getElementById('shareFB').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://celestial-self.vercel.app/palm-compatibility.html')}`;
+
+  document.getElementById('premiumResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─── Re-upload after payment ───
+const origStartFree = startFreeReading;
+startFreeReading = function() {
+  const paidId = sessionStorage.getItem('paid_session_id');
+  if (paidId && imageA && imageB) {
+    sessionStorage.removeItem('paid_session_id');
+    sessionStorage.setItem('compat_imageA', imageA);
+    sessionStorage.setItem('compat_mimeA', mimeA);
+    sessionStorage.setItem('compat_imageB', imageB);
+    sessionStorage.setItem('compat_mimeB', mimeB);
+    const u = new URL(window.location);
+    u.searchParams.set('session_id', paidId);
+    window.history.replaceState({}, '', u);
+    handleReturn();
+    return;
+  }
+  origStartFree();
+};
+
+// ─── Utils ───
+
+function showError(msg) { const el = document.getElementById('errorMsg'); el.textContent = msg; el.classList.add('visible'); }
+function hideError() { document.getElementById('errorMsg').classList.remove('visible'); }
+
+function copyLink() {
+  navigator.clipboard.writeText('https://celestial-self.vercel.app/palm-compatibility.html')
+    .then(() => alert('Link copied!')).catch(() => {});
+}
+
+function resetAll() {
+  imageA = imageB = mimeA = mimeB = null;
+  selectedPlan = null;
+  document.getElementById('step-upload').style.display = 'block';
+  document.getElementById('readBtn').disabled = true;
+
+  ['A','B'].forEach(p => {
+    const zone = document.getElementById('zone'+p);
+    const preview = document.getElementById('preview'+p);
+    const btn = document.getElementById('changeBtn'+p);
+    preview.classList.remove('visible'); preview.src = '';
+    btn.classList.remove('visible');
+    zone.classList.remove('has-image');
+    zone.querySelector('.icon').textContent = '\u270b';
+    zone.querySelector('.label').textContent = 'upload palm';
+    zone.querySelector('.hint').textContent = 'tap or drag';
+    document.getElementById('file'+p).value = '';
+  });
+
+  ['freeResult','paywall','premiumResult'].forEach(id => document.getElementById(id).classList.remove('visible'));
+  document.getElementById('loading').classList.remove('visible');
+  document.getElementById('resetWrap').style.display = 'none';
+  document.getElementById('cardOnetime').classList.remove('selected');
+  document.getElementById('cardSub').classList.remove('selected');
+  document.getElementById('payBtn').disabled = true;
+  document.getElementById('payBtn').textContent = 'unlock full reading';
+  hideError();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+handleReturn();
+</script>
+
+</body>
+</html>
