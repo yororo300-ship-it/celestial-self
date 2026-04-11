@@ -1,59 +1,57 @@
-// /api/create-checkout.js
-// Creates a Stripe Checkout Session for one-time or subscription payment
+// Lemon Squeezy チェックアウトセッション作成
+const STORE_ID = '342370';
+const VARIANTS = {
+  single: '31ed6ff5-13bd-4fe3-948b-6bb314b09319', // $2.99 Single Reading
+  unlimited: '07ee4b08-ddd6-4942-bf79-ae07ebbfb562', // $4.99/月 Unlimited
+};
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
-module.exports = async (req, res) => {
-  // CORS
-  res.setHeader('Access-Control-Allow-Origin', 'https://celestial-self.vercel.app');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.status(200).end();
+export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { mode, imageHash } = req.body;
-    // mode: 'one_time' or 'subscription'
+    const { product, email, userId } = req.body;
+    const variantId = VARIANTS[product];
+    if (!variantId) return res.status(400).json({ error: 'Invalid product' });
 
-    const baseUrl = process.env.SITE_URL || 'https://celestial-self.vercel.app';
-
-    let sessionConfig = {
-      payment_method_types: ['card'],
-      success_url: `${baseUrl}/palmreading.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/palmreading.html?canceled=true`,
-      metadata: {
-        imageHash: imageHash || '',
-        product: 'palm_reading'
-      }
-    };
-
-    if (mode === 'subscription') {
-      sessionConfig.mode = 'subscription';
-      sessionConfig.line_items = [{
-        price: process.env.STRIPE_SUBSCRIPTION_PRICE_ID,
-        quantity: 1
-      }];
-    } else {
-      sessionConfig.mode = 'payment';
-      sessionConfig.line_items = [{
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: 'Detailed Palm Reading',
-            description: 'AI-powered deep analysis of your palm lines, mounts, and patterns',
-            images: ['https://celestial-self.vercel.app/og-palm.png']
+    const response = await fetch('https://api.lemonsqueezy.com/v1/checkouts', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/vnd.api+json',
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': `Bearer ${process.env.LEMONSQUEEZY_API_KEY}`,
+      },
+      body: JSON.stringify({
+        data: {
+          type: 'checkouts',
+          attributes: {
+            checkout_data: {
+              email: email || '',
+              custom: { user_id: userId || '', product },
+            },
+            product_options: {
+              redirect_url: `${process.env.SITE_URL}/success?session={checkout_id}`,
+            },
           },
-          unit_amount: parseInt(process.env.ONETIME_PRICE_CENTS || '299') // $2.99
+          relationships: {
+            store: { data: { type: 'stores', id: STORE_ID } },
+            variant: { data: { type: 'variants', id: variantId } },
+          },
         },
-        quantity: 1
-      }];
+      }),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      console.error('LS checkout error:', data);
+      return res.status(500).json({ error: 'Checkout creation failed' });
     }
 
-    const session = await stripe.checkout.sessions.create(sessionConfig);
-
-    res.status(200).json({ url: session.url, sessionId: session.id });
+    return res.status(200).json({
+      url: data.data.attributes.url,
+      checkoutId: data.data.id,
+    });
   } catch (err) {
-    console.error('Checkout error:', err);
-    res.status(500).json({ error: 'Failed to create checkout session' });
+    console.error(err);
+    return res.status(500).json({ error: err.message });
   }
-};
+}
