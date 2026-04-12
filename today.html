@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Today's Ritual — Celestial Self</title>
+<meta name="description" content="A short daily reading drawn from your numbers and today's date. One minute, once a day. No sign-up.">
+<link rel="canonical" href="https://celestial-self.vercel.app/today.html">
+
+<!-- GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8E1NGR4VSS"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-8E1NGR4VSS');
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#09090F;--bg2:#0F0F18;--bg3:#161622;--bg4:#1E1E2E;
+  --gold:#C9A84C;--gold-light:#E0C872;--gold-dim:#8A7333;
+  --text:#E8E6E1;--text-dim:#9994A8;--text-faint:#5C5770;
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'Jost','Helvetica Neue',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-weight:300;line-height:1.7;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(1px 1px at 10% 20%,rgba(255,255,255,.35),transparent),radial-gradient(1.5px 1.5px at 50% 10%,rgba(201,168,76,.35),transparent),radial-gradient(1px 1px at 70% 40%,rgba(255,255,255,.3),transparent),radial-gradient(1px 1px at 90% 80%,rgba(255,255,255,.25),transparent),radial-gradient(1.2px 1.2px at 15% 90%,rgba(201,168,76,.25),transparent),radial-gradient(1px 1px at 45% 55%,rgba(255,255,255,.2),transparent)}
+
+.container{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:2rem 1.5rem}
+.back-link{display:inline-block;font-size:.85rem;color:var(--text-faint);text-decoration:none;margin-bottom:2rem;transition:color .3s}
+.back-link:hover{color:var(--gold)}
+
+h1{font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,5vw,2.8rem);color:var(--text);line-height:1.15;margin-bottom:.5rem;text-align:center}
+h1 em{font-style:italic;color:var(--gold)}
+.subtitle{text-align:center;font-size:.95rem;color:var(--text-dim);max-width:480px;margin:0 auto 2.5rem;font-weight:300}
+
+/* Onboarding */
+.onboard{background:var(--bg2);border:1px solid rgba(201,168,76,.15);border-radius:20px;padding:2rem 1.75rem;margin:1.5rem 0}
+.onboard h2{font-family:var(--font-display);font-size:1.2rem;color:var(--gold-light);margin-bottom:.5rem;font-weight:600}
+.onboard p{font-size:.9rem;color:var(--text-dim);margin-bottom:1.25rem}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-bottom:.4rem}
+.field input{width:100%;font-family:var(--font-body);font-size:1rem;padding:.85rem 1rem;background:var(--bg3);border:1px solid var(--bg4);border-radius:10px;color:var(--text);transition:border-color .3s}
+.field input:focus{outline:none;border-color:var(--gold-dim)}
+.field .hint{font-size:.72rem;color:var(--text-faint);margin-top:.3rem}
+
+.cta-btn{display:block;width:100%;font-family:var(--font-body);font-weight:500;font-size:1rem;letter-spacing:.08em;padding:1rem;border:1px solid var(--gold);border-radius:50px;background:transparent;color:var(--gold);cursor:pointer;position:relative;overflow:hidden;transition:all .4s cubic-bezier(.22,1,.36,1);margin-top:1rem}
+.cta-btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.22,1,.36,1)}
+.cta-btn:hover{color:var(--bg);border-color:var(--gold)}
+.cta-btn:hover::before{transform:scaleX(1)}
+.cta-btn span{position:relative;z-index:1}
+.cta-btn:disabled{opacity:.4;cursor:not-allowed}
+.cta-btn:disabled:hover::before{transform:scaleX(0)}
+.cta-btn:disabled:hover{color:var(--gold)}
+
+/* Today's reading */
+.reading-wrap{display:none;animation:fadeUp .7s ease-out}
+.reading-wrap.visible{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.date-line{text-align:center;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-faint);margin-bottom:1rem}
+
+.reading-card{background:linear-gradient(135deg,rgba(201,168,76,.06),rgba(201,168,76,.01));border:1px solid rgba(201,168,76,.2);border-radius:20px;padding:2.25rem 1.75rem;margin:1rem 0;position:relative}
+.reading-card::before{content:'✦';position:absolute;top:-.8rem;left:50%;transform:translateX(-50%);background:var(--bg);color:var(--gold);font-size:1.2rem;padding:0 .8rem}
+
+.life-path-badge{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);text-align:center;display:block;margin-bottom:1.25rem}
+.reading-text{font-family:var(--font-display);font-size:1.1rem;font-style:italic;line-height:1.7;color:var(--text);text-align:center}
+.reading-footer{font-size:.75rem;color:var(--text-faint);text-align:center;margin-top:1.25rem;font-style:italic}
+
+/* Streak */
+.streak-box{background:var(--bg2);border:1px solid var(--bg4);border-radius:16px;padding:1.25rem 1.5rem;margin:1.5rem 0;text-align:center}
+.streak-label{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-faint);margin-bottom:.5rem}
+.streak-count{font-family:var(--font-display);font-size:1.8rem;color:var(--gold);font-weight:700}
+.streak-count small{font-size:.8rem;font-weight:300;color:var(--text-dim);margin-left:.3rem}
+.streak-dots{display:flex;justify-content:center;gap:.4rem;margin-top:.75rem}
+.streak-dot{width:10px;height:10px;border-radius:50%;background:var(--bg4);transition:background .3s}
+.streak-dot.filled{background:var(--gold)}
+.streak-message{font-size:.78rem;color:var(--text-dim);margin-top:.75rem;font-style:italic}
+
+/* Next tools */
+.next-wrap{margin:2.5rem 0 1rem}
+.next-title{font-family:var(--font-display);font-size:1rem;color:var(--gold-light);text-align:center;margin-bottom:1rem;font-weight:600}
+.next-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media(max-width:480px){.next-grid{grid-template-columns:1fr}}
+.next-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:12px;padding:1rem 1.1rem;text-decoration:none;color:var(--text);transition:all .3s;display:block}
+.next-card:hover{border-color:var(--gold-dim);transform:translateY(-2px)}
+.next-card .label{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint);margin-bottom:.2rem}
+.next-card .name{font-family:var(--font-display);font-size:.95rem;color:var(--gold-light);font-weight:600}
+
+/* Reset */
+.reset-link{display:block;text-align:center;font-size:.75rem;color:var(--text-faint);text-decoration:none;margin-top:1.5rem;transition:color .3s}
+.reset-link:hover{color:var(--text-dim)}
+
+/* Error */
+.error-msg{background:rgba(199,80,80,.1);border:1px solid rgba(199,80,80,.25);border-radius:10px;padding:.8rem 1.1rem;color:#C75050;font-size:.85rem;margin:.75rem 0;display:none}
+.error-msg.visible{display:block}
+
+footer{text-align:center;padding:2rem 0;margin-top:2rem}
+footer p{font-size:.78rem;color:var(--text-faint)}
+footer a{color:var(--gold-dim);text-decoration:none;margin:0 .5rem}
+footer a:hover{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <a href="https://celestial-self.vercel.app/index.html" class="back-link">&larr; Back to All Tools</a>
+
+  <h1>Today's <em>Ritual</em></h1>
+  <p class="subtitle">one minute. once a day. a short reading drawn from your numbers and this day's shape.</p>
+
+  <!-- Onboarding (first visit only) -->
+  <div id="onboard" class="onboard" style="display:none">
+    <h2>let's start with your birth date</h2>
+    <p>we'll use it to calculate your Life Path Number. this stays in your browser — nothing is sent anywhere.</p>
+    <div class="field">
+      <label for="birthInput">your birth date</label>
+      <input type="date" id="birthInput" max="">
+      <div class="hint">used once, remembered locally</div>
+    </div>
+    <div class="error-msg" id="onboardError"></div>
+    <button class="cta-btn" id="startBtn" onclick="completeOnboarding()"><span>begin today's ritual</span></button>
+  </div>
+
+  <!-- Today's reading -->
+  <div class="reading-wrap" id="readingWrap">
+    <div class="date-line" id="dateLine"></div>
+
+    <div class="reading-card">
+      <span class="life-path-badge" id="lifePathBadge"></span>
+      <p class="reading-text" id="readingText"></p>
+      <p class="reading-footer">— drawn from your numbers and today's shape</p>
+    </div>
+
+    <div class="streak-box">
+      <div class="streak-label">your ritual streak</div>
+      <div class="streak-count" id="streakCount">0 <small>days</small></div>
+      <div class="streak-dots" id="streakDots"></div>
+      <div class="streak-message" id="streakMessage"></div>
+    </div>
+
+    <div class="next-wrap">
+      <div class="next-title">dive deeper today</div>
+      <div class="next-grid">
+        <a class="next-card" href="https://celestial-self.vercel.app/tarot.html">
+          <div class="label">free</div>
+          <div class="name">🃏 pull a tarot card</div>
+        </a>
+        <a class="next-card" href="https://celestial-self.vercel.app/palmreading.html">
+          <div class="label">free preview</div>
+          <div class="name">✋ read your palm</div>
+        </a>
+        <a class="next-card" href="https://celestial-self.vercel.app/numerology.html">
+          <div class="label">free</div>
+          <div class="name">🔢 full numerology</div>
+        </a>
+        <a class="next-card" href="https://celestial-self.vercel.app/zodiac.html">
+          <div class="label">free</div>
+          <div class="name">⭐ zodiac profile</div>
+        </a>
+      </div>
+    </div>
+
+    <a class="reset-link" href="#" onclick="resetProfile();return false">✦ change birth date</a>
+  </div>
+
+  <footer>
+    <p><em>none of this is real. all of it is useful.</em></p>
+    <p style="margin-top:1rem">
+      <a href="https://celestial-self.vercel.app/index.html">Home</a>
+      <a href="https://celestial-self.vercel.app/about.html">About</a>
+      <a href="https://celestial-self.vercel.app/privacy.html">Privacy</a>
+      <a href="https://celestial-self.vercel.app/contact.html">Contact</a>
+    </p>
+  </footer>
+</div>
+
+<script>
+// ─── Life Path calculation ───
+function calculateLifePath(dateStr) {
+  // dateStr is "YYYY-MM-DD"
+  const digits = dateStr.replace(/-/g, '').split('').map(Number);
+  let sum = digits.reduce((a, b) => a + b, 0);
+  // Reduce to single digit, but keep master numbers (11, 22, 33) for future use
+  while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
+    sum = String(sum).split('').map(Number).reduce((a, b) => a + b, 0);
+  }
+  // For now, reduce master numbers down too (9-pattern system per phase 1)
+  if (sum === 11) sum = 2;
+  if (sum === 22) sum = 4;
+  if (sum === 33) sum = 6;
+  return sum;
+}
+
+// ─── Date helpers (local timezone) ───
+function todayKey() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+function todayMMDD() {
+  const d = new Date();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${m}-${day}`;
+}
+function isYesterday(lastDateStr, todayStr) {
+  if (!lastDateStr) return false;
+  const last = new Date(lastDateStr + 'T00:00:00');
+  const today = new Date(todayStr + 'T00:00:00');
+  const diff = (today - last) / (1000 * 60 * 60 * 24);
+  return Math.round(diff) === 1;
+}
+function formatDateLong() {
+  const d = new Date();
+  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+// ─── Reading lookup (placeholder — replace with generated JSON in phase B) ───
+// Fallback templates keyed by Life Path number. Day variation comes from MM-DD hash.
+const READING_TEMPLATES = {
+  1: [
+    "Today has an edge of initiation to it. You may find yourself wanting to start something — even something small — before you feel fully ready. That impulse isn't reckless. It's your number remembering what it's for.",
+    "There's an opening today for you to lead, even quietly. Not by announcing anything, but by moving first. Your 1 doesn't need permission — it just needs a direction.",
+    "This day asks for a kind of solitary clarity. You may feel pulled to make a decision without consulting anyone. Trust that pull today."
+  ],
+  2: [
+    "Today softens toward you. There's an invitation to listen more than speak, to notice the shape of what others aren't saying. Your 2 was built for this kind of quiet attention.",
+    "You may find yourself holding space for someone today — friend, stranger, yourself. That's not passive. That's your number working.",
+    "There's a slow, paired energy to this day. Not romantic necessarily — just something about being in relationship rather than in isolation. Let it in."
+  ],
+  3: [
+    "Today wants you to make something. Not finish it — just start. Words, color, sound, a half-formed idea texted to a friend. Your 3 doesn't need polish. It needs expression.",
+    "There's a playful current under this day. You may find yourself saying something true through a joke. That's a 3 move. Let it be the real thing, even if it sounds light.",
+    "Today opens toward conversation. Not small talk — the kind where you accidentally say what you actually mean. Your number is good at those."
+  ],
+  4: [
+    "Today rewards steadiness. You may find yourself drawn to the unglamorous work — the list, the fix, the thing you've been avoiding. That pull is your 4 knowing something.",
+    "There's an opening in the structure of this day. Small choices about how you organize your time will echo further than they look. Your number thrives in this register.",
+    "Today has a foundation-laying quality. What you build today doesn't need to be visible to count. Trust the slow part."
+  ],
+  5: [
+    "Today moves. You may find yourself restless in a familiar room, pulled toward a different route home, a new tab, a rerouted plan. Your 5 doesn't need a reason. Let it breathe.",
+    "There's an opening for change today — small, reversible, yours. Your number was never meant to sit still this long. What wants to shift?",
+    "This day has exit doors you haven't noticed. Not from your life — from a pattern inside it. Your 5 knows which one."
+  ],
+  6: [
+    "Today asks about care. Not performance of care — the actual kind. You may find yourself noticing who needs something, including yourself. Your 6 is honest about that last part.",
+    "There's a gentle weight to this day. Something about tending — a person, a plant, a corner of your home, a part of yourself. Your number knows this is a form of magic.",
+    "Today opens toward the people you love, however you define that. Reach once. That's enough."
+  ],
+  7: [
+    "Today has a quiet edge. You may find yourself pulled toward solitude — not because you're avoiding anyone, but because something inside you needs space to listen. Your 7 trusts that impulse.",
+    "There's an opening in the silence today. A question you haven't let yourself ask is sitting just beneath the surface. Your number knows which one.",
+    "Today wants to be read, not reacted to. The slowness isn't dullness — it's depth arriving. Let it."
+  ],
+  8: [
+    "Today has a weight that wants to be used. You may find yourself drawn to the thing with real stakes — a decision, a conversation, a number on a page. Your 8 isn't afraid of consequence.",
+    "There's an opening in the material world today. Not luck — leverage. Your number notices where effort actually moves things. Apply it there.",
+    "Today rewards the long view. What you commit to today will cash out later than you'd like, but more than you'd expect. Your 8 plays long games."
+  ],
+  9: [
+    "Today asks for release more than acquisition. You may find yourself noticing what you're still carrying that isn't yours. Your 9 was built for this kind of honest accounting.",
+    "There's a closing quality to this day — not an ending exactly, just a completion of something small. Your number is good at honoring those.",
+    "Today opens toward a wider view. The thing that felt personal yesterday may feel like part of a bigger pattern today. Let the zoom-out happen."
+  ]
+};
+
+function getTodaysReading(lifePath) {
+  const templates = READING_TEMPLATES[lifePath] || READING_TEMPLATES[1];
+  // Deterministic daily selection: hash MM-DD into template index
+  const mmdd = todayMMDD();
+  const hash = mmdd.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  return templates[hash % templates.length];
+}
+
+// ─── Streak logic ───
+function updateStreak() {
+  const today = todayKey();
+  const last = localStorage.getItem('cs_last_visit');
+  let streak = parseInt(localStorage.getItem('cs_streak') || '0', 10);
+
+  if (last === today) {
+    // same day, no change
+  } else if (isYesterday(last, today)) {
+    streak += 1;
+  } else {
+    streak = 1;
+  }
+
+  localStorage.setItem('cs_last_visit', today);
+  localStorage.setItem('cs_streak', String(streak));
+  return streak;
+}
+
+function renderStreak(streak) {
+  document.getElementById('streakCount').innerHTML = `${streak} <small>${streak === 1 ? 'day' : 'days'}</small>`;
+
+  // Dots: show up to 7
+  const dotsEl = document.getElementById('streakDots');
+  dotsEl.innerHTML = '';
+  const total = 7;
+  const filled = Math.min(streak, total);
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'streak-dot' + (i < filled ? ' filled' : '');
+    dotsEl.appendChild(dot);
+  }
+
+  // Milestone messages
+  let msg = '';
+  if (streak === 1) msg = 'a new rhythm begins.';
+  else if (streak === 3) msg = '✦ three days of showing up.';
+  else if (streak === 7) msg = '✦ seven days of listening to yourself.';
+  else if (streak === 14) msg = '✦ two weeks. this is a practice now.';
+  else if (streak === 30) msg = '✦ thirty days. your number knows you by heart.';
+  else if (streak === 100) msg = '✦ one hundred. you are the ritual.';
+  else if (streak >= 2 && streak < 7) msg = 'the streak is building.';
+  else if (streak > 7 && streak < 14) msg = 'more than a week, and still here.';
+  else if (streak > 14 && streak < 30) msg = 'this is becoming yours.';
+  else if (streak > 30) msg = 'you keep coming back.';
+  document.getElementById('streakMessage').textContent = msg;
+}
+
+// ─── Onboarding ───
+function showOnboarding() {
+  document.getElementById('onboard').style.display = 'block';
+  document.getElementById('readingWrap').classList.remove('visible');
+  // Set max date to today
+  document.getElementById('birthInput').max = todayKey();
+}
+
+function completeOnboarding() {
+  const birthInput = document.getElementById('birthInput');
+  const errEl = document.getElementById('onboardError');
+  const birthDate = birthInput.value;
+
+  errEl.classList.remove('visible');
+  if (!birthDate) {
+    errEl.textContent = 'please enter your birth date.';
+    errEl.classList.add('visible');
+    return;
+  }
+
+  const year = parseInt(birthDate.split('-')[0], 10);
+  if (year < 1900 || year > new Date().getFullYear()) {
+    errEl.textContent = 'please enter a valid birth year.';
+    errEl.classList.add('visible');
+    return;
+  }
+
+  const lifePath = calculateLifePath(birthDate);
+  localStorage.setItem('cs_birthdate', birthDate);
+  localStorage.setItem('cs_life_path', String(lifePath));
+
+  if (typeof gtag === 'function') gtag('event', 'today_onboard_complete', { life_path: lifePath });
+
+  document.getElementById('onboard').style.display = 'none';
+  showReading();
+}
+
+function resetProfile() {
+  if (!confirm('change your birth date? your streak will stay.')) return;
+  localStorage.removeItem('cs_birthdate');
+  localStorage.removeItem('cs_life_path');
+  showOnboarding();
+}
+
+// ─── Main render ───
+function showReading() {
+  const lifePath = parseInt(localStorage.getItem('cs_life_path') || '0', 10);
+  if (!lifePath) { showOnboarding(); return; }
+
+  document.getElementById('dateLine').textContent = formatDateLong();
+  document.getElementById('lifePathBadge').textContent = `life path ${lifePath}`;
+  document.getElementById('readingText').textContent = getTodaysReading(lifePath);
+
+  const streak = updateStreak();
+  renderStreak(streak);
+
+  document.getElementById('readingWrap').classList.add('visible');
+
+  if (typeof gtag === 'function') gtag('event', 'today_reading_view', { life_path: lifePath, streak });
+}
+
+// ─── Init ───
+(function init() {
+  const lifePath = localStorage.getItem('cs_life_path');
+  if (lifePath) showReading();
+  else showOnboarding();
+})();
+</script>
+
+</body>
+</html>
