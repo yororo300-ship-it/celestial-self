@@ -218,19 +218,19 @@ footer a:hover{color:var(--gold)}
         <li>Full compatibility synthesis — what your ink says about you two</li>
       </ul>
       <div class="pricing-options">
-        <div class="price-card" id="cardOnetime" onclick="selectPlan('one_time')">
+        <div class="price-card" id="cardOnetime" onclick="selectPlan('single')">
           <div class="price-name">one reading</div>
           <div class="price-amount">$2.99</div>
           <div class="price-detail">single compatibility reading</div>
         </div>
-        <div class="price-card popular" id="cardSub" onclick="selectPlan('subscription')">
+        <div class="price-card popular" id="cardSub" onclick="selectPlan('unlimited')">
           <div class="price-name">unlimited</div>
           <div class="price-amount">$4.99<small>/mo</small></div>
           <div class="price-detail">all readings, cancel anytime</div>
         </div>
       </div>
       <button class="pay-btn" id="payBtn" onclick="startCheckout()" disabled>unlock full reading</button>
-      <p class="secure-note">&#128274; secure payment via Stripe</p>
+      <p class="secure-note">&#128274; secure payment via Lemon Squeezy</p>
     </div>
   </div>
 
@@ -319,10 +319,10 @@ function startFreeReading(){
 
 function selectPlan(plan){
   selectedPlan=plan;
-  document.getElementById('cardOnetime').classList.toggle('selected',plan==='one_time');
-  document.getElementById('cardSub').classList.toggle('selected',plan==='subscription');
+  document.getElementById('cardOnetime').classList.toggle('selected',plan==='single');
+  document.getElementById('cardSub').classList.toggle('selected',plan==='unlimited');
   document.getElementById('payBtn').disabled=false;
-  document.getElementById('payBtn').textContent=plan==='subscription'?'unlock unlimited readings':'unlock full reading — $2.99';
+  document.getElementById('payBtn').textContent=plan==='unlimited'?'unlock unlimited readings':'unlock full reading — $2.99';
 }
 
 async function startCheckout(){
@@ -331,7 +331,7 @@ async function startCheckout(){
   payBtn.disabled=true;payBtn.textContent='redirecting to checkout...';
   if(typeof gtag==='function')gtag('event','begin_checkout',{plan:selectedPlan,product:'tattoo_compatibility'});
   try{
-    const res=await fetch(`${API_BASE}/api/create-checkout`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:selectedPlan,imageHash:'tattoo-compat'})});
+    sessionStorage.setItem('tc_plan',selectedPlan);const res=await fetch(`${API_BASE}/api/create-checkout`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({product:selectedPlan})});
     const data=await res.json();
     if(data.url){
       try{sessionStorage.setItem('tc_imgA',imageA);sessionStorage.setItem('tc_mimeA',mimeA);sessionStorage.setItem('tc_imgB',imageB);sessionStorage.setItem('tc_mimeB',mimeB)}catch(e){}
@@ -342,28 +342,28 @@ async function startCheckout(){
 
 async function handleReturn(){
   const params=new URLSearchParams(window.location.search);
-  const sessionId=params.get('session_id'),canceled=params.get('canceled');
+  const checkoutId=params.get('session'),canceled=params.get('canceled');
   if(canceled){showError('Payment was canceled. You can still try the free preview.');window.history.replaceState({},'',window.location.pathname);return}
-  if(!sessionId)return;
+  if(!checkoutId)return;
   window.history.replaceState({},'',window.location.pathname);
   const sA=sessionStorage.getItem('tc_imgA'),sB=sessionStorage.getItem('tc_imgB');
-  if(!sA||!sB){showError('Welcome back! Payment successful. Please re-upload both tattoo photos.');sessionStorage.setItem('paid_session_id',sessionId);return}
+  if(!sA||!sB){showError('Welcome back! Payment successful. Please re-upload both tattoo photos.');sessionStorage.setItem('paid_session_id',checkoutId);return}
   imageA=sA;mimeA=sessionStorage.getItem('tc_mimeA')||'image/jpeg';
   imageB=sB;mimeB=sessionStorage.getItem('tc_mimeB')||'image/jpeg';
   document.getElementById('step-upload').style.display='none';
   document.getElementById('loading').classList.add('visible');
   document.querySelector('#loading p').textContent='verifying payment & reading your ink together...';
   try{
-    const vRes=await fetch(`${API_BASE}/api/verify-payment`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId})});
+    const vRes=await fetch(`${API_BASE}/api/ls-verify?checkoutId=${encodeURIComponent(checkoutId)}`);
     const vData=await vRes.json();
-    if(!vData.paid)throw new Error('Payment not verified');
-    if(typeof gtag==='function')gtag('event','purchase',{plan:vData.mode,product:'tattoo_compatibility'});
+    if(!vData.paid||!vData.token)throw new Error('Payment not verified');
+    if(typeof gtag==='function')gtag('event','purchase',{plan:sessionStorage.getItem('tc_plan'),product:'tattoo_compatibility'});
     const rRes=await fetch(`${API_BASE}/api/tattoo-compatibility`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${vData.token}`},body:JSON.stringify({imageA_base64:imageA,imageA_mime:mimeA,imageB_base64:imageB,imageB_mime:mimeB})});
     const rData=await rRes.json();
     if(!rData.reading)throw new Error('Reading failed');
     document.getElementById('loading').classList.remove('visible');
     showPremiumResult(rData.reading);
-    ['tc_imgA','tc_mimeA','tc_imgB','tc_mimeB'].forEach(k=>sessionStorage.removeItem(k));
+    ['tc_imgA','tc_mimeA','tc_imgB','tc_mimeB','tc_plan'].forEach(k=>sessionStorage.removeItem(k));
   }catch(err){document.getElementById('loading').classList.remove('visible');showError('Issue generating reading. Please try again.');document.getElementById('step-upload').style.display='block'}
 }
 
@@ -380,7 +380,7 @@ function showPremiumResult(md){
 const origFree=startFreeReading;
 startFreeReading=function(){
   const pid=sessionStorage.getItem('paid_session_id');
-  if(pid&&imageA&&imageB){sessionStorage.removeItem('paid_session_id');sessionStorage.setItem('tc_imgA',imageA);sessionStorage.setItem('tc_mimeA',mimeA);sessionStorage.setItem('tc_imgB',imageB);sessionStorage.setItem('tc_mimeB',mimeB);const u=new URL(window.location);u.searchParams.set('session_id',pid);window.history.replaceState({},'',u);handleReturn();return}
+  if(pid&&imageA&&imageB){sessionStorage.removeItem('paid_session_id');sessionStorage.setItem('tc_imgA',imageA);sessionStorage.setItem('tc_mimeA',mimeA);sessionStorage.setItem('tc_imgB',imageB);sessionStorage.setItem('tc_mimeB',mimeB);const u=new URL(window.location);u.searchParams.set('session',pid);window.history.replaceState({},'',u);handleReturn();return}
   origFree();
 };
 
