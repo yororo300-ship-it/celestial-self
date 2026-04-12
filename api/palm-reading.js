@@ -39,14 +39,18 @@ If visible, analyze the fate line — career path, sense of purpose, pivotal lif
 ## The Mounts
 Read the prominent mounts — Venus (passion), Jupiter (ambition), Moon (imagination), etc.
 
+## Possibilities Ahead
+2-3 paragraphs describing directions this person may naturally lean into, based on what the lines reveal about their current tendencies. This is NOT a prediction or fortune-telling — it's a gentle mapping of openings and inclinations. Use tentative, non-deterministic language like "you may find yourself...", "there's an opening in...", "this hand suggests a pull toward...", "the shape of things points softly toward...". Never say "you will" or promise specific events. Frame this as possibilities the palm seems to invite, not a future that's already written. Open this section with a brief acknowledgment that what follows is about possibility, not prophecy.
+
 ## The Overall Pattern
 A synthesis — how all the lines work together to tell this person's unique story. End with something genuinely encouraging but not generic.
 
 Important rules:
-- Write 600-900 words total
+- Write 750-1100 words total
 - Be specific about what you observe — reference actual visual details
 - If the image is unclear, acknowledge it and do your best
 - Never claim medical, predictive, or absolute authority
+- In "Possibilities Ahead", stay in the register of possibility — no promises, no timelines, no guarantees
 - End with: "None of this is real. All of it is useful."
 - Format in Markdown`;
 
@@ -86,7 +90,7 @@ module.exports = async (req, res) => {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
+        max_tokens: 2500,
         system: SYSTEM_PROMPT,
         messages: [{
           role: 'user',
