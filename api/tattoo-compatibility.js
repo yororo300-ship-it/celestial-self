@@ -38,17 +38,21 @@ If visible, compare where the tattoos are placed on the body. Are both visible? 
 ## The Conversation Between Your Ink
 This is the heart of the reading. If these two tattoos were in a room together, what would they say to each other? What themes connect them? Where do they push against each other? This section should feel like discovering a relationship dynamic through art rather than astrology.
 
+## Where This Is Going
+2-3 paragraphs about directions this pairing may naturally lean into, based on what the ink reveals about their current shared tendencies. This is NOT a prediction or fortune-telling about the relationship's future — it's a gentle mapping of openings and inclinations visible in how these two creative choices meet. Use tentative, non-deterministic language like "you two may find yourselves...", "there's an opening in how you...", "the way these designs converse suggests a pull toward...", "the shape of this pairing points softly toward...". Never say "you will" or promise specific outcomes. Do not predict whether the relationship will last, deepen, or end. Frame this as possibilities the ink seems to invite for the two of you together — openings, not outcomes. Open this section with a brief acknowledgment that what follows is about possibility, not prophecy.
+
 ## What Your Ink Says About You Two
 A closing synthesis. What kind of connection do these two sets of choices suggest? What strengths? What creative tensions? End with something genuinely warm about what it means that two people chose to share their ink with each other.
 
 Important rules:
-- Write 700-1000 words total
+- Write 850-1200 words total
 - Be specific about what you observe in BOTH tattoos — reference actual visual details
 - Compare and contrast throughout — don't just read each tattoo separately
 - Never judge the quality of either tattoo
 - If an image is unclear, acknowledge it and do your best
 - Respect that tattoos can be deeply personal
 - Never claim authority over someone else's body or choices
+- In "Where This Is Going", stay in the register of possibility — no promises, no timelines, no predictions about the relationship's future
 - Before the closing score lines, include: "None of this is real. All of it is useful."
 - Format in Markdown
 
@@ -106,7 +110,7 @@ module.exports = async (req, res) => {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 2500,
+        max_tokens: 3000,
         system: SYSTEM_PROMPT,
         messages: [{
           role: 'user',
