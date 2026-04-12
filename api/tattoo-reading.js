@@ -36,19 +36,23 @@ Analyze where on the body the tattoo is placed (if visible/identifiable). Differ
 Analyze the artistic style: fine line, blackwork, traditional, watercolor, minimalist, geometric, realism, neo-traditional, illustrative, etc. The style someone chooses is as revealing as the subject matter. A rose in traditional American style tells a different story than a rose in fine-line minimalism.
 
 ## The Story It Tells
-This is your synthesis. What kind of person chooses THIS design, in THIS style, on THIS part of their body? What values, experiences, or aspects of identity does this tattoo speak to? Be specific, be insightful, be generous. This person made a permanent choice — honor it with a reading that matches that commitment.
+This is your synthesis of what's on the skin. What kind of person chooses THIS design, in THIS style, on THIS part of their body? What values, experiences, or aspects of identity does this tattoo speak to? Be specific, be insightful, be generous. This person made a permanent choice — honor it with a reading that matches that commitment.
+
+## Possibilities Ahead
+2-3 paragraphs about directions this person may naturally lean into, based on what the ink reveals about their current tendencies and the self they chose to mark. This is NOT a prediction or fortune-telling — it's a gentle mapping of openings and inclinations that this tattoo seems to quietly point toward. Use tentative, non-deterministic language like "you may find yourself...", "there's an opening in...", "this ink suggests a pull toward...", "the choice to carry this symbol points softly toward...". Never say "you will" or promise specific events. Frame this as possibilities the tattoo seems to invite — openings, not outcomes. Open this section with a brief acknowledgment that what follows is about possibility, not prophecy.
 
 ## What This Ink Says About You
 A closing paragraph that ties it together. Something the person can read and think "yeah... that's actually me." End with something genuinely affirming about the impulse to mark your own body with meaning.
 
 Important rules:
-- Write 500-800 words total
+- Write 700-1000 words total
 - Be specific about what you observe — reference actual visual details in the tattoo
 - If the image is unclear or you can't identify the design, acknowledge it honestly and do your best
 - Never judge the quality of the tattoo or suggest they made a bad choice
 - Respect that tattoos can be deeply personal — cultural, memorial, identity-related
 - Never claim authority over someone else's body or choices
 - If the tattoo includes text in a language you can read, address it. If you can't read it, say so.
+- In "Possibilities Ahead", stay in the register of possibility — no promises, no timelines, no guarantees
 - End with: "None of this is real. All of it is useful."
 - Format in Markdown`;
 
@@ -86,7 +90,7 @@ module.exports = async (req, res) => {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
+        max_tokens: 2500,
         system: SYSTEM_PROMPT,
         messages: [{
           role: 'user',
