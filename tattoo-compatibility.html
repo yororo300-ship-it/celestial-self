@@ -141,6 +141,23 @@ footer{text-align:center;padding:2rem 0;margin-top:2rem}
 footer p{font-size:.78rem;color:var(--text-faint)}
 footer a{color:var(--gold-dim);text-decoration:none;margin:0 .5rem}
 footer a:hover{color:var(--gold)}
+
+/* Compatibility Scores */
+.score-board{margin:1.5rem 0 2rem;padding:1.75rem;background:var(--bg2);border:1px solid rgba(201,168,76,.15);border-radius:16px;display:none}
+.score-board.visible{display:block;animation:fadeUp .6s ease-out}
+.score-board-title{font-family:var(--font-display);font-size:1rem;color:var(--gold-light);font-weight:600;margin-bottom:1.25rem;text-align:center;letter-spacing:.05em}
+.score-overall{text-align:center;margin-bottom:1.5rem;padding-bottom:1.25rem;border-bottom:1px solid var(--bg4)}
+.score-overall-label{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-faint);margin-bottom:.3rem}
+.score-overall-value{font-family:var(--font-display);font-size:2.8rem;font-weight:700;color:var(--gold);line-height:1}
+.score-overall-value small{font-size:1rem;color:var(--text-faint);font-weight:300;margin-left:.15rem}
+.score-row{margin-bottom:1rem}
+.score-row:last-child{margin-bottom:0}
+.score-row-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.4rem;font-size:.82rem}
+.score-row-label{color:var(--text-dim);letter-spacing:.03em;text-transform:lowercase}
+.score-row-value{font-family:var(--font-display);color:var(--gold-light);font-weight:600;font-size:.95rem}
+.score-bar-track{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;position:relative}
+.score-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold-dim),var(--gold),var(--gold-light));border-radius:3px;transition:width 1.4s cubic-bezier(.22,1,.36,1);box-shadow:0 0 12px rgba(201,168,76,.25)}
+
 </style>
 </head>
 <body>
@@ -236,6 +253,14 @@ footer a:hover{color:var(--gold)}
 
   <div class="premium-result" id="premiumResult">
     <span class="result-badge badge-premium">detailed ink compatibility</span>
+        <div class="score-board" id="scoreBoard">
+          <div class="score-board-title">Compatibility Breakdown</div>
+          <div class="score-overall">
+            <div class="score-overall-label">overall</div>
+            <div class="score-overall-value"><span id="scoreOverall">—</span><small>/100</small></div>
+          </div>
+          <div id="scoreRows"></div>
+        </div>
     <div class="premium-content" id="premiumContent"></div>
     <div class="share-row">
       <a class="share-btn" id="shareX" href="#" target="_blank" rel="noopener">&#120143; post</a>
@@ -367,8 +392,65 @@ async function handleReturn(){
   }catch(err){document.getElementById('loading').classList.remove('visible');showError('Issue generating reading. Please try again.');document.getElementById('step-upload').style.display='block'}
 }
 
+// ─── Compatibility Scores ───
+const SCORE_LABELS = {
+  design: 'design',
+  emotional_resonance: 'emotional resonance',
+  communication: 'communication',
+  shared_values: 'shared values'
+};
+const SCORE_ORDER = ['design','emotional_resonance','communication','shared_values'];
+
+function extractScores(md){
+  const scores = {};
+  const re = /^SCORE:(\w+):(\d+)\s*$/gm;
+  let m;
+  while((m = re.exec(md)) !== null){
+    const k = m[1];
+    const v = Math.max(0, Math.min(100, parseInt(m[2],10)));
+    if(!isNaN(v)) scores[k] = v;
+  }
+  const cleaned = md.replace(/^SCORE:\w+:\d+\s*$/gm, '').replace(/\n{3,}/g,'\n\n').trim();
+  return { scores, cleaned };
+}
+
+function renderScores(scores){
+  if(!scores || Object.keys(scores).length === 0) return;
+  const board = document.getElementById('scoreBoard');
+  const overallEl = document.getElementById('scoreOverall');
+  const rowsEl = document.getElementById('scoreRows');
+  if(!board || !overallEl || !rowsEl) return;
+
+  overallEl.textContent = scores.overall != null ? scores.overall : '—';
+
+  rowsEl.innerHTML = '';
+  SCORE_ORDER.forEach(key => {
+    if(scores[key] == null) return;
+    const row = document.createElement('div');
+    row.className = 'score-row';
+    row.innerHTML = `
+      <div class="score-row-header">
+        <span class="score-row-label">${SCORE_LABELS[key]}</span>
+        <span class="score-row-value">${scores[key]}</span>
+      </div>
+      <div class="score-bar-track"><div class="score-bar-fill" data-target="${scores[key]}"></div></div>`;
+    rowsEl.appendChild(row);
+  });
+
+  board.classList.add('visible');
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      board.querySelectorAll('.score-bar-fill').forEach(el => {
+        el.style.width = el.dataset.target + '%';
+      });
+    }, 150);
+  });
+}
+
 function showPremiumResult(md){
-  document.getElementById('premiumContent').innerHTML=typeof marked!=='undefined'?marked.parse(md):md.replace(/\n/g,'<br>');
+  const {scores,cleaned}=extractScores(md);
+  renderScores(scores);
+  document.getElementById('premiumContent').innerHTML=typeof marked!=='undefined'?marked.parse(cleaned):cleaned.replace(/\n/g,'<br>');
   document.getElementById('premiumResult').classList.add('visible');
   document.getElementById('resetWrap').style.display='block';
   const t=encodeURIComponent('compared our tattoos with AI 🔮🔮 https://celestial-self.vercel.app/tattoo-compatibility.html');
@@ -399,7 +481,7 @@ function resetAll(){
     z.querySelector('.label').textContent='upload tattoo';z.querySelector('.hint').textContent='tap or drag';
     document.getElementById('file'+p).value='';
   });
-  ['freeResult','paywall','premiumResult'].forEach(id=>document.getElementById(id).classList.remove('visible'));
+  ['freeResult','paywall','premiumResult','scoreBoard'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('visible')});
   document.getElementById('loading').classList.remove('visible');
   document.getElementById('resetWrap').style.display='none';
   document.getElementById('cardOnetime').classList.remove('selected');

@@ -175,6 +175,23 @@ footer a:hover{color:var(--gold)}
 .cross-link p{font-size:.85rem;color:var(--text-dim);margin-bottom:.5rem}
 .cross-link a{color:var(--gold);text-decoration:none;font-weight:500;font-size:.9rem}
 .cross-link a:hover{color:var(--gold-light)}
+
+/* Compatibility Scores */
+.score-board{margin:1.5rem 0 2rem;padding:1.75rem;background:var(--bg2);border:1px solid rgba(201,168,76,.15);border-radius:16px;display:none}
+.score-board.visible{display:block;animation:fadeUp .6s ease-out}
+.score-board-title{font-family:var(--font-display);font-size:1rem;color:var(--gold-light);font-weight:600;margin-bottom:1.25rem;text-align:center;letter-spacing:.05em}
+.score-overall{text-align:center;margin-bottom:1.5rem;padding-bottom:1.25rem;border-bottom:1px solid var(--bg4)}
+.score-overall-label{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-faint);margin-bottom:.3rem}
+.score-overall-value{font-family:var(--font-display);font-size:2.8rem;font-weight:700;color:var(--gold);line-height:1}
+.score-overall-value small{font-size:1rem;color:var(--text-faint);font-weight:300;margin-left:.15rem}
+.score-row{margin-bottom:1rem}
+.score-row:last-child{margin-bottom:0}
+.score-row-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.4rem;font-size:.82rem}
+.score-row-label{color:var(--text-dim);letter-spacing:.03em;text-transform:lowercase}
+.score-row-value{font-family:var(--font-display);color:var(--gold-light);font-weight:600;font-size:.95rem}
+.score-bar-track{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;position:relative}
+.score-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold-dim),var(--gold),var(--gold-light));border-radius:3px;transition:width 1.4s cubic-bezier(.22,1,.36,1);box-shadow:0 0 12px rgba(201,168,76,.25)}
+
 </style>
 </head>
 <body>
@@ -283,6 +300,14 @@ footer a:hover{color:var(--gold)}
   <!-- Premium result -->
   <div class="premium-result" id="premiumResult">
     <span class="result-badge badge-premium">detailed compatibility reading</span>
+        <div class="score-board" id="scoreBoard">
+          <div class="score-board-title">Compatibility Breakdown</div>
+          <div class="score-overall">
+            <div class="score-overall-label">overall</div>
+            <div class="score-overall-value"><span id="scoreOverall">—</span><small>/100</small></div>
+          </div>
+          <div id="scoreRows"></div>
+        </div>
     <div class="premium-content" id="premiumContent"></div>
 
     <div class="share-row">
@@ -511,8 +536,65 @@ async function handleReturn() {
   }
 }
 
+// ─── Compatibility Scores ───
+const SCORE_LABELS = {
+  design: 'design',
+  emotional_resonance: 'emotional resonance',
+  communication: 'communication',
+  shared_values: 'shared values'
+};
+const SCORE_ORDER = ['design','emotional_resonance','communication','shared_values'];
+
+function extractScores(md){
+  const scores = {};
+  const re = /^SCORE:(\w+):(\d+)\s*$/gm;
+  let m;
+  while((m = re.exec(md)) !== null){
+    const k = m[1];
+    const v = Math.max(0, Math.min(100, parseInt(m[2],10)));
+    if(!isNaN(v)) scores[k] = v;
+  }
+  const cleaned = md.replace(/^SCORE:\w+:\d+\s*$/gm, '').replace(/\n{3,}/g,'\n\n').trim();
+  return { scores, cleaned };
+}
+
+function renderScores(scores){
+  if(!scores || Object.keys(scores).length === 0) return;
+  const board = document.getElementById('scoreBoard');
+  const overallEl = document.getElementById('scoreOverall');
+  const rowsEl = document.getElementById('scoreRows');
+  if(!board || !overallEl || !rowsEl) return;
+
+  overallEl.textContent = scores.overall != null ? scores.overall : '—';
+
+  rowsEl.innerHTML = '';
+  SCORE_ORDER.forEach(key => {
+    if(scores[key] == null) return;
+    const row = document.createElement('div');
+    row.className = 'score-row';
+    row.innerHTML = `
+      <div class="score-row-header">
+        <span class="score-row-label">${SCORE_LABELS[key]}</span>
+        <span class="score-row-value">${scores[key]}</span>
+      </div>
+      <div class="score-bar-track"><div class="score-bar-fill" data-target="${scores[key]}"></div></div>`;
+    rowsEl.appendChild(row);
+  });
+
+  board.classList.add('visible');
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      board.querySelectorAll('.score-bar-fill').forEach(el => {
+        el.style.width = el.dataset.target + '%';
+      });
+    }, 150);
+  });
+}
+
 function showPremiumResult(md) {
-  const html = typeof marked !== 'undefined' ? marked.parse(md) : md.replace(/\n/g, '<br>');
+  const { scores, cleaned } = extractScores(md);
+  renderScores(scores);
+  const html = typeof marked !== 'undefined' ? marked.parse(cleaned) : cleaned.replace(/\n/g, '<br>');
   document.getElementById('premiumContent').innerHTML = html;
   document.getElementById('premiumResult').classList.add('visible');
   document.getElementById('resetWrap').style.display = 'block';
@@ -572,7 +654,7 @@ function resetAll() {
     document.getElementById('file'+p).value = '';
   });
 
-  ['freeResult','paywall','premiumResult'].forEach(id => document.getElementById(id).classList.remove('visible'));
+  ['freeResult','paywall','premiumResult','scoreBoard'].forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('visible'); });
   document.getElementById('loading').classList.remove('visible');
   document.getElementById('resetWrap').style.display = 'none';
   document.getElementById('cardOnetime').classList.remove('selected');
