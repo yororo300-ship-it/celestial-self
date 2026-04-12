@@ -49,8 +49,28 @@ Important rules:
 - If an image is unclear, acknowledge it and do your best
 - Respect that tattoos can be deeply personal
 - Never claim authority over someone else's body or choices
-- End with: "None of this is real. All of it is useful."
-- Format in Markdown`;
+- Before the closing score lines, include: "None of this is real. All of it is useful."
+- Format in Markdown
+
+## Compatibility Scores (REQUIRED)
+After the full reading, you MUST output exactly 5 score lines in this EXACT format, one per line, with no extra text, no markdown, no bullets, no headings:
+
+SCORE:overall:<0-100>
+SCORE:design:<0-100>
+SCORE:emotional_resonance:<0-100>
+SCORE:communication:<0-100>
+SCORE:shared_values:<0-100>
+
+Scoring guide:
+- overall: holistic compatibility based on everything observed across both tattoos
+- design: how the two tattoo designs visually and symbolically complement each other
+- emotional_resonance: what each tattoo reveals about emotional depth and how those emotional languages meet
+- communication: what the style and placement choices say about how these two people express and share themselves
+- shared_values: the underlying themes, priorities, and life philosophies visible in the ink
+
+Scores should be thoughtful, not inflated. Most healthy compatibilities land 65-85. Reserve 90+ for genuinely rare alignment. Never output below 40. Vary the scores meaningfully — do not output the same number for all five.
+
+Output the 5 SCORE lines as the very last thing in your response, after the "None of this is real. All of it is useful." line.`;
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', 'https://celestial-self.vercel.app');
