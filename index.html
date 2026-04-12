@@ -15,13 +15,61 @@ gtag('config', 'G-8E1NGR4VSS');
 <meta name="description" content="Inclusive divination for every identity. Free numerology, tarot, and astrology tools — no gendered scripts, no heteronormative assumptions. Just you.">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#09090F;--bg-warm:#12121A;--bg-card:#14141E;--gold:#C9A84C;--gold-light:#E0C872;--gold-pale:#3D3520;--gold-wash:rgba(201,168,76,0.08);--gold-border:rgba(201,168,76,0.2);--text-dark:#F0EBE1;--text-body:#B8B0A4;--text-light:#8A8279;--text-faint:#5C5750;--border:#252530;--border-light:#1E1E28;--accent-green:#50A870;--accent-green-wash:rgba(80,168,112,0.08);--accent-green-border:rgba(80,168,112,0.2);--premium-wash:rgba(201,168,76,0.06);--premium-border:rgba(201,168,76,0.18)}
+:root {
+  --bg: #0A0517;
+  --bg-warm: #140824;
+  --bg-card: #1F142F;
+  --bg-card-hover: #2A1D3E;
+  
+  --gold: #C9A84C;
+  --gold-light: #E8C872;
+  --gold-pale: #4A3A1A;
+  --gold-wash: rgba(201,168,76,0.08);
+  
+  --lavender: #B89AE8;
+  --lavender-light: #D4C2F0;
+  --lavender-pale: #3A2C4E;
+  --lavender-wash: rgba(184,154,232,0.08);
+  
+  --pink: #E8A0C8;
+  --pink-light: #F4C2DC;
+  --pink-pale: #4A2840;
+  --pink-wash: rgba(232,160,200,0.08);
+  
+  --text-dark: #F4EBFB;
+  --text-body: #C8B8D8;
+  --text-light: #9E8CB5;
+  --text-faint: #6E5A82;
+  
+  --border: #3A2C4E;
+  --border-light: #2A1D3E;
+  
+  --accent-green: #7FD4A8;
+  --accent-green-wash: rgba(127,212,168,0.08);
+  --accent-green-border: rgba(127,212,168,0.25);
+}
+.tool-card:nth-child(1) .tool-icon { border-color: var(--lavender); background: var(--lavender-wash); }
+.tool-card:nth-child(2) .tool-icon { border-color: var(--pink); background: var(--pink-wash); }
+.tool-card:nth-child(3) .tool-icon { border-color: var(--gold); background: var(--gold-wash); }
+.tool-card:nth-child(4) .tool-icon { border-color: var(--lavender); background: var(--lavender-wash); }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--text-body);min-height:100vh;-webkit-font-smoothing:antialiased}
+body {
+  font-family: 'Jost', sans-serif;
+  background: 
+    radial-gradient(ellipse at 30% 20%, rgba(139,95,191,0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 70%, rgba(232,160,200,0.08) 0%, transparent 50%),
+    #0A0517;
+  color: var(--text-body);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
 body::before{content:'';position:fixed;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 5%,var(--gold-pale) 30%,var(--gold) 50%,var(--gold-pale) 70%,transparent 95%);z-index:100}
 .sky-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .container{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:80px 24px 80px}
-.site-header{text-align:center;margin-bottom:56px}
+.site-header h1 em { 
+  font-style: italic; 
+  color: var(--pink);
+}
 .logo-mark{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:28px;opacity:0;animation:softIn 1s ease forwards}
 .logo-mark .line{width:56px;height:1px;background:var(--gold-pale)}
 .logo-mark .mark{width:40px;height:40px;border:1.5px solid var(--gold-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--gold-light)}
