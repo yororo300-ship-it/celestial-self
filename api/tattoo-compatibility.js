@@ -57,7 +57,30 @@ Scoring guide:
 
 Scores should be thoughtful, not inflated. Most healthy compatibilities land 65-85. Reserve 90+ for genuinely rare alignment. Never output below 40. Vary the scores meaningfully — do not output the same number for all five.
 
-Output the 5 SCORE lines as the very last thing in your response, after the "None of this is real. All of it is useful." line.`;
+Output the 5 SCORE lines after the "None of this is real. All of it is useful." line.
+
+## Shareable Headline (REQUIRED)
+After the 5 SCORE lines, output exactly one QUOTE line in this EXACT format on its own line:
+
+QUOTE:<short catchy headline, 8-15 words, that captures the vibe of this specific pairing>
+
+The headline should:
+- Feel like a tagline for THIS specific pairing — pull from what you observed about how their ink interacts
+- Be punchy, poetic, and shareable — think magazine headline or gallery title, not full sentence
+- Pair naturally with the overall compatibility score (a 90+ pairing gets a different headline than a 65)
+- Stand alone without context — no "these two tattoos..." or "this pairing shows..."
+- Be in second/third person or aphoristic — never first person
+- Avoid hashtags, emojis, formatting characters, or quotation marks
+- Honor that both people chose to mark themselves — the headline should feel worthy of that commitment
+
+Good examples of tone:
+QUOTE:Two permanent choices that happened to choose each other.
+QUOTE:Different languages, same alphabet of meaning.
+QUOTE:Ink that reads like matched handwriting from different hands.
+QUOTE:Separate decisions that somehow rhyme.
+QUOTE:Two signatures that shouldn't fit, and absolutely do.
+
+Output the QUOTE line as the very last line in your response, after all 5 SCORE lines.`;
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', 'https://celestial-self.vercel.app');
