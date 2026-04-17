@@ -36,8 +36,17 @@ Important rules:
 - Never claim authority over someone else's body or choices
 - If the tattoo includes text in a language you can read, address it. If you can't read it, say so.
 - In "Possibilities Ahead", stay in the register of possibility — no promises, no timelines, no guarantees
-- End with: "None of this is real. All of it is useful."
-- Format in Markdown`;
+- Before the final QUOTE line, include: "None of this is real. All of it is useful."
+- Format in Markdown
+
+## Shareable Quote (REQUIRED)
+After the full reading, output exactly one QUOTE line in this EXACT format on its own line:
+
+QUOTE:<one striking sentence, 15-25 words, that captures the essence of this reading>
+
+The quote should:
+- Be specific to this tattoo and this person — pull from what you actually observed in the ink
+- Feel like something they'd want to screenshot and share — insightful, a little poetic, the kind of
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', 'https://celestial-self.vercel.app');
