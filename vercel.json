@@ -1,9 +1,15 @@
 {
   "functions": {
-    "api/webhook.js": {
-      "maxDuration": 10
-    },
     "api/palm-reading.js": {
+      "maxDuration": 30
+    },
+    "api/palm-compatibility.js": {
+      "maxDuration": 30
+    },
+    "api/tattoo-reading.js": {
+      "maxDuration": 30
+    },
+    "api/tattoo-compatibility.js": {
       "maxDuration": 30
     }
   }
