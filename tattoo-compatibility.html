@@ -157,7 +157,8 @@ footer a:hover{color:var(--gold)}
 .score-row-value{font-family:var(--font-display);color:var(--gold-light);font-weight:600;font-size:.95rem}
 .score-bar-track{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;position:relative}
 .score-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold-dim),var(--gold),var(--gold-light));border-radius:3px;transition:width 1.4s cubic-bezier(.22,1,.36,1);box-shadow:0 0 12px rgba(201,168,76,.25)}
-
+.paywall{display:none!important}
+  
 </style>
 </head>
 <body>
@@ -327,19 +328,48 @@ const FREE_TEXTS=[
   "There's something here that goes beyond aesthetics. Both of these tattoos feel chosen rather than collected, which suggests two people who treat their bodies as canvases for meaning, not just decoration. The full reading will dig into exactly what that shared impulse reveals about your connection."
 ];
 
-function startFreeReading(){
-  if(!imageA||!imageB)return;
-  if(typeof gtag==='function')gtag('event','tattoo_compatibility_free');
-  document.getElementById('step-upload').style.display='none';
-  document.getElementById('loading').classList.add('visible');hideError();
-  setTimeout(()=>{
+async function startFreeReading() {
+  if (!imageA || !imageB) return;
+
+  if (localStorage.getItem('cs_used_tattoo_compat')) {
+    showError('You\'ve already used your free tattoo compatibility reading. Thank you for trying Celestial Self! Unlimited access coming soon for supporters.');
+    return;
+  }
+
+  if (typeof gtag === 'function') gtag('event', 'tattoo_compatibility_start');
+
+  document.getElementById('step-upload').style.display = 'none';
+  document.getElementById('loading').classList.add('visible');
+  document.querySelector('#loading p').textContent = 'comparing your ink...';
+  hideError();
+
+  try {
+    const res = await fetch(`${API_BASE}/api/tattoo-compatibility`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        imageA_base64: imageA, imageA_mime: mimeA,
+        imageB_base64: imageB, imageB_mime: mimeB
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok || !data.reading) {
+      throw new Error(data.error || 'Reading generation failed');
+    }
+
+    localStorage.setItem('cs_used_tattoo_compat', Date.now().toString());
+
     document.getElementById('loading').classList.remove('visible');
-    document.getElementById('freeText').textContent=FREE_TEXTS.join('\n\n');
-    document.getElementById('freeResult').classList.add('visible');
-    document.getElementById('paywall').classList.add('visible');
-    document.getElementById('resetWrap').style.display='block';
-    try{(adsbygoogle=window.adsbygoogle||[]).push({})}catch(e){}
-  },2500);
+    showPremiumResult(data.reading);
+
+    if (typeof gtag === 'function') gtag('event', 'tattoo_compatibility_complete');
+  } catch (err) {
+    document.getElementById('loading').classList.remove('visible');
+    document.getElementById('step-upload').style.display = 'block';
+    showError('Something went wrong generating your reading. Please try again in a moment.');
+    console.error('Reading error:', err);
+  }
 }
 
 function selectPlan(plan){
@@ -459,13 +489,6 @@ function showPremiumResult(md){
   document.getElementById('premiumResult').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-const origFree=startFreeReading;
-startFreeReading=function(){
-  const pid=sessionStorage.getItem('paid_session_id');
-  if(pid&&imageA&&imageB){sessionStorage.removeItem('paid_session_id');sessionStorage.setItem('tc_imgA',imageA);sessionStorage.setItem('tc_mimeA',mimeA);sessionStorage.setItem('tc_imgB',imageB);sessionStorage.setItem('tc_mimeB',mimeB);const u=new URL(window.location);u.searchParams.set('session',pid);window.history.replaceState({},'',u);handleReturn();return}
-  origFree();
-};
-
 function showError(m){const e=document.getElementById('errorMsg');e.textContent=m;e.classList.add('visible')}
 function hideError(){document.getElementById('errorMsg').classList.remove('visible')}
 function copyLink(){navigator.clipboard.writeText('https://celestial-self.vercel.app/tattoo-compatibility.html').then(()=>alert('Link copied!')).catch(()=>{})}
@@ -491,7 +514,6 @@ function resetAll(){
   hideError();window.scrollTo({top:0,behavior:'smooth'});
 }
 
-handleReturn();
 </script>
 </body>
 </html>
