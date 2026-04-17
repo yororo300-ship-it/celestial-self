@@ -192,6 +192,7 @@ footer a:hover{color:var(--gold)}
 .score-bar-track{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;position:relative}
 .score-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold-dim),var(--gold),var(--gold-light));border-radius:3px;transition:width 1.4s cubic-bezier(.22,1,.36,1);box-shadow:0 0 12px rgba(201,168,76,.25)}
 
+.paywall{display:none!important}  
 </style>
 </head>
 <body>
@@ -404,23 +405,48 @@ const FREE_TEXTS = [
   "There's a natural balance visible in these two hands that suggests a pairing where differences become strengths rather than friction points. The full reading will reveal how each line interacts — and where the real magic between these two palms lives."
 ];
 
-function startFreeReading() {
+async function startFreeReading() {
   if (!imageA || !imageB) return;
 
-  if (typeof gtag === 'function') gtag('event', 'palm_compatibility_free');
+  if (localStorage.getItem('cs_used_palm_compat')) {
+    showError('You\'ve already used your free palm compatibility reading. Thank you for trying Celestial Self! Unlimited access coming soon for supporters.');
+    return;
+  }
+
+  if (typeof gtag === 'function') gtag('event', 'palm_compatibility_start');
 
   document.getElementById('step-upload').style.display = 'none';
   document.getElementById('loading').classList.add('visible');
+  document.querySelector('#loading p').textContent = 'comparing your palms...';
   hideError();
 
-  setTimeout(() => {
+  try {
+    const res = await fetch(`${API_BASE}/api/palm-compatibility`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        imageA_base64: imageA, imageA_mime: mimeA,
+        imageB_base64: imageB, imageB_mime: mimeB
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok || !data.reading) {
+      throw new Error(data.error || 'Reading generation failed');
+    }
+
+    localStorage.setItem('cs_used_palm_compat', Date.now().toString());
+
     document.getElementById('loading').classList.remove('visible');
-    document.getElementById('freeText').textContent = FREE_TEXTS.join('\n\n');
-    document.getElementById('freeResult').classList.add('visible');
-    document.getElementById('paywall').classList.add('visible');
-    document.getElementById('resetWrap').style.display = 'block';
-    try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
-  }, 2500);
+    showPremiumResult(data.reading);
+
+    if (typeof gtag === 'function') gtag('event', 'palm_compatibility_complete');
+  } catch (err) {
+    document.getElementById('loading').classList.remove('visible');
+    document.getElementById('step-upload').style.display = 'block';
+    showError('Something went wrong generating your reading. Please try again in a moment.');
+    console.error('Reading error:', err);
+  }
 }
 
 // ─── Plan / Checkout ───
@@ -606,25 +632,6 @@ function showPremiumResult(md) {
   document.getElementById('premiumResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// ─── Re-upload after payment ───
-const origStartFree = startFreeReading;
-startFreeReading = function() {
-  const paidId = sessionStorage.getItem('paid_session_id');
-  if (paidId && imageA && imageB) {
-    sessionStorage.removeItem('paid_session_id');
-    sessionStorage.setItem('compat_imageA', imageA);
-    sessionStorage.setItem('compat_mimeA', mimeA);
-    sessionStorage.setItem('compat_imageB', imageB);
-    sessionStorage.setItem('compat_mimeB', mimeB);
-    const u = new URL(window.location);
-    u.searchParams.set('session', paidId);
-    window.history.replaceState({}, '', u);
-    handleReturn();
-    return;
-  }
-  origStartFree();
-};
-
 // ─── Utils ───
 
 function showError(msg) { const el = document.getElementById('errorMsg'); el.textContent = msg; el.classList.add('visible'); }
@@ -665,7 +672,6 @@ function resetAll() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-handleReturn();
 </script>
 
 </body>
