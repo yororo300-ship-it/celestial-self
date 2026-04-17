@@ -114,6 +114,10 @@ footer{text-align:center;padding:2rem 0;margin-top:2rem}
 footer p{font-size:.78rem;color:var(--text-faint)}
 footer a{color:var(--gold-dim);text-decoration:none;margin:0 .5rem}
 footer a:hover{color:var(--gold)}
+.download-btn{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;max-width:420px;margin:1.5rem auto .5rem;font-family:var(--font-body);font-weight:500;font-size:1rem;letter-spacing:.08em;padding:1rem 1.5rem;border:1px solid var(--gold);border-radius:50px;background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.05));color:var(--gold);cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.download-btn:hover{background:var(--gold);color:var(--bg);transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,.2)}
+.download-btn:disabled{opacity:.5;cursor:not-allowed}
+.download-btn span{position:relative;z-index:1}
 .error-msg{background:rgba(199,80,80,.1);border:1px solid rgba(199,80,80,.25);border-radius:12px;padding:1rem 1.25rem;color:var(--accent-red);font-size:.9rem;margin:1rem 0;display:none}
 .error-msg.visible{display:block}
 .paywall{display:none!important}
@@ -203,8 +207,10 @@ footer a:hover{color:var(--gold)}
   <div class="premium-result" id="premiumResult">
     <span class="result-badge badge-premium">detailed reading</span>
     <div class="premium-content" id="premiumContent"></div>
-  <div class="share-row">
-      <button class="share-btn" onclick="downloadShareImage()">&#128247; download image</button>
+<button class="download-btn" onclick="downloadShareImage()">
+      <span>&#128247; download shareable image</span>
+    </button>
+    <div class="share-row">
       <a class="share-btn" id="shareX" href="#" target="_blank" rel="noopener">&#120143; post</a>
       <a class="share-btn" id="shareFB" href="#" target="_blank" rel="noopener">facebook</a>
       <button class="share-btn" onclick="copyLink()">copy link</button>
@@ -475,7 +481,6 @@ function wrapText(ctx, text, maxWidth) {
 }
 
 async function generateShareImage() {
-  // Wait for fonts to be ready
   if (document.fonts && document.fonts.ready) {
     await document.fonts.ready;
   }
@@ -485,134 +490,256 @@ async function generateShareImage() {
   canvas.height = 1080;
   const ctx = canvas.getContext('2d');
 
-  // Background gradient: black → deep purple/navy
+  // ─── Background gradient ───
   const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1080);
   bgGrad.addColorStop(0, '#09090F');
-  bgGrad.addColorStop(0.55, '#150F24');
-  bgGrad.addColorStop(1, '#1A1030');
+  bgGrad.addColorStop(0.5, '#150F28');
+  bgGrad.addColorStop(1, '#1A1038');
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, 1080, 1080);
 
-  // Scattered stars (deterministic-ish seeded pattern for consistency)
+  // ─── Scattered stars (outside card area) ───
   const stars = [
-    // {x, y, radius, color alpha}
-    [80, 120, 1.5, 0.9], [180, 60, 1, 0.7], [280, 180, 1.2, 0.8],
-    [380, 90, 0.8, 0.6], [480, 160, 1.5, 0.9], [580, 50, 1, 0.7],
-    [680, 200, 1.3, 0.85], [780, 110, 0.9, 0.65], [880, 180, 1.2, 0.8],
-    [980, 80, 1.4, 0.9], [1030, 160, 0.8, 0.55],
-    [60, 280, 1, 0.7], [150, 350, 1.3, 0.85], [250, 290, 0.9, 0.6],
-    [340, 380, 1.1, 0.75], [830, 280, 1.2, 0.8], [920, 360, 1, 0.7],
-    [1010, 310, 1.4, 0.88], [40, 480, 1.2, 0.78], [105, 560, 1, 0.7],
-    [960, 480, 1.1, 0.75], [1020, 550, 1.3, 0.85],
-    [50, 700, 0.9, 0.6], [120, 790, 1.3, 0.85], [220, 860, 1, 0.7],
-    [310, 790, 1.2, 0.8], [410, 870, 0.9, 0.6], [540, 900, 1.4, 0.88],
-    [650, 860, 1, 0.7], [750, 910, 1.2, 0.8], [850, 870, 0.9, 0.65],
-    [950, 920, 1.3, 0.85], [1020, 820, 1.1, 0.75], [60, 940, 1, 0.7],
-    [220, 970, 1.2, 0.8], [380, 950, 0.9, 0.6], [700, 980, 1.1, 0.75],
-    // Gold stars (sparse)
-    [150, 220, 2, 0.85], [720, 320, 1.8, 0.8], [180, 680, 2.2, 0.9],
-    [870, 680, 1.9, 0.82], [420, 160, 1.7, 0.78]
+    [60, 80, 1.2, 0.8], [180, 50, 1, 0.7], [280, 120, 1.4, 0.85],
+    [400, 70, 0.9, 0.6], [520, 110, 1.2, 0.8], [640, 60, 1, 0.7],
+    [760, 120, 1.3, 0.85], [880, 80, 1, 0.7], [1000, 110, 1.2, 0.8],
+    [40, 180, 1, 0.7], [100, 240, 1.3, 0.85], [60, 340, 0.9, 0.6],
+    [120, 420, 1.2, 0.8], [40, 520, 1, 0.7], [80, 620, 1.4, 0.85],
+    [50, 720, 1, 0.7], [100, 820, 1.2, 0.8], [40, 900, 0.9, 0.6],
+    [1020, 180, 1.2, 0.8], [980, 260, 1, 0.7], [1040, 360, 1.3, 0.85],
+    [990, 440, 0.9, 0.6], [1030, 540, 1.2, 0.8], [980, 640, 1.4, 0.85],
+    [1030, 740, 1, 0.7], [990, 830, 1.2, 0.8], [1040, 920, 0.9, 0.6],
+    [60, 980, 1.2, 0.8], [180, 1030, 1, 0.7], [320, 1000, 1.3, 0.85],
+    [480, 1040, 0.9, 0.6], [620, 1000, 1.2, 0.8], [760, 1030, 1, 0.7],
+    [900, 1010, 1.3, 0.85], [1020, 1020, 1.1, 0.75],
+    // Gold stars (sparse, special)
+    [150, 160, 2, 0.9], [930, 150, 1.8, 0.85], [140, 920, 2.2, 0.9],
+    [940, 940, 1.9, 0.85]
   ];
-
   stars.forEach(([x, y, r, a], i) => {
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
-    // Last 5 are gold
-    if (i >= stars.length - 5) {
-      ctx.fillStyle = `rgba(201, 168, 76, ${a})`;
-    } else {
-      ctx.fillStyle = `rgba(255, 255, 255, ${a})`;
-    }
+    ctx.fillStyle = i >= stars.length - 4
+      ? `rgba(201, 168, 76, ${a})`
+      : `rgba(255, 255, 255, ${a})`;
     ctx.fill();
   });
 
-  // Sparkle accents (✦ shape via simple 4-point)
+  // Sparkle ✦
   function drawSparkle(cx, cy, size, color) {
     ctx.strokeStyle = color;
-    ctx.lineWidth = 1.2;
+    ctx.lineWidth = 1.5;
+    ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(cx - size, cy); ctx.lineTo(cx + size, cy);
     ctx.moveTo(cx, cy - size); ctx.lineTo(cx, cy + size);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(cx, cy, size * 0.2, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+
+  // ─── Top brand ───
+  ctx.fillStyle = 'rgba(201, 168, 76, 0.9)';
+  ctx.font = '300 20px Jost, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  drawSparkle(420, 75, 7, 'rgba(201, 168, 76, 0.85)');
+  drawSparkle(660, 75, 7, 'rgba(201, 168, 76, 0.85)');
+  ctx.fillText('CELESTIAL SELF', 540, 75);
+
+  // ─── Tarot card frame (600x800, centered) ───
+  const cardX = 240, cardY = 120, cardW = 600, cardH = 800;
+  const cardGrad = ctx.createLinearGradient(cardX, cardY, cardX, cardY + cardH);
+  cardGrad.addColorStop(0, 'rgba(15, 10, 30, 0.7)');
+  cardGrad.addColorStop(0.5, 'rgba(25, 15, 50, 0.6)');
+  cardGrad.addColorStop(1, 'rgba(15, 10, 30, 0.7)');
+  ctx.fillStyle = cardGrad;
+  ctx.fillRect(cardX, cardY, cardW, cardH);
+
+  // Card border (double line)
+  ctx.strokeStyle = 'rgba(201, 168, 76, 0.7)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(cardX, cardY, cardW, cardH);
+  ctx.strokeStyle = 'rgba(201, 168, 76, 0.35)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(cardX + 12, cardY + 12, cardW - 24, cardH - 24);
+
+  // Corner ornaments ◈ (four corners of card)
+  function drawDiamond(cx, cy, size, color) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - size);
+    ctx.lineTo(cx + size, cy);
+    ctx.lineTo(cx, cy + size);
+    ctx.lineTo(cx - size, cy);
+    ctx.closePath();
     ctx.stroke();
     ctx.beginPath();
     ctx.arc(cx, cy, size * 0.25, 0, Math.PI * 2);
     ctx.fillStyle = color;
     ctx.fill();
   }
-  drawSparkle(120, 180, 8, 'rgba(224, 200, 114, 0.9)');
-  drawSparkle(950, 230, 7, 'rgba(224, 200, 114, 0.85)');
-  drawSparkle(220, 840, 9, 'rgba(224, 200, 114, 0.9)');
-  drawSparkle(880, 820, 7, 'rgba(224, 200, 114, 0.85)');
+  drawDiamond(cardX + 30, cardY + 30, 8, 'rgba(201, 168, 76, 0.8)');
+  drawDiamond(cardX + cardW - 30, cardY + 30, 8, 'rgba(201, 168, 76, 0.8)');
+  drawDiamond(cardX + 30, cardY + cardH - 30, 8, 'rgba(201, 168, 76, 0.8)');
+  drawDiamond(cardX + cardW - 30, cardY + cardH - 30, 8, 'rgba(201, 168, 76, 0.8)');
 
-  // Top brand bar
-  ctx.fillStyle = 'rgba(201, 168, 76, 0.9)';
-  ctx.font = '300 18px Jost, sans-serif';
+  // ─── Card title: ◈ PALM ◈ ───
+  ctx.fillStyle = 'rgba(224, 200, 114, 0.95)';
+  ctx.font = '300 22px Jost, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  const brand = '✦  CELESTIAL SELF  ✦';
-  ctx.fillText(brand, 540, 130);
+  const titleY = cardY + 70;
+  ctx.fillText('PALM', 540, titleY);
+  drawDiamond(460, titleY, 6, 'rgba(201, 168, 76, 0.9)');
+  drawDiamond(620, titleY, 6, 'rgba(201, 168, 76, 0.9)');
 
-  // Thin gold line separators above/below brand
-  ctx.strokeStyle = 'rgba(201, 168, 76, 0.35)';
+  // Divider line below title
+  ctx.strokeStyle = 'rgba(201, 168, 76, 0.4)';
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(340, 170); ctx.lineTo(740, 170);
+  ctx.moveTo(cardX + 80, titleY + 30);
+  ctx.lineTo(cardX + cardW - 80, titleY + 30);
   ctx.stroke();
 
-  // Main quote
+  // ─── Palm silhouette illustration (centered, above text) ───
+  // A stylized hand with a star in the palm
+  const illCenterX = 540, illCenterY = cardY + 220;
+  ctx.save();
+  ctx.translate(illCenterX, illCenterY);
+
+  // Crescent moon behind hand
+  ctx.fillStyle = 'rgba(224, 200, 114, 0.1)';
+  ctx.beginPath();
+  ctx.arc(0, 0, 75, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(224, 200, 114, 0.3)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(-20, -10, 70, Math.PI * 0.3, Math.PI * 1.7, false);
+  ctx.stroke();
+
+  // Hand outline (stylized, facing forward)
+  ctx.strokeStyle = 'rgba(224, 200, 114, 0.9)';
+  ctx.lineWidth = 1.8;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  // Start at wrist left
+  ctx.moveTo(-35, 55);
+  // Left side of palm up
+  ctx.lineTo(-42, 20);
+  // Thumb
+  ctx.lineTo(-55, 5);
+  ctx.lineTo(-60, -10);
+  ctx.lineTo(-52, -20);
+  ctx.lineTo(-42, -10);
+  // Index finger
+  ctx.lineTo(-38, -25);
+  ctx.lineTo(-42, -55);
+  ctx.lineTo(-30, -62);
+  ctx.lineTo(-26, -30);
+  // Middle finger
+  ctx.lineTo(-18, -35);
+  ctx.lineTo(-16, -70);
+  ctx.lineTo(-4, -72);
+  ctx.lineTo(-2, -35);
+  // Ring finger
+  ctx.lineTo(8, -32);
+  ctx.lineTo(14, -62);
+  ctx.lineTo(24, -60);
+  ctx.lineTo(22, -28);
+  // Pinky
+  ctx.lineTo(30, -25);
+  ctx.lineTo(34, -45);
+  ctx.lineTo(42, -43);
+  ctx.lineTo(40, -20);
+  // Right side of palm
+  ctx.lineTo(42, 20);
+  ctx.lineTo(35, 55);
+  ctx.closePath();
+  ctx.stroke();
+
+  // Palm lines (subtle)
+  ctx.strokeStyle = 'rgba(224, 200, 114, 0.5)';
+  ctx.lineWidth = 0.8;
+  ctx.beginPath();
+  ctx.moveTo(-32, 0); ctx.bezierCurveTo(-20, -5, 15, -5, 35, -5);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(-32, 15); ctx.bezierCurveTo(-15, 8, 10, 8, 32, 10);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(-30, 40); ctx.bezierCurveTo(-25, 25, -20, 10, -15, -5);
+  ctx.stroke();
+
+  // Star in the palm
+  ctx.fillStyle = 'rgba(224, 200, 114, 0.95)';
+  const starX = 0, starY = 18, starR = 5;
+  ctx.beginPath();
+  for (let i = 0; i < 10; i++) {
+    const angle = (Math.PI * 2 * i) / 10 - Math.PI / 2;
+    const r = i % 2 === 0 ? starR : starR * 0.4;
+    const px = starX + Math.cos(angle) * r;
+    const py = starY + Math.sin(angle) * r;
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.restore();
+
+  // ─── Quote text ───
   const quote = extractQuoteFromReading(window._lastReading);
-  ctx.fillStyle = '#E8E6E1';
-  ctx.font = 'italic 600 44px "Playfair Display", Georgia, serif';
+  ctx.fillStyle = '#F0EEE6';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
 
-  const quoteLines = wrapText(ctx, quote, 860);
-  // Dynamic sizing if too many lines
-  let fontSize = 44;
-  if (quoteLines.length > 5) {
-    fontSize = 36;
-    ctx.font = `italic 600 ${fontSize}px "Playfair Display", Georgia, serif`;
+  const maxQuoteWidth = cardW - 120;
+  let fontSize = 30;
+  ctx.font = `italic 500 ${fontSize}px "Playfair Display", Georgia, serif`;
+  let lines = wrapText(ctx, quote, maxQuoteWidth);
+
+  if (lines.length > 6) {
+    fontSize = 26;
+    ctx.font = `italic 500 ${fontSize}px "Playfair Display", Georgia, serif`;
+    lines = wrapText(ctx, quote, maxQuoteWidth);
   }
-  const finalLines = wrapText(ctx, quote, 860);
 
-  const lineHeight = fontSize * 1.4;
-  const totalHeight = finalLines.length * lineHeight;
-  const startY = 540 - totalHeight / 2 + lineHeight / 2;
-
-  // Quote marks
-  ctx.fillStyle = 'rgba(201, 168, 76, 0.25)';
-  ctx.font = '400 120px "Playfair Display", Georgia, serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('“', 540, startY - 80);
-
-  // Quote text
-  ctx.fillStyle = '#E8E6E1';
-  ctx.font = `italic 600 ${fontSize}px "Playfair Display", Georgia, serif`;
-  finalLines.forEach((line, i) => {
-    ctx.fillText(line, 540, startY + i * lineHeight);
+  const lineHeight = fontSize * 1.45;
+  const quoteBlockStartY = cardY + 400;
+  lines.forEach((line, i) => {
+    ctx.fillText(line, 540, quoteBlockStartY + i * lineHeight);
   });
 
-  // Signature (Caveat, handwritten)
-  ctx.fillStyle = 'rgba(224, 200, 114, 0.85)';
-  ctx.font = '400 38px Caveat, cursive';
+  // ─── Signature (Caveat) ───
+  ctx.fillStyle = 'rgba(224, 200, 114, 0.9)';
+  ctx.font = '400 34px Caveat, cursive';
   ctx.textAlign = 'center';
-  ctx.fillText('— your palm, read', 540, startY + finalLines.length * lineHeight + 80);
+  const sigY = quoteBlockStartY + lines.length * lineHeight + 50;
+  ctx.fillText('— your palm, read', 540, sigY);
 
-  // Bottom brand + URL
-  ctx.strokeStyle = 'rgba(201, 168, 76, 0.35)';
-  ctx.lineWidth = 1;
+  // ─── Bottom ornament inside card ───
+  const bottomOrnY = cardY + cardH - 60;
+  drawDiamond(460, bottomOrnY, 5, 'rgba(201, 168, 76, 0.7)');
+  ctx.strokeStyle = 'rgba(201, 168, 76, 0.4)';
+  ctx.lineWidth = 0.8;
   ctx.beginPath();
-  ctx.moveTo(340, 930); ctx.lineTo(740, 930);
+  ctx.moveTo(475, bottomOrnY);
+  ctx.lineTo(605, bottomOrnY);
   ctx.stroke();
+  drawDiamond(620, bottomOrnY, 5, 'rgba(201, 168, 76, 0.7)');
 
-  ctx.fillStyle = 'rgba(201, 168, 76, 0.75)';
-  ctx.font = '300 20px Jost, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('PALM READING', 540, 965);
-
-  ctx.fillStyle = 'rgba(152, 148, 168, 0.9)';
+  // ─── Below card: URL ───
+  ctx.fillStyle = 'rgba(180, 170, 200, 0.85)';
   ctx.font = '300 22px Jost, sans-serif';
-  ctx.fillText('celestial-self.vercel.app', 540, 1010);
+  ctx.textAlign = 'center';
+  ctx.fillText('celestial-self.vercel.app', 540, 970);
 
   return canvas;
 }
