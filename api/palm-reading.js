@@ -34,8 +34,28 @@ Important rules:
 - If the image is unclear, acknowledge it and do your best
 - Never claim medical, predictive, or absolute authority
 - In "Possibilities Ahead", stay in the register of possibility — no promises, no timelines, no guarantees
-- End with: "None of this is real. All of it is useful."
-- Format in Markdown`;
+- Before the final QUOTE line, include: "None of this is real. All of it is useful."
+- Format in Markdown
+
+## Shareable Quote (REQUIRED)
+After the full reading, output exactly one QUOTE line in this EXACT format on its own line:
+
+QUOTE:<one striking sentence, 15-25 words, that captures the essence of this reading>
+
+The quote should:
+- Be specific to this person's reading — pull from what you observed, not generic palmistry
+- Feel like something they'd want to screenshot and share — insightful, a little poetic, slightly uncanny in how accurate it feels
+- Stand alone without context (do NOT start with "your palm shows..." or "this reading reveals..." — write it as a standalone observation or truth about who they are)
+- Be in second person ("you") or aphoristic third person — never first person
+- Avoid hashtags, emojis, or formatting characters
+- Do NOT wrap in quotation marks
+
+Good examples of tone:
+QUOTE:You are the kind of person who pretends not to know what they want, right up until the moment they do.
+QUOTE:Your hands belong to someone who has already made the decision and is waiting for everyone else to catch up.
+QUOTE:There is nothing halfway about you, even when you are trying very hard to seem casual.
+
+Output the QUOTE line as the very last thing in your response, after the "None of this is real. All of it is useful." line.`;
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', 'https://celestial-self.vercel.app');
