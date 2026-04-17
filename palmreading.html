@@ -116,6 +116,7 @@ footer a{color:var(--gold-dim);text-decoration:none;margin:0 .5rem}
 footer a:hover{color:var(--gold)}
 .error-msg{background:rgba(199,80,80,.1);border:1px solid rgba(199,80,80,.25);border-radius:12px;padding:1rem 1.25rem;color:var(--accent-red);font-size:.9rem;margin:1rem 0;display:none}
 .error-msg.visible{display:block}
+.paywall{display:none!important}
 </style>
 </head>
 <body>
@@ -276,22 +277,46 @@ const FREE_PROMPTS = {
   ]
 };
 
-function startFreeReading() {
-  const paidSessionId = sessionStorage.getItem('paid_session_id');
-  if (paidSessionId) { checkForPaidSession(); return; }
+async function startFreeReading() {
   if (!imageBase64) return;
-  if (typeof gtag === 'function') gtag('event', 'palm_reading_free', { method: 'upload' });
+
+  // Check if user has already used their free reading
+  if (localStorage.getItem('cs_used_palm')) {
+    showError('You\'ve already used your free palm reading. Thank you for trying Celestial Self! Unlimited access coming soon for supporters.');
+    return;
+  }
+
+  if (typeof gtag === 'function') gtag('event', 'palm_reading_start', { method: 'upload' });
+
   document.getElementById('step-upload').style.display = 'none';
   document.getElementById('loading').classList.add('visible');
+  document.querySelector('#loading p').textContent = 'reading your palm...';
   hideError();
-  setTimeout(() => {
+
+  try {
+    const res = await fetch(`${API_BASE}/api/palm-reading`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageBase64, mimeType: imageMimeType })
+    });
+
+    const data = await res.json();
+    if (!res.ok || !data.reading) {
+      throw new Error(data.error || 'Reading generation failed');
+    }
+
+    localStorage.setItem('cs_used_palm', Date.now().toString());
+
     document.getElementById('loading').classList.remove('visible');
-    document.getElementById('freeReadingText').textContent = FREE_PROMPTS.default.join('\n\n');
-    document.getElementById('freeResult').classList.add('visible');
-    document.getElementById('paywall').classList.add('visible');
-    document.getElementById('resetWrap').style.display = 'block';
-    try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
-  }, 2500);
+    showPremiumResult(data.reading);
+
+    if (typeof gtag === 'function') gtag('event', 'palm_reading_complete');
+  } catch (err) {
+    document.getElementById('loading').classList.remove('visible');
+    document.getElementById('step-upload').style.display = 'block';
+    showError('Something went wrong generating your reading. Please try again in a moment.');
+    console.error('Reading error:', err);
+  }
 }
 
 function selectPlan(plan) {
@@ -440,7 +465,6 @@ function resetAll() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-handleReturnFromCheckout();
 </script>
 
 </body>
