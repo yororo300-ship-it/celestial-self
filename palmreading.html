@@ -305,10 +305,6 @@ async function startFreeReading() {
   if (!imageBase64) return;
 
   // Check if user has already used their free reading
-  if (localStorage.getItem('cs_used_palm')) {
-    showError('You\'ve already used your free palm reading. Thank you for trying Celestial Self! Unlimited access coming soon for supporters.');
-    return;
-  }
 
   if (typeof gtag === 'function') gtag('event', 'palm_reading_start', { method: 'upload' });
 
@@ -328,8 +324,6 @@ async function startFreeReading() {
     if (!res.ok || !data.reading) {
       throw new Error(data.error || 'Reading generation failed');
     }
-
-    localStorage.setItem('cs_used_palm', Date.now().toString());
 
     document.getElementById('loading').classList.remove('visible');
     showPremiumResult(data.reading);
