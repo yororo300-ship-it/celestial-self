@@ -349,11 +349,6 @@ const FREE_TEXTS = [
 async function startFreeReading() {
   if (!imageBase64) return;
 
-  if (localStorage.getItem('cs_used_tattoo')) {
-    showError('You\'ve already used your free tattoo reading. Thank you for trying Celestial Self! Unlimited access coming soon for supporters.');
-    return;
-  }
-
   if (typeof gtag === 'function') gtag('event', 'tattoo_reading_start', { method: 'upload' });
 
   document.getElementById('step-upload').style.display = 'none';
@@ -372,8 +367,6 @@ async function startFreeReading() {
     if (!res.ok || !data.reading) {
       throw new Error(data.error || 'Reading generation failed');
     }
-
-    localStorage.setItem('cs_used_tattoo', Date.now().toString());
 
     document.getElementById('loading').classList.remove('visible');
     showPremiumResult(data.reading);
