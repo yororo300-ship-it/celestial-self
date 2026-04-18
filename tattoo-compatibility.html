@@ -157,6 +157,15 @@ footer a:hover{color:var(--gold)}
 .score-row-value{font-family:var(--font-display);color:var(--gold-light);font-weight:600;font-size:.95rem}
 .score-bar-track{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;position:relative}
 .score-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold-dim),var(--gold),var(--gold-light));border-radius:3px;transition:width 1.4s cubic-bezier(.22,1,.36,1);box-shadow:0 0 12px rgba(201,168,76,.25)}
+.affiliate-card{background:linear-gradient(135deg,rgba(201,168,76,.06),rgba(201,168,76,.02));border:1px solid rgba(201,168,76,.18);border-radius:18px;padding:1.75rem;margin:1.5rem 0 0;text-align:center;animation:fadeUp .6s ease-out}
+.affiliate-card h3{font-family:var(--font-display);font-size:1.05rem;color:var(--gold-light);margin-bottom:.6rem;font-weight:600;letter-spacing:.02em}
+.affiliate-card p{font-size:.92rem;color:var(--text-dim);line-height:1.7;margin-bottom:1.25rem;max-width:440px;margin-left:auto;margin-right:auto}
+.affiliate-card .affiliate-btn{display:inline-block;font-family:var(--font-body);font-weight:500;font-size:.92rem;letter-spacing:.06em;padding:.75rem 1.75rem;border:1px solid var(--gold);border-radius:50px;background:transparent;color:var(--gold);text-decoration:none;position:relative;overflow:hidden;transition:all .4s cubic-bezier(.22,1,.36,1)}
+.affiliate-card .affiliate-btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.22,1,.36,1);z-index:0}
+.affiliate-card .affiliate-btn:hover{color:var(--bg)}
+.affiliate-card .affiliate-btn:hover::before{transform:scaleX(1)}
+.affiliate-card .affiliate-btn span{position:relative;z-index:1}
+.affiliate-disclosure{display:block;font-size:.7rem;color:var(--text-faint);margin-top:.9rem;font-style:italic}
 .paywall{display:none!important}
   
 </style>
@@ -266,7 +275,16 @@ footer a:hover{color:var(--gold)}
     <div class="share-row">
       <a class="share-btn" id="shareX" href="#" target="_blank" rel="noopener">&#120143; post</a>
       <a class="share-btn" id="shareFB" href="#" target="_blank" rel="noopener">facebook</a>
-      <button class="share-btn" onclick="copyLink()">copy link</button>
+<button class="share-btn" onclick="copyLink()">copy link</button>
+    </div>
+
+    <div class="affiliate-card">
+      <h3>✦ drawn to what ink can hold?</h3>
+      <p>the unknown truth tarot shop has beautiful decks, crystals, and ritual tools — handpicked for people who take meaning seriously.</p>
+      <a class="affiliate-btn" href="https://www.unknowntruthtarot.com/shop/?ref=1169" target="_blank" rel="noopener sponsored" onclick="if(typeof gtag==='function')gtag('event','affiliate_click',{product:'tattoo_compatibility',partner:'unknown_truth_tarot'})">
+        <span>explore the shop →</span>
+      </a>
+      <span class="affiliate-disclosure">affiliate link — we may earn a small commission at no cost to you</span>
     </div>
   </div>
 
