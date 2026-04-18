@@ -426,11 +426,6 @@ const FREE_TEXTS = [
 async function startFreeReading() {
   if (!imageA || !imageB) return;
 
-  if (localStorage.getItem('cs_used_palm_compat')) {
-    showError('You\'ve already used your free palm compatibility reading. Thank you for trying Celestial Self! Unlimited access coming soon for supporters.');
-    return;
-  }
-
   if (typeof gtag === 'function') gtag('event', 'palm_compatibility_start');
 
   document.getElementById('step-upload').style.display = 'none';
@@ -452,8 +447,6 @@ async function startFreeReading() {
     if (!res.ok || !data.reading) {
       throw new Error(data.error || 'Reading generation failed');
     }
-
-    localStorage.setItem('cs_used_palm_compat', Date.now().toString());
 
     document.getElementById('loading').classList.remove('visible');
     showPremiumResult(data.reading);
