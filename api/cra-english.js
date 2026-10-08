@@ -1,6 +1,7 @@
 // /api/cra-english.js
 // Role-play English conversation practice for clinical research associates (CRA / 臨床開発モニター)
 // The model plays an overseas investigator (Dr.) and gives feedback on the CRA's English.
+// lang 'ja': Japanese learners of English; lang 'en': English speakers new to clinical-trial terminology.
 
 const Anthropic = require('@anthropic-ai/sdk').default;
 
@@ -10,11 +11,24 @@ const MODEL = 'claude-opus-5-5';
 const MAX_HISTORY = 40;
 const MAX_TEXT = 2000;
 
-const BASE_RULES = `You are part of an English-practice app for Japanese clinical research associates (CRAs / clinical monitors) who work with overseas investigators on industry-sponsored clinical trials.
+const BASE_RULES = `You are part of a conversation-practice app for clinical research associates (CRAs / clinical monitors) who work with investigators on industry-sponsored clinical trials.
 
 Domain knowledge you must apply accurately: ICH E6 GCP, protocol, informed consent (ICF), source data verification (SDV), source document review (SDR), eCRF/EDC, queries, AE/SAE reporting (investigator reports SAEs to the sponsor within 24 hours of awareness), protocol deviations, inclusion/exclusion criteria, investigational product (IP) accountability and temperature excursions, delegation log, ISF/TMF, site initiation visit (SIV), routine monitoring visit (IMV), close-out visit (COV), IRB/EC, CAPA, recruitment.
-Never invent regulatory facts. If a point depends on the specific protocol or local regulation, say so instead of guessing.
-The learner is Japanese. All explanations and feedback for the learner are written in natural Japanese; corrected or model English is written in English.`;
+Never invent regulatory facts. If a point depends on the specific protocol or local regulation, say so instead of guessing.`;
+
+// Who the learner is decides the explanation language and what feedback focuses on.
+const LEARNER = {
+  ja: {
+    profile: 'The learner is a Japanese CRA whose English is the main challenge. Feedback should cover grammar, word choice, naturalness and politeness, as well as GCP accuracy.',
+    lang: 'natural Japanese',
+    gloss: 'Japanese translation of "reply"'
+  },
+  en: {
+    profile: 'The learner speaks English well but is new to clinical research, so clinical-trial terminology, abbreviations, GCP concepts and the professional conventions of talking to investigators are the main challenge. Feedback should focus on correct use of terminology, accurate GCP content, precision and professional tact; mention grammar only when it causes ambiguity.',
+    lang: 'plain, simple English (avoid jargon in explanations, or define it when used)',
+    gloss: 'a plain-English paraphrase of "reply" that a newcomer to clinical research would understand, expanding abbreviations'
+  }
+};
 
 const DIFFICULTY = {
   beginner: 'Speak slowly and simply: short sentences, common words, no idioms. Be patient and cooperative. If the CRA is unclear, kindly ask them to clarify.',
@@ -31,8 +45,12 @@ const REGION = {
   sg: 'a Singaporean physician (Singapore English, efficient tone)'
 };
 
-function personaPrompt(s) {
+function personaPrompt(s, learner) {
   return `${BASE_RULES}
+
+## Learner
+${learner.profile}
+All explanations, comments and meanings for the learner are written in ${learner.lang}. Corrected or model CRA lines are always in English.
 
 ## Role-play setup
 You play the investigator: Dr. ${s.doctorName}, ${REGION[s.region] || REGION.us}, ${s.doctorRole}.
@@ -42,7 +60,7 @@ CRA's goal in this conversation: ${s.goal}
 Hidden facts / your stance (reveal naturally only when relevant): ${s.hidden}
 Difficulty: ${DIFFICULTY[s.difficulty] || DIFFICULTY.intermediate}
 
-Stay in character as the doctor. Reply like a real conversation: usually 1-4 sentences, no stage directions, no bullet lists, no Japanese in "reply".
+Stay in character as the doctor. Reply like a real conversation: usually 1-4 sentences, no stage directions, no bullet lists, English only in "reply".
 React realistically to what the CRA actually said, including vagueness, rudeness or factual GCP errors (question them as a real investigator would).`;
 }
 
@@ -92,33 +110,61 @@ function toMessages(history, opening) {
   return msgs;
 }
 
+const TERMS = {
+  type: 'array',
+  items: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['term', 'meaning'],
+    properties: {
+      term: { type: 'string' },
+      meaning: { type: 'string' }
+    }
+  }
+};
+
+const PHRASES = {
+  type: 'array',
+  items: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['en', 'meaning'],
+    properties: {
+      en: { type: 'string' },
+      meaning: { type: 'string' }
+    }
+  }
+};
+
 const SCHEMAS = {
   start: {
     type: 'object',
     additionalProperties: false,
-    required: ['reply', 'reply_ja'],
+    required: ['reply', 'gloss', 'terms'],
     properties: {
       reply: { type: 'string' },
-      reply_ja: { type: 'string' }
+      gloss: { type: 'string' },
+      terms: TERMS
     }
   },
   turn: {
     type: 'object',
     additionalProperties: false,
-    required: ['reply', 'reply_ja', 'feedback'],
+    required: ['reply', 'gloss', 'terms', 'feedback'],
     properties: {
       reply: { type: 'string' },
-      reply_ja: { type: 'string' },
+      gloss: { type: 'string' },
+      terms: TERMS,
       feedback: {
         type: 'object',
         additionalProperties: false,
-        required: ['score', 'corrected', 'better', 'comments_ja', 'gcp_note_ja'],
+        required: ['score', 'corrected', 'better', 'comments', 'gcp_note'],
         properties: {
           score: { type: 'integer' },
           corrected: { type: 'string' },
           better: { type: 'string' },
-          comments_ja: { type: 'string' },
-          gcp_note_ja: { type: 'string' }
+          comments: { type: 'string' },
+          gcp_note: { type: 'string' }
         }
       }
     }
@@ -133,11 +179,11 @@ const SCHEMAS = {
         items: {
           type: 'object',
           additionalProperties: false,
-          required: ['en', 'ja', 'note_ja'],
+          required: ['en', 'meaning', 'note'],
           properties: {
             en: { type: 'string' },
-            ja: { type: 'string' },
-            note_ja: { type: 'string' }
+            meaning: { type: 'string' },
+            note: { type: 'string' }
           }
         }
       }
@@ -153,74 +199,90 @@ const SCHEMAS = {
         items: {
           type: 'object',
           additionalProperties: false,
-          required: ['en', 'tone_ja'],
+          required: ['en', 'tone'],
           properties: {
             en: { type: 'string' },
-            tone_ja: { type: 'string' }
+            tone: { type: 'string' }
           }
         }
       }
     }
   },
+  explain: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['explanation', 'in_this_case', 'examples', 'related'],
+    properties: {
+      explanation: { type: 'string' },
+      in_this_case: { type: 'string' },
+      examples: { type: 'array', items: { type: 'string' } },
+      related: TERMS
+    }
+  },
   evaluate: {
     type: 'object',
     additionalProperties: false,
-    required: ['scores', 'goal_achieved', 'summary_ja', 'strengths_ja', 'improvements_ja', 'key_phrases'],
+    required: ['scores', 'goal_achieved', 'summary', 'strengths', 'improvements', 'key_phrases'],
     properties: {
       scores: {
         type: 'object',
         additionalProperties: false,
-        required: ['clarity', 'grammar', 'professionalism', 'gcp_accuracy', 'goal'],
+        required: ['clarity', 'language', 'professionalism', 'gcp_accuracy', 'goal'],
         properties: {
           clarity: { type: 'integer' },
-          grammar: { type: 'integer' },
+          language: { type: 'integer' },
           professionalism: { type: 'integer' },
           gcp_accuracy: { type: 'integer' },
           goal: { type: 'integer' }
         }
       },
       goal_achieved: { type: 'boolean' },
-      summary_ja: { type: 'string' },
-      strengths_ja: { type: 'array', items: { type: 'string' } },
-      improvements_ja: { type: 'array', items: { type: 'string' } },
-      key_phrases: {
-        type: 'array',
-        items: {
-          type: 'object',
-          additionalProperties: false,
-          required: ['en', 'ja'],
-          properties: {
-            en: { type: 'string' },
-            ja: { type: 'string' }
-          }
-        }
-      }
+      summary: { type: 'string' },
+      strengths: { type: 'array', items: { type: 'string' } },
+      improvements: { type: 'array', items: { type: 'string' } },
+      key_phrases: PHRASES
     }
   }
 };
 
-const ACTION_INSTRUCTIONS = {
-  start: `Output JSON: "reply" = your opening line as the doctor (English), "reply_ja" = its Japanese translation.`,
-  turn: `Output JSON:
+const TERMS_RULE = `"terms": every clinical-trial term, abbreviation or GCP concept that appears in "reply" (e.g. SDV, eCRF, SAE, delegation log), each with a short "meaning" for the learner; empty array if none.`;
+
+function actionInstructions(action, learner) {
+  switch (action) {
+    case 'start':
+      return `Output JSON: "reply" = your opening line as the doctor (English), "gloss" = ${learner.gloss}, ${TERMS_RULE}`;
+    case 'turn':
+      return `Output JSON:
 - "reply": your next line as the doctor (English), responding to the CRA's latest message.
-- "reply_ja": Japanese translation of "reply".
+- "gloss": ${learner.gloss}.
+- ${TERMS_RULE}
 - "feedback": evaluation of the CRA's latest message only:
   - "score": 1-5 (5 = clear, accurate, natural and professional).
-  - "corrected": the CRA's message with grammar/word-choice errors minimally fixed (same meaning). If it was already correct, repeat it unchanged.
-  - "better": a more natural, polite and professional way a skilled CRA would say it to an investigator.
-  - "comments_ja": 1-3 short points in Japanese explaining the main corrections or why "better" is better (nuance, politeness, ambiguity). Praise what was good if nothing needs fixing.
-  - "gcp_note_ja": Japanese note if the CRA's content was inaccurate or risky from a GCP/monitoring standpoint, or an important point they missed; empty string if none.
-If the CRA wrote in Japanese, treat it as what they wanted to say: put the English rendering in "corrected" and "better", and have the doctor respond as if it had been said in English.`,
-  hint: `Do not continue the role-play. Suggest 3 different things the CRA could say next to move toward the goal, from simple to more advanced. Output JSON "suggestions": each with "en" (what to say), "ja" (Japanese meaning), "note_ja" (short Japanese tip on when/why to use it).`,
-  translate: `Do not continue the role-play. The CRA wants to say the Japanese text given below in English to this doctor, in this context. Output JSON "options": 2-3 English renderings ("en") with "tone_ja" describing in Japanese the nuance/politeness of each (e.g. 丁寧・標準・簡潔).`,
-  evaluate: `Do not continue the role-play. Evaluate the CRA's performance across the whole conversation. Output JSON:
-- "scores": each 1-10: clarity, grammar, professionalism (politeness/tact with the investigator), gcp_accuracy, goal (progress toward the CRA's goal).
+  - "corrected": the CRA's message with errors minimally fixed (same meaning), including misused terminology. If it was already correct, repeat it unchanged.
+  - "better": how a skilled, experienced CRA would say it to an investigator.
+  - "comments": 1-3 short points explaining the main corrections or why "better" is better. Praise what was good if nothing needs fixing.
+  - "gcp_note": a note if the CRA's content was inaccurate or risky from a GCP/monitoring standpoint, or an important point they missed; empty string if none.
+If the CRA wrote in a language other than English, treat it as what they wanted to say: put the English rendering in "corrected" and "better", and have the doctor respond as if it had been said in English.`;
+    case 'hint':
+      return `Do not continue the role-play. Suggest 3 different things the CRA could say next to move toward the goal, from simple to more advanced. Output JSON "suggestions": each with "en" (what to say), "meaning" (${learner === LEARNER.ja ? 'its Japanese meaning' : 'what it achieves, explaining any terminology it uses'}), "note" (short tip on when/why to use it).`;
+    case 'translate':
+      return `Do not continue the role-play. The CRA wants to say the text given below in English to this doctor, in this context. Output JSON "options": 2-3 English renderings ("en") with "tone" describing the nuance/politeness of each (e.g. polite / neutral / concise).`;
+    case 'explain':
+      return `Do not continue the role-play. The learner asks about the term, abbreviation or phrase given below. Output JSON:
+- "explanation": what it means in clinical trials, in simple words (2-4 sentences).
+- "in_this_case": how it applies to the current scenario/conversation (1-2 sentences); empty string if not relevant.
+- "examples": 2 example sentences a CRA might say to an investigator using it (English).
+- "related": 2-4 related terms with short meanings.`;
+    case 'evaluate':
+      return `Do not continue the role-play. Evaluate the CRA's performance across the whole conversation. Output JSON:
+- "scores": each 1-10: clarity, language (${learner === LEARNER.ja ? 'grammar and natural English' : 'correct use of clinical-trial terminology and professional phrasing'}), professionalism (politeness/tact with the investigator), gcp_accuracy, goal (progress toward the CRA's goal).
 - "goal_achieved": whether the goal was achieved.
-- "summary_ja": 2-4 sentence overall comment in Japanese.
-- "strengths_ja": 2-4 strengths in Japanese.
-- "improvements_ja": 2-4 concrete improvements in Japanese, quoting the CRA's actual wording where useful.
-- "key_phrases": 5-8 useful English phrases for this situation with Japanese meanings ("en", "ja").`
-};
+- "summary": 2-4 sentence overall comment.
+- "strengths": 2-4 strengths.
+- "improvements": 2-4 concrete improvements, quoting the CRA's actual wording where useful.
+- "key_phrases": 5-8 useful English phrases for this situation, each with "meaning" (${learner === LEARNER.ja ? 'Japanese meaning' : 'when to use it, defining any terminology'}).`;
+  }
+}
 
 function parseJSON(response) {
   const text = response.content
@@ -249,12 +311,13 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Missing scenario' });
     }
     const history = sanitizeHistory(body.history);
-    const text = str(body.text);
+    const text = str(body.text, 500);
+    const learner = LEARNER[body.lang] || LEARNER.ja;
 
     if (action === 'turn' && !history.some(m => m.role === 'cra')) {
       return res.status(400).json({ error: 'Missing CRA message' });
     }
-    if (action === 'translate' && !text) {
+    if ((action === 'translate' || action === 'explain') && !text) {
       return res.status(400).json({ error: 'Missing text' });
     }
     if (action === 'evaluate' && !history.some(m => m.role === 'cra')) {
@@ -264,10 +327,11 @@ module.exports = async (req, res) => {
     let messages;
     if (action === 'start' || action === 'turn') {
       messages = toMessages(history, scenario.opening);
-      messages.push({ role: 'system', content: ACTION_INSTRUCTIONS[action] });
+      messages.push({ role: 'system', content: actionInstructions(action, learner) });
     } else {
-      let content = `Conversation so far:\n${transcript(history)}\n\n${ACTION_INSTRUCTIONS[action]}`;
-      if (action === 'translate') content += `\n\nJapanese text: ${text}`;
+      let content = `Conversation so far:\n${transcript(history)}\n\n${actionInstructions(action, learner)}`;
+      if (action === 'translate') content += `\n\nText to say: ${text}`;
+      if (action === 'explain') content += `\n\nAsked about: ${text}`;
       messages = [{ role: 'user', content }];
     }
 
@@ -280,7 +344,7 @@ module.exports = async (req, res) => {
         effort: 'low',
         format: { type: 'json_schema', schema: SCHEMAS[action] }
       },
-      system: personaPrompt(scenario),
+      system: personaPrompt(scenario, learner),
       messages
     });
 
@@ -292,7 +356,7 @@ module.exports = async (req, res) => {
     }
 
     const result = parseJSON(response);
-    console.log(`CRA English | action: ${action} | turns: ${history.length}`);
+    console.log(`CRA English | action: ${action} | lang: ${body.lang === 'en' ? 'en' : 'ja'} | turns: ${history.length}`);
     res.status(200).json(result);
   } catch (err) {
     if (err instanceof Anthropic.RateLimitError) {

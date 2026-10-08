@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CRA English Simulator</title>
-<meta name="description" content="臨床開発モニター（CRA）向け英会話シミュレーター。海外の治験責任医師とのやり取りをAIとロールプレイで練習できます。">
+<meta name="description" content="臨床開発モニター（CRA）向け英会話シミュレーター。AI role-play practice for CRAs talking to clinical trial investigators.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -234,15 +234,28 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
   .score-row { grid-template-columns: 100px 1fr 34px; font-size: 13px; }
   header.top h1 small { display: none; }
 }
+.mode-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+.terms { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; max-width: 85%; }
+.term {
+  background: var(--accent-soft); color: var(--text); border: 1px solid transparent;
+  border-radius: 8px; font-size: 12px; padding: 3px 8px; text-align: left;
+}
+.term b { color: var(--accent); margin-right: 4px; }
+.term:hover { border-color: var(--accent); }
+.explain-out p { margin: 6px 0; }
+@media (max-width: 560px) {
+  .terms { max-width: 95%; }
+}
 </style>
+
 </head>
 <body>
 
 <header class="top">
   <div class="wrap">
-    <h1>CRA English Simulator <small>臨床開発モニター英会話</small></h1>
-    <button class="icon-btn" id="theme-btn" title="テーマ切替" aria-label="テーマ切替">◐</button>
-    <button class="icon-btn" id="home-btn" style="display:none">シナリオ選択</button>
+    <h1>CRA English Simulator <small data-t="subtitle"></small></h1>
+    <button class="icon-btn" id="theme-btn" aria-label="Theme">◐</button>
+    <button class="icon-btn" id="home-btn" style="display:none" data-t="homeBtn"></button>
   </div>
 </header>
 
@@ -250,55 +263,69 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
 <section id="setup-view" class="view active">
   <div class="wrap">
     <div class="intro">
-      <h2>海外の治験責任医師と、英語で話す練習</h2>
-      <p>AIが海外のDr.役を演じます。あなたはCRAとして英語で対応してください。発言ごとに添削とより自然な言い回しが表示され、最後に総合評価が出ます。</p>
+      <h2 data-t="introTitle"></h2>
+      <p data-t="introText"></p>
     </div>
 
-    <div class="section-title">1. シナリオ</div>
+    <div class="section-title" data-t="secMode"></div>
+    <div class="mode-cards" id="mode-cards">
+      <button class="card" data-v="ja">
+        <div class="tag">日本語サポート</div>
+        <div class="name">英語を練習したい人向け</div>
+        <div class="desc">添削・和訳・解説はすべて日本語。文法や自然な言い回しまでチェックします。</div>
+      </button>
+      <button class="card" data-v="en">
+        <div class="tag">English support</div>
+        <div class="name">New to clinical research?</div>
+        <div class="desc">Everything in English. Focus on clinical-trial terminology, GCP and how to talk to investigators. Jargon is explained in plain English.</div>
+      </button>
+    </div>
+
+    <div class="section-title" data-t="secScenario"></div>
     <div class="cards" id="scenario-cards"></div>
     <div class="custom-box" id="custom-box">
-      <label for="c-situation">状況（日本語・英語どちらでも可）</label>
-      <textarea id="c-situation" rows="3" placeholder="例：EDCの入力が3か月遅れており、CRCが退職したと聞いている"></textarea>
-      <label for="c-goal">あなた（CRA）のゴール</label>
-      <textarea id="c-goal" rows="2" placeholder="例：入力遅延の原因を確認し、具体的なキャッチアップ計画と期限に合意する"></textarea>
-      <label for="c-role">Dr.の立場</label>
-      <input type="text" id="c-role" placeholder="例：principal investigator, cardiologist">
+      <label for="c-situation" data-t="cSituation"></label>
+      <textarea id="c-situation" rows="3"></textarea>
+      <label for="c-goal" data-t="cGoal"></label>
+      <textarea id="c-goal" rows="2"></textarea>
+      <label for="c-role" data-t="cRole"></label>
+      <input type="text" id="c-role">
     </div>
 
-    <div class="section-title">2. 難易度</div>
+    <div class="section-title" data-t="secDifficulty"></div>
     <div class="seg" id="difficulty-seg">
-      <button data-v="beginner">初級</button>
-      <button data-v="intermediate" class="selected">中級</button>
-      <button data-v="advanced">上級</button>
+      <button data-v="beginner" data-t="diffBeginner"></button>
+      <button data-v="intermediate" data-t="diffIntermediate" class="selected"></button>
+      <button data-v="advanced" data-t="diffAdvanced"></button>
     </div>
     <div class="seg-note" id="difficulty-note"></div>
 
-    <div class="section-title">3. Dr.の国・英語</div>
+    <div class="section-title" data-t="secRegion"></div>
     <div class="seg" id="region-seg">
-      <button data-v="us" class="selected">🇺🇸 米国</button>
-      <button data-v="uk">🇬🇧 英国</button>
-      <button data-v="de">🇩🇪 ドイツ</button>
-      <button data-v="in">🇮🇳 インド</button>
-      <button data-v="au">🇦🇺 豪州</button>
-      <button data-v="sg">🇸🇬 シンガポール</button>
+      <button data-v="us" class="selected" data-t="rUs"></button>
+      <button data-v="uk" data-t="rUk"></button>
+      <button data-v="de" data-t="rDe"></button>
+      <button data-v="in" data-t="rIn"></button>
+      <button data-v="au" data-t="rAu"></button>
+      <button data-v="sg" data-t="rSg"></button>
     </div>
-    <div class="seg-note">話し方・表現がその国の医師らしくなります。音声の訛りは端末にあるボイスに依存します。</div>
+    <div class="seg-note" data-t="regionNote"></div>
 
-    <div class="section-title">4. オプション</div>
+    <div class="section-title" data-t="secOptions"></div>
     <div class="opts">
-      <label><input type="checkbox" id="opt-tts" checked> Dr.の発言を自動で読み上げ</label>
-      <label><input type="checkbox" id="opt-ja"> 和訳を最初から表示</label>
-      <label>読み上げ速度
+      <label><input type="checkbox" id="opt-tts" checked> <span data-t="optTts"></span></label>
+      <label><input type="checkbox" id="opt-gloss"> <span data-t="optGloss"></span></label>
+      <label><span data-t="optRate"></span>
         <select id="opt-rate" style="width:auto">
-          <option value="0.75">ゆっくり</option>
-          <option value="0.9" selected>ふつう</option>
-          <option value="1.05">速め</option>
+          <option value="0.75" data-t="rateSlow"></option>
+          <option value="0.9" data-t="rateNormal" selected></option>
+          <option value="1.05" data-t="rateFast"></option>
         </select>
       </label>
     </div>
 
     <div class="start-row">
-      <button class="primary" id="start-btn">ロールプレイ開始</button>
+      <button class="primary" id="start-btn" data-t="startBtn"></button>
       <span class="err" id="setup-err"></span>
     </div>
   </div>
@@ -311,7 +338,7 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       <details id="brief-details" open>
         <summary id="brief-title"></summary>
         <div class="goal" id="brief-situation"></div>
-        <div class="goal"><b>ゴール：</b><span id="brief-goal"></span></div>
+        <div class="goal"><b data-t="goalLabel"></b><span id="brief-goal"></span></div>
       </details>
     </div>
   </div>
@@ -321,14 +348,15 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
   <div class="composer">
     <div class="wrap">
       <div class="tools">
-        <button class="secondary" id="hint-btn">💡 ヒント</button>
-        <button class="secondary" id="tr-btn">🔁 日→英</button>
-        <button class="secondary end" id="end-btn">終了して評価</button>
+        <button class="secondary" id="hint-btn" data-t="hintBtn"></button>
+        <button class="secondary" id="tr-btn" data-t="trBtn"></button>
+        <button class="secondary" id="explain-btn" data-t="explainBtn"></button>
+        <button class="secondary end" id="end-btn" data-t="endBtn"></button>
       </div>
       <div class="row">
-        <button class="mic" id="mic-btn" title="音声入力（英語）" aria-label="音声入力">🎤</button>
-        <textarea id="input" rows="1" placeholder="英語で返答（Enterで送信 / Shift+Enterで改行）"></textarea>
-        <button class="primary send" id="send-btn">送信</button>
+        <button class="mic" id="mic-btn" aria-label="Voice input">🎤</button>
+        <textarea id="input" rows="1"></textarea>
+        <button class="primary send" id="send-btn" data-t="sendBtn"></button>
       </div>
       <div class="status" id="status"></div>
     </div>
@@ -346,10 +374,110 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
 
   const API = '/api/cra-english';
 
+  // ---------- UI strings ----------
+  const STR = {
+    ja: {
+      subtitle: '臨床開発モニター英会話',
+      homeBtn: 'シナリオ選択',
+      introTitle: '海外の治験責任医師と、英語で話す練習',
+      introText: 'AIが海外のDr.役を演じます。あなたはCRAとして英語で対応してください。発言ごとに添削とより自然な言い回しが表示され、最後に総合評価が出ます。',
+      secMode: '0. モード', secScenario: '1. シナリオ', secDifficulty: '2. 難易度', secRegion: '3. Dr.の国・英語', secOptions: '4. オプション',
+      cSituation: '状況（日本語・英語どちらでも可）', cGoal: 'あなた（CRA）のゴール', cRole: 'Dr.の立場',
+      cSituationPh: '例：EDCの入力が3か月遅れており、CRCが退職したと聞いている',
+      cGoalPh: '例：入力遅延の原因を確認し、具体的なキャッチアップ計画と期限に合意する',
+      cRolePh: '例：principal investigator, cardiologist',
+      diffBeginner: '初級', diffIntermediate: '中級', diffAdvanced: '上級',
+      diffNote: {
+        beginner: '初級：ゆっくり・簡単な表現。医師は協力的です。',
+        intermediate: '中級：自然なスピード。医師は質問を返してきます。',
+        advanced: '上級：忙しく少しせっかちな医師。根拠を丁寧に説明しないと納得しません。'
+      },
+      rUs: '🇺🇸 米国', rUk: '🇬🇧 英国', rDe: '🇩🇪 ドイツ', rIn: '🇮🇳 インド', rAu: '🇦🇺 豪州', rSg: '🇸🇬 シンガポール',
+      regionNote: '話し方・表現がその国の医師らしくなります。音声の訛りは端末にあるボイスに依存します。',
+      optTts: 'Dr.の発言を自動で読み上げ', optGloss: '和訳を最初から表示', optRate: '読み上げ速度',
+      rateSlow: 'ゆっくり', rateNormal: 'ふつう', rateFast: '速め',
+      startBtn: 'ロールプレイ開始',
+      errScenario: 'シナリオを選択してください。', errCustom: '状況とゴールを入力してください。',
+      goalLabel: 'ゴール：',
+      hintBtn: '💡 ヒント', trBtn: '🔁 日→英', explainBtn: '📖 用語', endBtn: '終了して評価', sendBtn: '送信',
+      inputPh: '英語で返答（Enterで送信 / Shift+Enterで改行）',
+      micUnsupported: 'このブラウザは音声入力に対応していません（Chrome / Edge 推奨）',
+      micDenied: 'マイクの使用が許可されていません。',
+      confirmLeave: '会話を終了してシナリオ選択に戻りますか？',
+      typing: ' が入力中 ',
+      play: '🔊 再生', glossBtn: '訳',
+      you: 'You (CRA)',
+      fbTitle: '添削フィードバック', fbClose: '閉じる', fbOpen: '開く',
+      fbCorrected: '修正', fbBetter: 'より自然・プロらしい言い方', fbGcp: 'GCPメモ：',
+      startFail: '開始できませんでした：', sendFail: '送信できませんでした：',
+      hintTitle: '💡 次に言えること', thinking: '考え中…', fetchFail: '取得できませんでした：',
+      toInput: '入力欄へ',
+      trTitle: '🔁 日本語で言いたいことを英語に', trPh: '例：お忙しいところ恐縮ですが、来週までにクエリへの回答をお願いできますか',
+      trGo: '英訳する', translating: '翻訳中…', trFail: '翻訳できませんでした：',
+      exTitle: '📖 用語・表現を調べる', exPh: '例：SDV / delegation log / 「逸脱」', exGo: '調べる',
+      exInCase: 'この場面では：', exExamples: '使い方の例', exRelated: '関連用語',
+      noTurn: 'まだ発言がありません。少なくとも1回は返答してください。',
+      evaluating: '会話全体を評価しています…', evalFail: '評価できませんでした：', backToChat: '会話に戻る',
+      reportTitle: '評価レポート', goalOk: 'ゴール達成', goalNg: 'ゴール未達', scoresTitle: 'スコア（10点満点）',
+      scoreLabels: { clarity: 'わかりやすさ', language: '文法・語法', professionalism: '丁寧さ・配慮', gcp_accuracy: 'GCP的正確さ', goal: 'ゴール達成度' },
+      strengths: '👍 良かった点', improvements: '📈 改善ポイント', phrases: '📝 この場面で使えるフレーズ',
+      again: '同じシナリオでもう一度', viewLog: '会話ログを見る', other: '別のシナリオを選ぶ'
+    },
+    en: {
+      subtitle: 'Clinical trial conversation practice',
+      homeBtn: 'Scenarios',
+      introTitle: 'Practice talking to investigators like an experienced CRA',
+      introText: 'The AI plays an investigator at a study site. You play the CRA. After each message you get feedback on terminology, GCP accuracy and professional phrasing, and a full evaluation at the end. Any jargon the doctor uses is explained in plain English.',
+      secMode: '0. Mode', secScenario: '1. Scenario', secDifficulty: '2. Difficulty', secRegion: '3. Investigator\'s country', secOptions: '4. Options',
+      cSituation: 'Situation', cGoal: 'Your goal as the CRA', cRole: 'Doctor\'s role',
+      cSituationPh: 'e.g. EDC data entry is 3 months behind and the study coordinator has just resigned',
+      cGoalPh: 'e.g. Find out why entry is delayed and agree on a catch-up plan with deadlines',
+      cRolePh: 'e.g. principal investigator, cardiologist',
+      diffBeginner: 'Easy', diffIntermediate: 'Standard', diffAdvanced: 'Hard',
+      diffNote: {
+        beginner: 'Easy: the doctor is patient and cooperative.',
+        intermediate: 'Standard: natural pace; the doctor asks follow-up questions.',
+        advanced: 'Hard: a busy, impatient doctor who pushes back unless you explain the GCP rationale clearly.'
+      },
+      rUs: '🇺🇸 US', rUk: '🇬🇧 UK', rDe: '🇩🇪 Germany', rIn: '🇮🇳 India', rAu: '🇦🇺 Australia', rSg: '🇸🇬 Singapore',
+      regionNote: 'Changes the doctor\'s style and expressions. Spoken accent depends on the voices installed on your device.',
+      optTts: 'Read the doctor\'s lines aloud', optGloss: 'Always show plain-English version', optRate: 'Speech speed',
+      rateSlow: 'Slow', rateNormal: 'Normal', rateFast: 'Fast',
+      startBtn: 'Start role-play',
+      errScenario: 'Please choose a scenario.', errCustom: 'Please enter the situation and your goal.',
+      goalLabel: 'Goal: ',
+      hintBtn: '💡 Hint', trBtn: '🔁 Rephrase', explainBtn: '📖 Explain a term', endBtn: 'End & evaluate', sendBtn: 'Send',
+      inputPh: 'Your reply (Enter to send / Shift+Enter for new line)',
+      micUnsupported: 'Voice input is not supported in this browser (try Chrome or Edge)',
+      micDenied: 'Microphone access was denied.',
+      confirmLeave: 'End this conversation and go back to scenarios?',
+      typing: ' is typing ',
+      play: '🔊 Play', glossBtn: 'Plain English',
+      you: 'You (CRA)',
+      fbTitle: 'Feedback', fbClose: 'Hide', fbOpen: 'Show',
+      fbCorrected: 'Corrected', fbBetter: 'How an experienced CRA might say it', fbGcp: 'GCP note: ',
+      startFail: 'Could not start: ', sendFail: 'Could not send: ',
+      hintTitle: '💡 Things you could say next', thinking: 'Thinking…', fetchFail: 'Could not load: ',
+      toInput: 'Use',
+      trTitle: '🔁 Say it professionally', trPh: 'Type roughly what you want to say, e.g. "you need to fix the missing data by next week"',
+      trGo: 'Rephrase', translating: 'Working…', trFail: 'Could not rephrase: ',
+      exTitle: '📖 Explain a term', exPh: 'e.g. SDV, delegation log, protocol deviation', exGo: 'Explain',
+      exInCase: 'In this conversation: ', exExamples: 'Examples', exRelated: 'Related terms',
+      noTurn: 'Reply at least once before ending.',
+      evaluating: 'Evaluating the whole conversation…', evalFail: 'Could not evaluate: ', backToChat: 'Back to conversation',
+      reportTitle: 'Evaluation', goalOk: 'Goal achieved', goalNg: 'Goal not achieved', scoresTitle: 'Scores (out of 10)',
+      scoreLabels: { clarity: 'Clarity', language: 'Terminology', professionalism: 'Professional tact', gcp_accuracy: 'GCP accuracy', goal: 'Goal progress' },
+      strengths: '👍 Strengths', improvements: '📈 To improve', phrases: '📝 Useful phrases for this situation',
+      again: 'Try this scenario again', viewLog: 'View conversation', other: 'Choose another scenario'
+    }
+  };
+
   const SCENARIOS = [
     {
-      id: 'siv', tag: 'SIV', name: '施設開始時訪問（SIV）',
-      desc: 'PIにプロトコルの重要ポイントと責務を説明する',
+      id: 'siv', tag: 'SIV',
+      name: { ja: '施設開始時訪問（SIV）', en: 'Site Initiation Visit (SIV)' },
+      desc: { ja: 'PIにプロトコルの重要ポイントと責務を説明する', en: 'Walk the PI through key protocol points and responsibilities' },
+      goalJa: 'プロトコルの要点と責務を説明し、SAEの24時間以内報告とDelegation Logの更新についてPIの理解を確認する。',
       doctorName: 'Miller', doctorRole: 'principal investigator, oncologist, first time working with this sponsor',
       situation: 'Site Initiation Visit for a Phase III oncology trial. The CRA needs to walk the PI through key protocol points (eligibility, dosing, visit windows), SAE reporting within 24 hours, and investigator responsibilities including the delegation log.',
       goal: 'Explain the key protocol points and investigator responsibilities clearly, and confirm the PI understands the 24-hour SAE reporting requirement and will keep the delegation log up to date.',
@@ -357,8 +485,10 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       opening: "Good morning. I only have about half an hour, so let's get to it."
     },
     {
-      id: 'sdv', tag: 'IMV', name: 'SDVでの不一致指摘',
-      desc: 'カルテとeCRFの不一致について医師に確認を求める',
+      id: 'sdv', tag: 'IMV',
+      name: { ja: 'SDVでの不一致指摘', en: 'SDV discrepancies' },
+      desc: { ja: 'カルテとeCRFの不一致について医師に確認を求める', en: 'Raise differences between medical records and the eCRF' },
+      goalJa: '不一致を丁寧に伝え、正しいデータを確認し、来週末までのeCRF修正・クエリ回答に合意する。',
       doctorName: 'Johnson', doctorRole: 'principal investigator, cardiologist',
       situation: 'Routine monitoring visit. During source data verification the CRA found that Subject 012\'s concomitant medication (a new antihypertensive started at Visit 4) is in the medical record but missing in the eCRF, and the blood pressure value at Visit 3 differs between source (152/94) and eCRF (125/94).',
       goal: 'Politely explain the discrepancies, ask the doctor to confirm the correct data, and agree that the site will correct the eCRF and respond to queries by the end of next week.',
@@ -366,8 +496,10 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       opening: "Hi, come in. The coordinator said you wanted to talk to me about some data?"
     },
     {
-      id: 'query', tag: 'Query', name: 'クエリへの反発に対応',
-      desc: '「クエリが多すぎる」と不満な医師をなだめつつ回答を依頼',
+      id: 'query', tag: 'Query',
+      name: { ja: 'クエリへの反発に対応', en: 'Pushback on queries' },
+      desc: { ja: '「クエリが多すぎる」と不満な医師をなだめつつ回答を依頼', en: 'A frustrated doctor complains about too many data queries' },
+      goalJa: '医師の負担に共感しつつクエリの重要性を説明し、現実的な解決計画と期限に合意する。',
       doctorName: 'Becker', doctorRole: 'principal investigator, endocrinologist, very busy with clinical work',
       situation: 'There are 45 open data queries at this site, some older than 30 days, and database lock for the interim analysis is in 3 weeks. The doctor is frustrated with the number of queries.',
       goal: 'Acknowledge the doctor\'s workload, explain why the queries matter for data integrity and the interim analysis, and agree on a realistic plan and timeline to resolve them.',
@@ -375,8 +507,10 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       opening: "Before you start, I have to say, the number of queries from your company is ridiculous."
     },
     {
-      id: 'sae', tag: 'Safety', name: 'SAEの報告遅延',
-      desc: '24時間以内に報告されなかったSAEについて話し合う',
+      id: 'sae', tag: 'Safety',
+      name: { ja: 'SAEの報告遅延', en: 'Late SAE report' },
+      desc: { ja: '24時間以内に報告されなかったSAEについて話し合う', en: 'A serious adverse event was not reported within 24 hours' },
+      goalJa: '入院はSAEに該当し、認知から24時間以内の報告が必要と説明。本日中のSAE報告と再発防止策に合意する。',
       doctorName: 'Patel', doctorRole: 'sub-investigator, internal medicine',
       situation: 'During the visit the CRA found that Subject 007 was hospitalized for pneumonia 9 days ago, but it was not reported to the sponsor as an SAE. The hospital admission was at another hospital and the site learned about it 5 days ago.',
       goal: 'Explain that hospitalization meets SAE criteria and must be reported within 24 hours of the site becoming aware, get the SAE report submitted today, and discuss how to prevent this in the future.',
@@ -384,8 +518,10 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       opening: "Yes, I saw that patient last week. Is there a problem?"
     },
     {
-      id: 'pd', tag: 'Deviation', name: '選択基準違反（プロトコル逸脱）',
-      desc: '不適格な被験者が登録されていた件を伝える',
+      id: 'pd', tag: 'Deviation',
+      name: { ja: '選択基準違反（プロトコル逸脱）', en: 'Eligibility deviation' },
+      desc: { ja: '不適格な被験者が登録されていた件を伝える', en: 'An ineligible subject was randomized' },
+      goalJa: '責めずに事実を伝え、被験者の安全と継続可否（メディカルモニターへの相談が必要）を話し合い、逸脱の記録・IRB報告と是正措置に合意する。',
       doctorName: 'Wong', doctorRole: 'principal investigator, rheumatologist',
       situation: 'The CRA found that Subject 015 was randomized although their eGFR at screening (38 mL/min) did not meet the inclusion criterion (eGFR ≥ 45 mL/min). The subject has already received 2 doses of study drug.',
       goal: 'Explain the deviation factually without blaming, discuss subject safety and whether the subject should continue (the decision requires sponsor medical monitor consultation), ensure the deviation is documented and reported to the IRB as required, and agree on a corrective action.',
@@ -393,8 +529,10 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       opening: "The coordinator mentioned you found an issue with one of our patients?"
     },
     {
-      id: 'icf', tag: 'ICF', name: '旧版同意説明文書の使用',
-      desc: '改訂前のICFで同意取得していた問題に対応する',
+      id: 'icf', tag: 'ICF',
+      name: { ja: '旧版同意説明文書の使用', en: 'Outdated consent form' },
+      desc: { ja: '改訂前のICFで同意取得していた問題に対応する', en: 'Subjects signed a superseded informed consent form' },
+      goalJa: '問題を説明し、v3.0での再同意、逸脱報告、旧版の使用停止に合意する。',
       doctorName: 'Thompson', doctorRole: 'principal investigator, neurologist',
       situation: 'The CRA found that 2 subjects consented last month signed ICF version 2.0, although version 3.0 (with new safety information) was IRB-approved and distributed 6 weeks ago.',
       goal: 'Explain the issue, ask the site to re-consent the subjects with version 3.0 at their next visit (or sooner), report the deviation as required, and ensure old versions are removed from use.',
@@ -402,8 +540,10 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       opening: "Hello again. What do you need from me today?"
     },
     {
-      id: 'enroll', tag: 'Recruitment', name: '症例登録の遅れ',
-      desc: '登録が進まない理由を聞き、改善策を一緒に考える',
+      id: 'enroll', tag: 'Recruitment',
+      name: { ja: '症例登録の遅れ', en: 'Slow enrollment' },
+      desc: { ja: '登録が進まない理由を聞き、改善策を一緒に考える', en: 'Find out why recruitment is behind and agree on a plan' },
+      goalJa: '登録が進まない本当の理由を聞き出し、具体的な支援策を提案し、修正目標とフォローアップに合意する。',
       doctorName: 'Garcia', doctorRole: 'principal investigator, pulmonologist',
       situation: 'The site committed to enroll 10 subjects in 6 months, but after 5 months only 1 subject has been randomized. The study\'s global recruitment is behind schedule.',
       goal: 'Find out the real barriers to enrollment, propose practical support (e.g. pre-screening logs, referral letters, materials), and agree on a revised target and follow-up.',
@@ -411,8 +551,10 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       opening: "I know, I know, enrollment has been slow. It's not easy, you know."
     },
     {
-      id: 'ip', tag: 'IP', name: '治験薬の温度逸脱',
-      desc: '保管温度逸脱の報告と対応を確認する',
+      id: 'ip', tag: 'IP',
+      name: { ja: '治験薬の温度逸脱', en: 'IP temperature excursion' },
+      desc: { ja: '保管温度逸脱の報告と対応を確認する', en: 'The study drug fridge went out of range' },
+      goalJa: '逸脱のスポンサー報告と、評価完了までの該当治験薬の隔離を説明し、投与済み被験者のフォローと再発防止策に合意する。',
       doctorName: 'Nguyen', doctorRole: 'principal investigator, gastroenterologist',
       situation: 'The temperature log shows the investigational product refrigerator reached 12°C (allowed range 2-8°C) for about 6 hours over the weekend 10 days ago. It was not reported, and the product was dispensed to 2 subjects afterwards.',
       goal: 'Explain that the excursion must be reported to the sponsor, affected stock must be quarantined until the sponsor assesses it, and confirm how the dispensed subjects will be followed up; agree on a preventive action for temperature monitoring.',
@@ -420,8 +562,10 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       opening: "The pharmacy told me something about the fridge? I'm not really sure what happened."
     },
     {
-      id: 'cov', tag: 'COV', name: '終了時訪問（COV）',
-      desc: '試験終了後の手続き・記録保存について説明する',
+      id: 'cov', tag: 'COV',
+      name: { ja: '終了時訪問（COV）', en: 'Close-out visit (COV)' },
+      desc: { ja: '試験終了後の手続き・記録保存について説明する', en: 'Explain close-out tasks and record retention' },
+      goalJa: '残りの終了手続きと担当者を確認し、必須文書の保存要件（スポンサーへの連絡なしに廃棄しない）をPIに理解してもらう。',
       doctorName: 'Anderson', doctorRole: 'principal investigator, dermatologist',
       situation: 'Close-out visit after the study ended at the site. Remaining tasks: return or destroy remaining investigational product, final ISF check, notify the IRB of study closure, and essential documents retention period.',
       goal: 'Explain the remaining close-out tasks, confirm who is responsible for each, and make sure the PI understands the essential document retention requirements and not to destroy records without sponsor notification.',
@@ -429,30 +573,18 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       opening: "So this is the last visit, right? It's been a long study!"
     },
     {
-      id: 'custom', tag: 'Custom', name: 'カスタムシナリオ',
-      desc: '自分の担当試験に近い状況を自由に設定する',
+      id: 'custom', tag: 'Custom',
+      name: { ja: 'カスタムシナリオ', en: 'Custom scenario' },
+      desc: { ja: '自分の担当試験に近い状況を自由に設定する', en: 'Set up a situation from your own study' },
       doctorName: 'Clark', doctorRole: '', situation: '', goal: '', hidden: '', opening: ''
     }
   ];
 
-  const DIFF_NOTES = {
-    beginner: '初級：ゆっくり・簡単な表現。医師は協力的です。',
-    intermediate: '中級：自然なスピード。医師は質問を返してきます。',
-    advanced: '上級：忙しく少しせっかちな医師。根拠を丁寧に説明しないと納得しません。'
-  };
-
   const REGION_LANG = { us: 'en-US', uk: 'en-GB', de: 'en-GB', in: 'en-IN', au: 'en-AU', sg: 'en-SG' };
-
-  const SCORE_LABELS = {
-    clarity: 'わかりやすさ',
-    grammar: '文法・語法',
-    professionalism: '丁寧さ・配慮',
-    gcp_accuracy: 'GCP的正確さ',
-    goal: 'ゴール達成度'
-  };
 
   // ---------- state ----------
   const state = {
+    lang: 'ja',
     scenarioId: null,
     difficulty: 'intermediate',
     region: 'us',
@@ -462,6 +594,7 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
   };
 
   const $ = id => document.getElementById(id);
+  const T = key => STR[state.lang][key];
   function el(tag, cls, text) {
     const e = document.createElement(tag);
     if (cls) e.className = cls;
@@ -488,15 +621,38 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
     save('theme', next);
   });
 
+  // ---------- language / mode ----------
+  function applyLang() {
+    document.documentElement.lang = state.lang;
+    document.querySelectorAll('[data-t]').forEach(n => { n.textContent = T(n.dataset.t); });
+    $('c-situation').placeholder = T('cSituationPh');
+    $('c-goal').placeholder = T('cGoalPh');
+    $('c-role').placeholder = T('cRolePh');
+    $('input').placeholder = T('inputPh');
+    $('difficulty-note').textContent = T('diffNote')[state.difficulty];
+    $('tr-btn').style.display = state.lang === 'ja' ? '' : 'none';
+    document.querySelectorAll('#mode-cards .card').forEach(c => c.classList.toggle('selected', c.dataset.v === state.lang));
+    if (!SR) $('mic-btn').title = T('micUnsupported');
+    renderScenarioCards();
+  }
+  document.querySelectorAll('#mode-cards .card').forEach(c => {
+    c.addEventListener('click', () => {
+      state.lang = c.dataset.v;
+      save('lang', state.lang);
+      applyLang();
+    });
+  });
+
   // ---------- setup ----------
   function renderScenarioCards() {
     const wrap = $('scenario-cards');
+    wrap.textContent = '';
     SCENARIOS.forEach(s => {
-      const b = el('button', 'card');
+      const b = el('button', 'card' + (s.id === state.scenarioId ? ' selected' : ''));
       b.dataset.id = s.id;
       b.appendChild(el('div', 'tag', s.tag));
-      b.appendChild(el('div', 'name', s.name));
-      b.appendChild(el('div', 'desc', s.desc));
+      b.appendChild(el('div', 'name', s.name[state.lang]));
+      b.appendChild(el('div', 'desc', s.desc[state.lang]));
       b.addEventListener('click', () => selectScenario(s.id));
       wrap.appendChild(b);
     });
@@ -517,15 +673,13 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       });
     });
   }
-  renderScenarioCards();
   bindSeg('difficulty-seg', 'difficulty', v => {
-    $('difficulty-note').textContent = DIFF_NOTES[v];
+    $('difficulty-note').textContent = T('diffNote')[v];
     $('opt-rate').value = v === 'beginner' ? '0.75' : v === 'advanced' ? '1.05' : '0.9';
   });
-  $('difficulty-note').textContent = DIFF_NOTES.intermediate;
   bindSeg('region-seg', 'region');
 
-  ['opt-tts', 'opt-ja'].forEach(id => {
+  ['opt-tts', 'opt-gloss'].forEach(id => {
     const v = load(id, null);
     if (v !== null) $(id).checked = v;
     $(id).addEventListener('change', () => save(id, $(id).checked));
@@ -552,8 +706,7 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
     window.scrollTo(0, 0);
   }
   $('home-btn').addEventListener('click', () => {
-    if (state.history.length && $('chat-view').classList.contains('active')
-      && !confirm('会話を終了してシナリオ選択に戻りますか？')) return;
+    if (state.history.length && $('chat-view').classList.contains('active') && !confirm(T('confirmLeave'))) return;
     stopSpeaking();
     stopMic();
     show('setup-view');
@@ -566,6 +719,7 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(Object.assign({
         action,
+        lang: state.lang,
         scenario: state.scenario,
         history: state.history
       }, extra || {}))
@@ -607,10 +761,7 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   let rec = null;
   let recBase = '';
-  if (!SR) {
-    $('mic-btn').disabled = true;
-    $('mic-btn').title = 'このブラウザは音声入力に対応していません（Chrome / Edge / Safari推奨）';
-  }
+  if (!SR) $('mic-btn').disabled = true;
   function startMic() {
     if (!SR) return;
     stopSpeaking();
@@ -629,7 +780,7 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       autoGrow();
     };
     rec.onerror = e => {
-      if (e.error === 'not-allowed') setStatus('マイクの使用が許可されていません。');
+      if (e.error === 'not-allowed') setStatus(T('micDenied'));
       stopMic();
     };
     rec.onend = () => { $('mic-btn').classList.remove('on'); rec = null; };
@@ -647,29 +798,41 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
   function scrollBottom() { const m = $('messages'); m.scrollTop = m.scrollHeight; }
   function setStatus(t) { $('status').textContent = t || ''; }
 
-  function addDoctor(text, ja) {
+  function addDoctor(r) {
     const m = el('div', 'msg doctor');
     m.appendChild(el('div', 'who', 'Dr. ' + state.scenario.doctorName));
-    const b = el('div', 'bubble', text);
-    const jaEl = el('div', 'ja' + ($('opt-ja').checked ? '' : ' hidden'), ja || '');
-    b.appendChild(jaEl);
+    const b = el('div', 'bubble', r.reply);
+    const glossEl = el('div', 'ja' + ($('opt-gloss').checked ? '' : ' hidden'), r.gloss || '');
+    b.appendChild(glossEl);
     m.appendChild(b);
     const tools = el('div', 'bubble-tools');
-    const play = el('button', 'mini', '🔊 再生');
-    play.addEventListener('click', () => speak(text));
-    const tr = el('button', 'mini', '訳');
-    tr.addEventListener('click', () => jaEl.classList.toggle('hidden'));
+    const play = el('button', 'mini', T('play'));
+    play.addEventListener('click', () => speak(r.reply));
+    const gl = el('button', 'mini', T('glossBtn'));
+    gl.addEventListener('click', () => glossEl.classList.toggle('hidden'));
     tools.appendChild(play);
-    tools.appendChild(tr);
+    tools.appendChild(gl);
     m.appendChild(tools);
+    if (r.terms && r.terms.length) {
+      const terms = el('div', 'terms');
+      r.terms.forEach(t => {
+        const chip = el('button', 'term');
+        chip.appendChild(el('b', '', t.term));
+        chip.appendChild(document.createTextNode(t.meaning));
+        chip.title = T('exGo');
+        chip.addEventListener('click', () => openExplain(t.term));
+        terms.appendChild(chip);
+      });
+      m.appendChild(terms);
+    }
     inner.appendChild(m);
     scrollBottom();
-    if ($('opt-tts').checked) speak(text);
+    if ($('opt-tts').checked) speak(r.reply);
   }
 
   function addCra(text) {
     const m = el('div', 'msg cra');
-    m.appendChild(el('div', 'who', 'You (CRA)'));
+    m.appendChild(el('div', 'who', T('you')));
     m.appendChild(el('div', 'bubble', text));
     inner.appendChild(m);
     scrollBottom();
@@ -685,14 +848,14 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
     if (!fb) return;
     const box = el('div', 'feedback');
     const head = el('div', 'fb-head');
-    head.appendChild(el('span', '', '添削フィードバック'));
+    head.appendChild(el('span', '', T('fbTitle')));
     const right = el('span');
     right.appendChild(el('span', 'stars', stars(fb.score)));
-    const tog = el('button', 'mini', '閉じる');
+    const tog = el('button', 'mini', T('fbClose'));
     tog.style.marginLeft = '8px';
     tog.addEventListener('click', () => {
       box.classList.toggle('collapsed');
-      tog.textContent = box.classList.contains('collapsed') ? '開く' : '閉じる';
+      tog.textContent = box.classList.contains('collapsed') ? T('fbOpen') : T('fbClose');
     });
     right.appendChild(tog);
     head.appendChild(right);
@@ -702,13 +865,13 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
     const corrected = (fb.corrected || '').trim();
     if (corrected && corrected !== original.trim()) {
       const r = el('div', 'fb-row');
-      r.appendChild(el('div', 'fb-label', '修正'));
+      r.appendChild(el('div', 'fb-label', T('fbCorrected')));
       r.appendChild(el('div', 'fb-en', corrected));
       body.appendChild(r);
     }
     if (fb.better) {
       const r = el('div', 'fb-row');
-      r.appendChild(el('div', 'fb-label', 'より自然・プロらしい言い方'));
+      r.appendChild(el('div', 'fb-label', T('fbBetter')));
       const bb = el('div', 'fb-better');
       bb.appendChild(el('span', 'fb-en', fb.better));
       const p = el('button', 'mini', '🔊');
@@ -717,15 +880,15 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       r.appendChild(bb);
       body.appendChild(r);
     }
-    if (fb.comments_ja) {
-      const r = el('div', 'fb-row', fb.comments_ja);
+    if (fb.comments) {
+      const r = el('div', 'fb-row', fb.comments);
       r.style.whiteSpace = 'pre-wrap';
       body.appendChild(r);
     }
-    if (fb.gcp_note_ja) {
+    if (fb.gcp_note) {
       const g = el('div', 'fb-gcp');
-      g.appendChild(el('b', '', 'GCPメモ：'));
-      g.appendChild(document.createTextNode(fb.gcp_note_ja));
+      g.appendChild(el('b', '', T('fbGcp')));
+      g.appendChild(document.createTextNode(fb.gcp_note));
       body.appendChild(g);
     }
     box.appendChild(body);
@@ -736,7 +899,7 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
   function showTyping() {
     const t = el('div', 'typing');
     t.id = 'typing';
-    t.appendChild(document.createTextNode('Dr. ' + state.scenario.doctorName + ' is typing '));
+    t.appendChild(document.createTextNode('Dr. ' + state.scenario.doctorName + T('typing')));
     for (let i = 0; i < 3; i++) t.appendChild(el('span', '', '●'));
     inner.appendChild(t);
     scrollBottom();
@@ -745,21 +908,21 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
 
   function setBusy(b) {
     state.busy = b;
-    ['send-btn', 'hint-btn', 'tr-btn', 'end-btn'].forEach(id => { $(id).disabled = b; });
+    ['send-btn', 'hint-btn', 'tr-btn', 'explain-btn', 'end-btn'].forEach(id => { $(id).disabled = b; });
   }
 
   // ---------- flow ----------
   $('start-btn').addEventListener('click', async () => {
-    if (!state.scenarioId) { $('setup-err').textContent = 'シナリオを選択してください。'; return; }
+    if (!state.scenarioId) { $('setup-err').textContent = T('errScenario'); return; }
     const s = buildScenario();
-    if (!s) { $('setup-err').textContent = '状況とゴールを入力してください。'; return; }
+    if (!s) { $('setup-err').textContent = T('errCustom'); return; }
     state.scenario = s;
     state.history = [];
     inner.textContent = '';
     setStatus('');
-    $('brief-title').textContent = s.name + ' — Dr. ' + s.doctorName;
-    $('brief-situation').textContent = s.id === 'custom' ? s.situation : s.desc;
-    $('brief-goal').textContent = s.id === 'custom' ? s.goal : goalJa(s);
+    $('brief-title').textContent = s.name[state.lang] + ' — Dr. ' + s.doctorName;
+    $('brief-situation').textContent = s.id === 'custom' ? s.situation : s.desc[state.lang];
+    $('brief-goal').textContent = state.lang === 'ja' && s.goalJa ? s.goalJa : s.goal;
     $('brief-details').open = true;
     show('chat-view');
     setBusy(true);
@@ -768,28 +931,15 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       const r = await call('start');
       hideTyping();
       state.history.push({ role: 'doctor', text: r.reply });
-      addDoctor(r.reply, r.reply_ja);
+      addDoctor(r);
       $('input').focus();
     } catch (e) {
       hideTyping();
-      setStatus('開始できませんでした：' + e.message);
+      setStatus(T('startFail') + e.message);
     } finally {
       setBusy(false);
     }
   });
-
-  const GOALS_JA = {
-    siv: 'プロトコルの要点と責務を説明し、SAEの24時間以内報告とDelegation Logの更新についてPIの理解を確認する。',
-    sdv: '不一致を丁寧に伝え、正しいデータを確認し、来週末までのeCRF修正・クエリ回答に合意する。',
-    query: '医師の負担に共感しつつクエリの重要性を説明し、現実的な解決計画と期限に合意する。',
-    sae: '入院はSAEに該当し、認知から24時間以内の報告が必要と説明。本日中のSAE報告と再発防止策に合意する。',
-    pd: '責めずに事実を伝え、被験者の安全と継続可否（メディカルモニターへの相談が必要）を話し合い、逸脱の記録・IRB報告と是正措置に合意する。',
-    icf: '問題を説明し、v3.0での再同意、逸脱報告、旧版の使用停止に合意する。',
-    enroll: '登録が進まない本当の理由を聞き出し、具体的な支援策を提案し、修正目標とフォローアップに合意する。',
-    ip: '逸脱のスポンサー報告と、評価完了までの該当治験薬の隔離を説明し、投与済み被験者のフォローと再発防止策に合意する。',
-    cov: '残りの終了手続きと担当者を確認し、必須文書の保存要件（スポンサーへの連絡なしに廃棄しない）をPIに理解してもらう。'
-  };
-  function goalJa(s) { return GOALS_JA[s.id] || s.goal; }
 
   async function send() {
     const text = $('input').value.trim();
@@ -810,14 +960,14 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       hideTyping();
       addFeedback(msgEl, text, r.feedback);
       state.history.push({ role: 'doctor', text: r.reply });
-      addDoctor(r.reply, r.reply_ja);
+      addDoctor(r);
     } catch (e) {
       hideTyping();
       state.history.pop();
       msgEl.remove();
       $('input').value = text;
       autoGrow();
-      setStatus('送信できませんでした：' + e.message);
+      setStatus(T('sendFail') + e.message);
     } finally {
       setBusy(false);
     }
@@ -833,7 +983,7 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
   }
   $('input').addEventListener('input', autoGrow);
 
-  // ---------- helpers: hint / translate ----------
+  // ---------- helpers: hint / translate / explain ----------
   function closeHelper() { const h = $('helper'); if (h) h.remove(); }
   function helperPanel(title) {
     closeHelper();
@@ -849,13 +999,13 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
     scrollBottom();
     return p;
   }
-  function suggestion(en, ja, note) {
+  function suggestion(en, meaning, note) {
     const s = el('div', 'sugg');
     s.appendChild(el('div', 'en', en));
-    if (ja) s.appendChild(el('div', 'meta', ja));
+    if (meaning) s.appendChild(el('div', 'meta', meaning));
     if (note) s.appendChild(el('div', 'meta', '💬 ' + note));
     const act = el('div', 'act');
-    const use = el('button', 'mini', '入力欄へ');
+    const use = el('button', 'mini', T('toInput'));
     use.addEventListener('click', () => { $('input').value = en; autoGrow(); $('input').focus(); });
     const play = el('button', 'mini', '🔊');
     play.addEventListener('click', () => speak(en));
@@ -867,79 +1017,127 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
 
   $('hint-btn').addEventListener('click', async () => {
     if (state.busy) return;
-    const p = helperPanel('💡 次に言えること');
-    const loading = el('div', 'meta', '考え中…');
+    const p = helperPanel(T('hintTitle'));
+    const loading = el('div', 'meta', T('thinking'));
     p.appendChild(loading);
     setBusy(true);
     try {
       const r = await call('hint');
       loading.remove();
-      (r.suggestions || []).forEach(s => p.appendChild(suggestion(s.en, s.ja, s.note_ja)));
+      (r.suggestions || []).forEach(s => p.appendChild(suggestion(s.en, s.meaning, s.note)));
       scrollBottom();
     } catch (e) {
-      loading.textContent = '取得できませんでした：' + e.message;
+      loading.textContent = T('fetchFail') + e.message;
     } finally {
       setBusy(false);
     }
   });
 
-  $('tr-btn').addEventListener('click', () => {
+  // A small panel with a text box that calls `action` and renders the result.
+  function inputPanel(opts) {
     if (state.busy) return;
-    const p = helperPanel('🔁 日本語で言いたいことを英語に');
+    const p = helperPanel(opts.title);
     const ta = el('textarea');
     ta.rows = 2;
-    ta.placeholder = '例：お忙しいところ恐縮ですが、来週までにクエリへの回答をお願いできますか';
-    const typed = $('input').value.trim();
-    if (/[぀-ヿ一-龯]/.test(typed)) ta.value = typed;
+    ta.placeholder = opts.placeholder;
+    ta.value = opts.initial || '';
     p.appendChild(ta);
-    const go = el('button', 'secondary', '英訳する');
+    const go = el('button', 'secondary', opts.button);
     go.style.marginTop = '6px';
-    const out = el('div');
+    const out = el('div', 'explain-out');
     p.appendChild(go);
     p.appendChild(out);
     ta.focus();
-    go.addEventListener('click', async () => {
+    async function run() {
       const text = ta.value.trim();
-      if (!text) return;
+      if (!text || state.busy) return;
       out.textContent = '';
-      const loading = el('div', 'meta', '翻訳中…');
+      const loading = el('div', 'meta', T('translating'));
       out.appendChild(loading);
       setBusy(true);
       go.disabled = true;
       try {
-        const r = await call('translate', { text });
+        const r = await call(opts.action, { text });
         loading.remove();
-        (r.options || []).forEach(o => out.appendChild(suggestion(o.en, null, o.tone_ja)));
+        opts.render(r, out);
         scrollBottom();
       } catch (e) {
-        loading.textContent = '翻訳できませんでした：' + e.message;
+        loading.textContent = opts.fail + e.message;
       } finally {
         setBusy(false);
         go.disabled = false;
       }
+    }
+    go.addEventListener('click', run);
+    ta.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); run(); }
+    });
+    if (opts.autorun) run();
+  }
+
+  $('tr-btn').addEventListener('click', () => {
+    const typed = $('input').value.trim();
+    inputPanel({
+      action: 'translate', title: T('trTitle'), placeholder: T('trPh'), button: T('trGo'), fail: T('trFail'),
+      initial: /[぀-ヿ一-龯]/.test(typed) ? typed : '',
+      render: (r, out) => (r.options || []).forEach(o => out.appendChild(suggestion(o.en, null, o.tone)))
     });
   });
+
+  function openExplain(term) {
+    inputPanel({
+      action: 'explain', title: T('exTitle'), placeholder: T('exPh'), button: T('exGo'), fail: T('fetchFail'),
+      initial: term || '', autorun: !!term,
+      render: (r, out) => {
+        out.appendChild(el('p', '', r.explanation));
+        if (r.in_this_case) {
+          const p = el('p');
+          p.appendChild(el('b', '', T('exInCase')));
+          p.appendChild(document.createTextNode(r.in_this_case));
+          out.appendChild(p);
+        }
+        if (r.examples && r.examples.length) {
+          out.appendChild(el('div', 'fb-label', T('exExamples')));
+          r.examples.forEach(x => out.appendChild(suggestion(x, null, null)));
+        }
+        if (r.related && r.related.length) {
+          out.appendChild(el('div', 'fb-label', T('exRelated')));
+          const terms = el('div', 'terms');
+          terms.style.maxWidth = '100%';
+          r.related.forEach(t => {
+            const chip = el('button', 'term');
+            chip.appendChild(el('b', '', t.term));
+            chip.appendChild(document.createTextNode(t.meaning));
+            chip.addEventListener('click', () => openExplain(t.term));
+            terms.appendChild(chip);
+          });
+          out.appendChild(terms);
+        }
+      }
+    });
+  }
+  $('explain-btn').addEventListener('click', () => openExplain(''));
 
   // ---------- evaluation ----------
   $('end-btn').addEventListener('click', async () => {
     if (state.busy) return;
     if (!state.history.some(m => m.role === 'cra')) {
-      setStatus('まだ発言がありません。少なくとも1回は返答してください。');
+      setStatus(T('noTurn'));
       return;
     }
     stopMic();
     stopSpeaking();
     const out = $('result-inner');
     out.textContent = '';
-    out.appendChild(el('div', 'loading-full', '会話全体を評価しています…'));
+    out.appendChild(el('div', 'loading-full', T('evaluating')));
     show('result-view');
     try {
       const r = await call('evaluate');
       renderResult(r);
     } catch (e) {
       out.textContent = '';
-      out.appendChild(el('div', 'loading-full', '評価できませんでした：' + e.message));
-      const back = el('button', 'secondary', '会話に戻る');
+      out.appendChild(el('div', 'loading-full', T('evalFail') + e.message));
+      const back = el('button', 'secondary', T('backToChat'));
       back.addEventListener('click', () => show('chat-view'));
       out.appendChild(back);
     }
@@ -948,18 +1146,19 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
   function renderResult(r) {
     const out = $('result-inner');
     out.textContent = '';
-    out.appendChild(el('h2', '', '評価レポート'));
+    out.appendChild(el('h2', '', T('reportTitle')));
     const sub = el('div');
-    sub.appendChild(el('span', 'badge ' + (r.goal_achieved ? 'ok' : 'ng'), r.goal_achieved ? 'ゴール達成' : 'ゴール未達'));
-    sub.appendChild(document.createTextNode('  ' + state.scenario.name));
+    sub.appendChild(el('span', 'badge ' + (r.goal_achieved ? 'ok' : 'ng'), r.goal_achieved ? T('goalOk') : T('goalNg')));
+    sub.appendChild(document.createTextNode('  ' + state.scenario.name[state.lang]));
     out.appendChild(sub);
 
     const sp = el('div', 'panel');
-    sp.appendChild(el('h3', '', 'スコア（10点満点）'));
-    Object.keys(SCORE_LABELS).forEach(k => {
+    sp.appendChild(el('h3', '', T('scoresTitle')));
+    const labels = T('scoreLabels');
+    Object.keys(labels).forEach(k => {
       const v = Math.max(0, Math.min(10, Math.round((r.scores || {})[k] || 0)));
       const row = el('div', 'score-row');
-      row.appendChild(el('span', '', SCORE_LABELS[k]));
+      row.appendChild(el('span', '', labels[k]));
       const bar = el('div', 'bar');
       const fill = el('div');
       fill.style.width = (v * 10) + '%';
@@ -968,8 +1167,8 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       row.appendChild(el('b', '', String(v)));
       sp.appendChild(row);
     });
-    if (r.summary_ja) {
-      const p = el('p', '', r.summary_ja);
+    if (r.summary) {
+      const p = el('p', '', r.summary);
       p.style.marginBottom = '0';
       sp.appendChild(p);
     }
@@ -984,17 +1183,17 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
       p.appendChild(ul);
       out.appendChild(p);
     }
-    listPanel('👍 良かった点', r.strengths_ja);
-    listPanel('📈 改善ポイント', r.improvements_ja);
+    listPanel(T('strengths'), r.strengths);
+    listPanel(T('improvements'), r.improvements);
 
     if (r.key_phrases && r.key_phrases.length) {
       const p = el('div', 'panel');
-      p.appendChild(el('h3', '', '📝 この場面で使えるフレーズ'));
+      p.appendChild(el('h3', '', T('phrases')));
       r.key_phrases.forEach(k => {
         const row = el('div', 'phrase');
         const left = el('div');
         left.appendChild(el('div', 'en', k.en));
-        left.appendChild(el('div', 'ja2', k.ja));
+        left.appendChild(el('div', 'ja2', k.meaning));
         row.appendChild(left);
         const play = el('button', 'mini', '🔊');
         play.addEventListener('click', () => speak(k.en));
@@ -1005,17 +1204,25 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); ou
     }
 
     const acts = el('div', 'result-actions');
-    const again = el('button', 'primary', '同じシナリオでもう一度');
+    const again = el('button', 'primary', T('again'));
     again.addEventListener('click', () => $('start-btn').click());
-    const back = el('button', 'secondary', '会話ログを見る');
+    const back = el('button', 'secondary', T('viewLog'));
     back.addEventListener('click', () => show('chat-view'));
-    const home = el('button', 'secondary', '別のシナリオを選ぶ');
+    const home = el('button', 'secondary', T('other'));
     home.addEventListener('click', () => show('setup-view'));
     acts.appendChild(again);
     acts.appendChild(back);
     acts.appendChild(home);
     out.appendChild(acts);
   }
+
+  // ---------- init ----------
+  const savedLang = load('lang', null);
+  const params = new URLSearchParams(location.search);
+  state.lang = STR[params.get('lang')] ? params.get('lang')
+    : STR[savedLang] ? savedLang
+    : (navigator.language || '').toLowerCase().startsWith('ja') ? 'ja' : 'en';
+  applyLang();
 })();
 </script>
 </body>
