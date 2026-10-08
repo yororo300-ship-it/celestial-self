@@ -11,6 +11,9 @@
     },
     "api/tattoo-compatibility.js": {
       "maxDuration": 30
+    },
+    "api/cra-english.js": {
+      "maxDuration": 60
     }
   }
 }

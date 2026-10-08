@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRA English Simulator</title>
+<meta name="description" content="臨床開発モニター（CRA）向け英会話シミュレーター。海外の治験責任医師とのやり取りをAIとロールプレイで練習できます。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --surface-2: #eef2f7;
+  --text: #1c2430;
+  --muted: #5b6878;
+  --border: #d9e0e8;
+  --accent: #0f6cbd;
+  --accent-soft: #e3effa;
+  --accent-text: #ffffff;
+  --doctor: #ffffff;
+  --cra: #0f6cbd;
+  --cra-text: #ffffff;
+  --good: #1a7f4b;
+  --good-soft: #e3f4ea;
+  --warn: #a15c00;
+  --warn-soft: #fdf1df;
+  --bad: #b3261e;
+  --shadow: 0 1px 3px rgba(20, 30, 50, .08), 0 4px 16px rgba(20, 30, 50, .05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11151b;
+    --surface: #1a2029;
+    --surface-2: #232b36;
+    --text: #e6ebf1;
+    --muted: #9aa7b6;
+    --border: #2f3946;
+    --accent: #4ba3f0;
+    --accent-soft: #1d3349;
+    --accent-text: #0b1520;
+    --doctor: #1f2731;
+    --cra: #2e6fa8;
+    --cra-text: #ffffff;
+    --good: #5cc98d;
+    --good-soft: #17301f;
+    --warn: #f0b35a;
+    --warn-soft: #33270f;
+    --bad: #f08a83;
+    --shadow: 0 1px 3px rgba(0, 0, 0, .4);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11151b;
+  --surface: #1a2029;
+  --surface-2: #232b36;
+  --text: #e6ebf1;
+  --muted: #9aa7b6;
+  --border: #2f3946;
+  --accent: #4ba3f0;
+  --accent-soft: #1d3349;
+  --accent-text: #0b1520;
+  --doctor: #1f2731;
+  --cra: #2e6fa8;
+  --cra-text: #ffffff;
+  --good: #5cc98d;
+  --good-soft: #17301f;
+  --warn: #f0b35a;
+  --warn-soft: #33270f;
+  --bad: #f08a83;
+  --shadow: 0 1px 3px rgba(0, 0, 0, .4);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', 'Noto Sans JP', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+}
+button { font: inherit; cursor: pointer; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+.wrap { max-width: 880px; margin: 0 auto; padding: 0 16px; }
+header.top {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 5;
+}
+header.top .wrap { display: flex; align-items: center; gap: 12px; height: 56px; }
+header.top h1 { font-size: 16px; margin: 0; font-weight: 700; flex: 1; }
+header.top h1 small { color: var(--muted); font-weight: 500; margin-left: 6px; font-size: 12px; }
+.icon-btn {
+  background: none; border: 1px solid var(--border); color: var(--text);
+  border-radius: 8px; height: 34px; min-width: 34px; padding: 0 10px; font-size: 13px;
+}
+.icon-btn:hover { background: var(--surface-2); }
+
+.view { display: none; }
+.view.active { display: block; }
+
+/* Setup */
+.intro { padding: 28px 0 8px; }
+.intro h2 { font-size: 22px; margin: 0 0 6px; }
+.intro p { margin: 0; color: var(--muted); }
+.section-title { font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: .04em; margin: 24px 0 10px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+.card {
+  text-align: left; background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 14px; color: var(--text); box-shadow: var(--shadow);
+}
+.card:hover { border-color: var(--accent); }
+.card.selected { border-color: var(--accent); background: var(--accent-soft); }
+.card .tag { font-size: 11px; font-weight: 600; color: var(--accent); }
+.card .name { font-weight: 700; margin: 2px 0 4px; }
+.card .desc { font-size: 13px; color: var(--muted); }
+.custom-box { display: none; margin-top: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+.custom-box.show { display: block; }
+.custom-box label { display: block; font-size: 13px; font-weight: 600; margin: 8px 0 4px; }
+textarea, input[type=text], select {
+  width: 100%; font: inherit; color: var(--text); background: var(--bg);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;
+}
+textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.seg { display: flex; flex-wrap: wrap; gap: 8px; }
+.seg button {
+  background: var(--surface); color: var(--text); border: 1.5px solid var(--border);
+  border-radius: 999px; padding: 6px 14px; font-size: 14px;
+}
+.seg button.selected { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.seg-note { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.opts { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+.opts label { display: flex; gap: 6px; align-items: center; font-size: 14px; }
+.primary {
+  background: var(--accent); color: var(--accent-text); border: none; border-radius: 10px;
+  padding: 12px 22px; font-weight: 700; font-size: 15px;
+}
+.primary:hover { filter: brightness(1.08); }
+.secondary {
+  background: var(--surface); color: var(--text); border: 1px solid var(--border);
+  border-radius: 10px; padding: 9px 14px; font-weight: 600; font-size: 14px;
+}
+.secondary:hover { background: var(--surface-2); }
+.start-row { margin: 28px 0 40px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.start-row .err { color: var(--bad); font-size: 13px; }
+
+/* Chat */
+#chat-view.active { display: flex; flex-direction: column; height: calc(100dvh - 56px); }
+.brief { background: var(--surface); border-bottom: 1px solid var(--border); }
+.brief details { padding: 10px 0; }
+.brief summary { cursor: pointer; font-weight: 600; font-size: 14px; }
+.brief .goal { font-size: 13px; margin-top: 6px; }
+.brief .goal b { color: var(--accent); }
+.messages { flex: 1; overflow-y: auto; padding: 16px 0; }
+.msg { display: flex; margin: 10px 0; flex-direction: column; }
+.msg .who { font-size: 11px; color: var(--muted); margin: 0 4px 3px; }
+.bubble { max-width: 85%; padding: 10px 14px; border-radius: 14px; word-wrap: break-word; white-space: pre-wrap; }
+.msg.doctor { align-items: flex-start; }
+.msg.doctor .bubble { background: var(--doctor); border: 1px solid var(--border); border-bottom-left-radius: 4px; box-shadow: var(--shadow); }
+.msg.cra { align-items: flex-end; }
+.msg.cra .bubble { background: var(--cra); color: var(--cra-text); border-bottom-right-radius: 4px; }
+.bubble-tools { display: flex; gap: 6px; margin-top: 4px; }
+.mini { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 6px; font-size: 12px; padding: 1px 8px; }
+.mini:hover { color: var(--text); background: var(--surface-2); }
+.ja { font-size: 13px; color: var(--muted); margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--border); white-space: pre-wrap; }
+.ja.hidden { display: none; }
+
+.feedback {
+  max-width: 85%; align-self: flex-end; margin-top: 6px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; font-size: 13px; box-shadow: var(--shadow);
+}
+.feedback .fb-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 4px; }
+.stars { color: var(--warn); letter-spacing: 1px; }
+.fb-row { margin-top: 6px; }
+.fb-label { font-size: 11px; font-weight: 700; color: var(--muted); }
+.fb-en { font-family: 'Inter', sans-serif; }
+.fb-better { background: var(--good-soft); border-radius: 8px; padding: 6px 8px; margin-top: 2px; display: flex; gap: 6px; align-items: flex-start; justify-content: space-between; }
+.fb-gcp { background: var(--warn-soft); color: var(--text); border-radius: 8px; padding: 6px 8px; margin-top: 6px; }
+.fb-gcp b { color: var(--warn); }
+.feedback.collapsed .fb-body { display: none; }
+
+.typing { color: var(--muted); font-size: 13px; padding: 4px; }
+.typing span { animation: blink 1.2s infinite; }
+.typing span:nth-child(2) { animation-delay: .2s; }
+.typing span:nth-child(3) { animation-delay: .4s; }
+@keyframes blink { 0%, 80%, 100% { opacity: .2; } 40% { opacity: 1; } }
+
+.helper-panel {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 10px 12px; margin: 10px 0; font-size: 13px; box-shadow: var(--shadow);
+}
+.helper-panel h4 { margin: 0 0 6px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+.sugg { padding: 8px; border-radius: 8px; background: var(--surface-2); margin-top: 6px; }
+.sugg .en { font-weight: 600; }
+.sugg .meta { color: var(--muted); font-size: 12px; }
+.sugg .act { display: flex; gap: 6px; margin-top: 4px; }
+
+.composer { background: var(--surface); border-top: 1px solid var(--border); padding: 10px 0 12px; }
+.composer .row { display: flex; gap: 8px; align-items: flex-end; }
+.composer textarea { resize: none; min-height: 44px; max-height: 140px; }
+.send { height: 44px; padding: 0 18px; white-space: nowrap; flex-shrink: 0; }
+.mic { height: 44px; width: 44px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 18px; flex-shrink: 0; }
+.mic.on { background: var(--bad); color: #fff; border-color: var(--bad); animation: pulse 1.2s infinite; }
+@keyframes pulse { 50% { opacity: .7; } }
+.tools { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.tools .secondary { padding: 5px 10px; font-size: 13px; }
+.tools .end { margin-left: auto; color: var(--bad); }
+.status { font-size: 12px; color: var(--bad); min-height: 0; }
+
+/* Result */
+.result { padding: 24px 0 48px; }
+.result h2 { margin: 0 0 4px; font-size: 22px; }
+.badge { display: inline-block; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 2px 10px; }
+.badge.ok { background: var(--good-soft); color: var(--good); }
+.badge.ng { background: var(--warn-soft); color: var(--warn); }
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-top: 14px; box-shadow: var(--shadow); }
+.panel h3 { margin: 0 0 10px; font-size: 15px; }
+.score-row { display: grid; grid-template-columns: 140px 1fr 40px; gap: 10px; align-items: center; margin: 8px 0; font-size: 14px; }
+.bar { height: 10px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.bar > div { height: 100%; background: var(--accent); border-radius: 999px; }
+.panel ul { margin: 0; padding-left: 20px; }
+.panel li { margin: 4px 0; }
+.phrase { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.phrase:last-child { border-bottom: none; }
+.phrase .en { font-weight: 600; }
+.phrase .ja2 { font-size: 13px; color: var(--muted); }
+.result-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+.loading-full { text-align: center; padding: 60px 0; color: var(--muted); }
+
+@media (max-width: 560px) {
+  .bubble, .feedback { max-width: 95%; }
+  .score-row { grid-template-columns: 100px 1fr 34px; font-size: 13px; }
+  header.top h1 small { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <h1>CRA English Simulator <small>臨床開発モニター英会話</small></h1>
+    <button class="icon-btn" id="theme-btn" title="テーマ切替" aria-label="テーマ切替">◐</button>
+    <button class="icon-btn" id="home-btn" style="display:none">シナリオ選択</button>
+  </div>
+</header>
+
+<!-- Setup -->
+<section id="setup-view" class="view active">
+  <div class="wrap">
+    <div class="intro">
+      <h2>海外の治験責任医師と、英語で話す練習</h2>
+      <p>AIが海外のDr.役を演じます。あなたはCRAとして英語で対応してください。発言ごとに添削とより自然な言い回しが表示され、最後に総合評価が出ます。</p>
+    </div>
+
+    <div class="section-title">1. シナリオ</div>
+    <div class="cards" id="scenario-cards"></div>
+    <div class="custom-box" id="custom-box">
+      <label for="c-situation">状況（日本語・英語どちらでも可）</label>
+      <textarea id="c-situation" rows="3" placeholder="例：EDCの入力が3か月遅れており、CRCが退職したと聞いている"></textarea>
+      <label for="c-goal">あなた（CRA）のゴール</label>
+      <textarea id="c-goal" rows="2" placeholder="例：入力遅延の原因を確認し、具体的なキャッチアップ計画と期限に合意する"></textarea>
+      <label for="c-role">Dr.の立場</label>
+      <input type="text" id="c-role" placeholder="例：principal investigator, cardiologist">
+    </div>
+
+    <div class="section-title">2. 難易度</div>
+    <div class="seg" id="difficulty-seg">
+      <button data-v="beginner">初級</button>
+      <button data-v="intermediate" class="selected">中級</button>
+      <button data-v="advanced">上級</button>
+    </div>
+    <div class="seg-note" id="difficulty-note"></div>
+
+    <div class="section-title">3. Dr.の国・英語</div>
+    <div class="seg" id="region-seg">
+      <button data-v="us" class="selected">🇺🇸 米国</button>
+      <button data-v="uk">🇬🇧 英国</button>
+      <button data-v="de">🇩🇪 ドイツ</button>
+      <button data-v="in">🇮🇳 インド</button>
+      <button data-v="au">🇦🇺 豪州</button>
+      <button data-v="sg">🇸🇬 シンガポール</button>
+    </div>
+    <div class="seg-note">話し方・表現がその国の医師らしくなります。音声の訛りは端末にあるボイスに依存します。</div>
+
+    <div class="section-title">4. オプション</div>
+    <div class="opts">
+      <label><input type="checkbox" id="opt-tts" checked> Dr.の発言を自動で読み上げ</label>
+      <label><input type="checkbox" id="opt-ja"> 和訳を最初から表示</label>
+      <label>読み上げ速度
+        <select id="opt-rate" style="width:auto">
+          <option value="0.75">ゆっくり</option>
+          <option value="0.9" selected>ふつう</option>
+          <option value="1.05">速め</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="start-row">
+      <button class="primary" id="start-btn">ロールプレイ開始</button>
+      <span class="err" id="setup-err"></span>
+    </div>
+  </div>
+</section>
+
+<!-- Chat -->
+<section id="chat-view" class="view">
+  <div class="brief">
+    <div class="wrap">
+      <details id="brief-details" open>
+        <summary id="brief-title"></summary>
+        <div class="goal" id="brief-situation"></div>
+        <div class="goal"><b>ゴール：</b><span id="brief-goal"></span></div>
+      </details>
+    </div>
+  </div>
+  <div class="messages" id="messages">
+    <div class="wrap" id="messages-inner"></div>
+  </div>
+  <div class="composer">
+    <div class="wrap">
+      <div class="tools">
+        <button class="secondary" id="hint-btn">💡 ヒント</button>
+        <button class="secondary" id="tr-btn">🔁 日→英</button>
+        <button class="secondary end" id="end-btn">終了して評価</button>
+      </div>
+      <div class="row">
+        <button class="mic" id="mic-btn" title="音声入力（英語）" aria-label="音声入力">🎤</button>
+        <textarea id="input" rows="1" placeholder="英語で返答（Enterで送信 / Shift+Enterで改行）"></textarea>
+        <button class="primary send" id="send-btn">送信</button>
+      </div>
+      <div class="status" id="status"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Result -->
+<section id="result-view" class="view">
+  <div class="wrap result" id="result-inner"></div>
+</section>
+
+<script>
+(function () {
+  'use strict';
+
+  const API = '/api/cra-english';
+
+  const SCENARIOS = [
+    {
+      id: 'siv', tag: 'SIV', name: '施設開始時訪問（SIV）',
+      desc: 'PIにプロトコルの重要ポイントと責務を説明する',
+      doctorName: 'Miller', doctorRole: 'principal investigator, oncologist, first time working with this sponsor',
+      situation: 'Site Initiation Visit for a Phase III oncology trial. The CRA needs to walk the PI through key protocol points (eligibility, dosing, visit windows), SAE reporting within 24 hours, and investigator responsibilities including the delegation log.',
+      goal: 'Explain the key protocol points and investigator responsibilities clearly, and confirm the PI understands the 24-hour SAE reporting requirement and will keep the delegation log up to date.',
+      hidden: 'You only have 30 minutes. You think the protocol is overly complicated and want to delegate most tasks to the study coordinator. You are not sure whether sub-investigators need to sign the delegation log before doing study tasks.',
+      opening: "Good morning. I only have about half an hour, so let's get to it."
+    },
+    {
+      id: 'sdv', tag: 'IMV', name: 'SDVでの不一致指摘',
+      desc: 'カルテとeCRFの不一致について医師に確認を求める',
+      doctorName: 'Johnson', doctorRole: 'principal investigator, cardiologist',
+      situation: 'Routine monitoring visit. During source data verification the CRA found that Subject 012\'s concomitant medication (a new antihypertensive started at Visit 4) is in the medical record but missing in the eCRF, and the blood pressure value at Visit 3 differs between source (152/94) and eCRF (125/94).',
+      goal: 'Politely explain the discrepancies, ask the doctor to confirm the correct data, and agree that the site will correct the eCRF and respond to queries by the end of next week.',
+      hidden: 'You believe the eCRF entry is the study coordinator\'s responsibility. The 125 is a transcription error. You did not realize the new antihypertensive needs to be recorded as a concomitant medication.',
+      opening: "Hi, come in. The coordinator said you wanted to talk to me about some data?"
+    },
+    {
+      id: 'query', tag: 'Query', name: 'クエリへの反発に対応',
+      desc: '「クエリが多すぎる」と不満な医師をなだめつつ回答を依頼',
+      doctorName: 'Becker', doctorRole: 'principal investigator, endocrinologist, very busy with clinical work',
+      situation: 'There are 45 open data queries at this site, some older than 30 days, and database lock for the interim analysis is in 3 weeks. The doctor is frustrated with the number of queries.',
+      goal: 'Acknowledge the doctor\'s workload, explain why the queries matter for data integrity and the interim analysis, and agree on a realistic plan and timeline to resolve them.',
+      hidden: 'You feel many queries are trivial and duplicated. You would accept help if the CRA offers to prioritize the critical ones and walk the coordinator through them. You get irritated if the CRA just says "it is required".',
+      opening: "Before you start, I have to say, the number of queries from your company is ridiculous."
+    },
+    {
+      id: 'sae', tag: 'Safety', name: 'SAEの報告遅延',
+      desc: '24時間以内に報告されなかったSAEについて話し合う',
+      doctorName: 'Patel', doctorRole: 'sub-investigator, internal medicine',
+      situation: 'During the visit the CRA found that Subject 007 was hospitalized for pneumonia 9 days ago, but it was not reported to the sponsor as an SAE. The hospital admission was at another hospital and the site learned about it 5 days ago.',
+      goal: 'Explain that hospitalization meets SAE criteria and must be reported within 24 hours of the site becoming aware, get the SAE report submitted today, and discuss how to prevent this in the future.',
+      hidden: 'You thought pneumonia was unrelated to the study drug, so it did not need to be reported. You are a little defensive at first.',
+      opening: "Yes, I saw that patient last week. Is there a problem?"
+    },
+    {
+      id: 'pd', tag: 'Deviation', name: '選択基準違反（プロトコル逸脱）',
+      desc: '不適格な被験者が登録されていた件を伝える',
+      doctorName: 'Wong', doctorRole: 'principal investigator, rheumatologist',
+      situation: 'The CRA found that Subject 015 was randomized although their eGFR at screening (38 mL/min) did not meet the inclusion criterion (eGFR ≥ 45 mL/min). The subject has already received 2 doses of study drug.',
+      goal: 'Explain the deviation factually without blaming, discuss subject safety and whether the subject should continue (the decision requires sponsor medical monitor consultation), ensure the deviation is documented and reported to the IRB as required, and agree on a corrective action.',
+      hidden: 'You think the patient is doing well and benefiting, so you want to keep them in the study. You are worried about how this looks for the site.',
+      opening: "The coordinator mentioned you found an issue with one of our patients?"
+    },
+    {
+      id: 'icf', tag: 'ICF', name: '旧版同意説明文書の使用',
+      desc: '改訂前のICFで同意取得していた問題に対応する',
+      doctorName: 'Thompson', doctorRole: 'principal investigator, neurologist',
+      situation: 'The CRA found that 2 subjects consented last month signed ICF version 2.0, although version 3.0 (with new safety information) was IRB-approved and distributed 6 weeks ago.',
+      goal: 'Explain the issue, ask the site to re-consent the subjects with version 3.0 at their next visit (or sooner), report the deviation as required, and ensure old versions are removed from use.',
+      hidden: 'You did not know version 3.0 had arrived; it is probably still in the coordinator\'s inbox. You ask whether the subjects need to be withdrawn.',
+      opening: "Hello again. What do you need from me today?"
+    },
+    {
+      id: 'enroll', tag: 'Recruitment', name: '症例登録の遅れ',
+      desc: '登録が進まない理由を聞き、改善策を一緒に考える',
+      doctorName: 'Garcia', doctorRole: 'principal investigator, pulmonologist',
+      situation: 'The site committed to enroll 10 subjects in 6 months, but after 5 months only 1 subject has been randomized. The study\'s global recruitment is behind schedule.',
+      goal: 'Find out the real barriers to enrollment, propose practical support (e.g. pre-screening logs, referral letters, materials), and agree on a revised target and follow-up.',
+      hidden: 'The main barrier is that the exclusion criteria exclude most of your patients on a common background therapy, and your coordinator is only part-time. You are mildly embarrassed and a bit defensive.',
+      opening: "I know, I know, enrollment has been slow. It's not easy, you know."
+    },
+    {
+      id: 'ip', tag: 'IP', name: '治験薬の温度逸脱',
+      desc: '保管温度逸脱の報告と対応を確認する',
+      doctorName: 'Nguyen', doctorRole: 'principal investigator, gastroenterologist',
+      situation: 'The temperature log shows the investigational product refrigerator reached 12°C (allowed range 2-8°C) for about 6 hours over the weekend 10 days ago. It was not reported, and the product was dispensed to 2 subjects afterwards.',
+      goal: 'Explain that the excursion must be reported to the sponsor, affected stock must be quarantined until the sponsor assesses it, and confirm how the dispensed subjects will be followed up; agree on a preventive action for temperature monitoring.',
+      hidden: 'The pharmacy handles the fridge and you assumed they would deal with it. You are worried whether the 2 subjects are at risk.',
+      opening: "The pharmacy told me something about the fridge? I'm not really sure what happened."
+    },
+    {
+      id: 'cov', tag: 'COV', name: '終了時訪問（COV）',
+      desc: '試験終了後の手続き・記録保存について説明する',
+      doctorName: 'Anderson', doctorRole: 'principal investigator, dermatologist',
+      situation: 'Close-out visit after the study ended at the site. Remaining tasks: return or destroy remaining investigational product, final ISF check, notify the IRB of study closure, and essential documents retention period.',
+      goal: 'Explain the remaining close-out tasks, confirm who is responsible for each, and make sure the PI understands the essential document retention requirements and not to destroy records without sponsor notification.',
+      hidden: 'You want to move the study files to off-site storage and are asking whether you can shred them in two years. You are relaxed and friendly.',
+      opening: "So this is the last visit, right? It's been a long study!"
+    },
+    {
+      id: 'custom', tag: 'Custom', name: 'カスタムシナリオ',
+      desc: '自分の担当試験に近い状況を自由に設定する',
+      doctorName: 'Clark', doctorRole: '', situation: '', goal: '', hidden: '', opening: ''
+    }
+  ];
+
+  const DIFF_NOTES = {
+    beginner: '初級：ゆっくり・簡単な表現。医師は協力的です。',
+    intermediate: '中級：自然なスピード。医師は質問を返してきます。',
+    advanced: '上級：忙しく少しせっかちな医師。根拠を丁寧に説明しないと納得しません。'
+  };
+
+  const REGION_LANG = { us: 'en-US', uk: 'en-GB', de: 'en-GB', in: 'en-IN', au: 'en-AU', sg: 'en-SG' };
+
+  const SCORE_LABELS = {
+    clarity: 'わかりやすさ',
+    grammar: '文法・語法',
+    professionalism: '丁寧さ・配慮',
+    gcp_accuracy: 'GCP的正確さ',
+    goal: 'ゴール達成度'
+  };
+
+  // ---------- state ----------
+  const state = {
+    scenarioId: null,
+    difficulty: 'intermediate',
+    region: 'us',
+    history: [],
+    busy: false,
+    scenario: null
+  };
+
+  const $ = id => document.getElementById(id);
+  function el(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+
+  // ---------- storage (per-viewer convenience only) ----------
+  function load(key, fallback) {
+    try { const v = localStorage.getItem('cra-en:' + key); return v === null ? fallback : JSON.parse(v); } catch (e) { return fallback; }
+  }
+  function save(key, value) {
+    try { localStorage.setItem('cra-en:' + key, JSON.stringify(value)); } catch (e) { /* ignore */ }
+  }
+
+  // ---------- theme ----------
+  const savedTheme = load('theme', null);
+  if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+  $('theme-btn').addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme')
+      || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    save('theme', next);
+  });
+
+  // ---------- setup ----------
+  function renderScenarioCards() {
+    const wrap = $('scenario-cards');
+    SCENARIOS.forEach(s => {
+      const b = el('button', 'card');
+      b.dataset.id = s.id;
+      b.appendChild(el('div', 'tag', s.tag));
+      b.appendChild(el('div', 'name', s.name));
+      b.appendChild(el('div', 'desc', s.desc));
+      b.addEventListener('click', () => selectScenario(s.id));
+      wrap.appendChild(b);
+    });
+  }
+  function selectScenario(id) {
+    state.scenarioId = id;
+    document.querySelectorAll('#scenario-cards .card').forEach(c => c.classList.toggle('selected', c.dataset.id === id));
+    $('custom-box').classList.toggle('show', id === 'custom');
+    $('setup-err').textContent = '';
+  }
+  function bindSeg(segId, key, onChange) {
+    const seg = $(segId);
+    seg.querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', () => {
+        seg.querySelectorAll('button').forEach(x => x.classList.toggle('selected', x === b));
+        state[key] = b.dataset.v;
+        if (onChange) onChange(b.dataset.v);
+      });
+    });
+  }
+  renderScenarioCards();
+  bindSeg('difficulty-seg', 'difficulty', v => {
+    $('difficulty-note').textContent = DIFF_NOTES[v];
+    $('opt-rate').value = v === 'beginner' ? '0.75' : v === 'advanced' ? '1.05' : '0.9';
+  });
+  $('difficulty-note').textContent = DIFF_NOTES.intermediate;
+  bindSeg('region-seg', 'region');
+
+  ['opt-tts', 'opt-ja'].forEach(id => {
+    const v = load(id, null);
+    if (v !== null) $(id).checked = v;
+    $(id).addEventListener('change', () => save(id, $(id).checked));
+  });
+
+  function buildScenario() {
+    const base = SCENARIOS.find(s => s.id === state.scenarioId);
+    if (!base) return null;
+    const s = Object.assign({}, base, { difficulty: state.difficulty, region: state.region });
+    if (base.id === 'custom') {
+      s.situation = $('c-situation').value.trim();
+      s.goal = $('c-goal').value.trim();
+      s.doctorRole = $('c-role').value.trim() || 'principal investigator';
+      s.hidden = 'Decide a realistic stance yourself that makes the conversation challenging but solvable.';
+      if (!s.situation || !s.goal) return null;
+    }
+    return s;
+  }
+
+  // ---------- views ----------
+  function show(view) {
+    ['setup-view', 'chat-view', 'result-view'].forEach(v => $(v).classList.toggle('active', v === view));
+    $('home-btn').style.display = view === 'setup-view' ? 'none' : '';
+    window.scrollTo(0, 0);
+  }
+  $('home-btn').addEventListener('click', () => {
+    if (state.history.length && $('chat-view').classList.contains('active')
+      && !confirm('会話を終了してシナリオ選択に戻りますか？')) return;
+    stopSpeaking();
+    stopMic();
+    show('setup-view');
+  });
+
+  // ---------- API ----------
+  async function call(action, extra) {
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(Object.assign({
+        action,
+        scenario: state.scenario,
+        history: state.history
+      }, extra || {}))
+    });
+    let data = null;
+    try { data = await res.json(); } catch (e) { /* ignore */ }
+    if (!res.ok) throw new Error((data && data.error) || ('HTTP ' + res.status));
+    return data;
+  }
+
+  // ---------- speech: TTS ----------
+  let voices = [];
+  function refreshVoices() { voices = window.speechSynthesis ? speechSynthesis.getVoices() : []; }
+  if (window.speechSynthesis) {
+    refreshVoices();
+    speechSynthesis.onvoiceschanged = refreshVoices;
+  }
+  function pickVoice(lang) {
+    const en = voices.filter(v => /^en/i.test(v.lang));
+    const norm = l => l.replace('_', '-').toLowerCase();
+    return en.find(v => norm(v.lang) === lang.toLowerCase())
+      || en.find(v => norm(v.lang).startsWith('en-us'))
+      || en[0] || null;
+  }
+  function speak(text) {
+    if (!window.speechSynthesis || !text) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    const lang = REGION_LANG[state.region] || 'en-US';
+    const v = pickVoice(lang);
+    if (v) u.voice = v;
+    u.lang = v ? v.lang : lang;
+    u.rate = parseFloat($('opt-rate').value) || 0.9;
+    speechSynthesis.speak(u);
+  }
+  function stopSpeaking() { if (window.speechSynthesis) speechSynthesis.cancel(); }
+
+  // ---------- speech: recognition ----------
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let rec = null;
+  let recBase = '';
+  if (!SR) {
+    $('mic-btn').disabled = true;
+    $('mic-btn').title = 'このブラウザは音声入力に対応していません（Chrome / Edge / Safari推奨）';
+  }
+  function startMic() {
+    if (!SR) return;
+    stopSpeaking();
+    rec = new SR();
+    rec.lang = 'en-US';
+    rec.interimResults = true;
+    rec.continuous = true;
+    recBase = $('input').value ? $('input').value.replace(/\s*$/, ' ') : '';
+    rec.onresult = e => {
+      let finalText = '', interim = '';
+      for (let i = 0; i < e.results.length; i++) {
+        if (e.results[i].isFinal) finalText += e.results[i][0].transcript;
+        else interim += e.results[i][0].transcript;
+      }
+      $('input').value = recBase + finalText + interim;
+      autoGrow();
+    };
+    rec.onerror = e => {
+      if (e.error === 'not-allowed') setStatus('マイクの使用が許可されていません。');
+      stopMic();
+    };
+    rec.onend = () => { $('mic-btn').classList.remove('on'); rec = null; };
+    rec.start();
+    $('mic-btn').classList.add('on');
+  }
+  function stopMic() {
+    if (rec) { try { rec.stop(); } catch (e) { /* ignore */ } }
+    $('mic-btn').classList.remove('on');
+  }
+  $('mic-btn').addEventListener('click', () => { rec ? stopMic() : startMic(); });
+
+  // ---------- chat rendering ----------
+  const inner = $('messages-inner');
+  function scrollBottom() { const m = $('messages'); m.scrollTop = m.scrollHeight; }
+  function setStatus(t) { $('status').textContent = t || ''; }
+
+  function addDoctor(text, ja) {
+    const m = el('div', 'msg doctor');
+    m.appendChild(el('div', 'who', 'Dr. ' + state.scenario.doctorName));
+    const b = el('div', 'bubble', text);
+    const jaEl = el('div', 'ja' + ($('opt-ja').checked ? '' : ' hidden'), ja || '');
+    b.appendChild(jaEl);
+    m.appendChild(b);
+    const tools = el('div', 'bubble-tools');
+    const play = el('button', 'mini', '🔊 再生');
+    play.addEventListener('click', () => speak(text));
+    const tr = el('button', 'mini', '訳');
+    tr.addEventListener('click', () => jaEl.classList.toggle('hidden'));
+    tools.appendChild(play);
+    tools.appendChild(tr);
+    m.appendChild(tools);
+    inner.appendChild(m);
+    scrollBottom();
+    if ($('opt-tts').checked) speak(text);
+  }
+
+  function addCra(text) {
+    const m = el('div', 'msg cra');
+    m.appendChild(el('div', 'who', 'You (CRA)'));
+    m.appendChild(el('div', 'bubble', text));
+    inner.appendChild(m);
+    scrollBottom();
+    return m;
+  }
+
+  function stars(n) {
+    n = Math.max(1, Math.min(5, Math.round(n || 0)));
+    return '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n);
+  }
+
+  function addFeedback(msgEl, original, fb) {
+    if (!fb) return;
+    const box = el('div', 'feedback');
+    const head = el('div', 'fb-head');
+    head.appendChild(el('span', '', '添削フィードバック'));
+    const right = el('span');
+    right.appendChild(el('span', 'stars', stars(fb.score)));
+    const tog = el('button', 'mini', '閉じる');
+    tog.style.marginLeft = '8px';
+    tog.addEventListener('click', () => {
+      box.classList.toggle('collapsed');
+      tog.textContent = box.classList.contains('collapsed') ? '開く' : '閉じる';
+    });
+    right.appendChild(tog);
+    head.appendChild(right);
+    box.appendChild(head);
+
+    const body = el('div', 'fb-body');
+    const corrected = (fb.corrected || '').trim();
+    if (corrected && corrected !== original.trim()) {
+      const r = el('div', 'fb-row');
+      r.appendChild(el('div', 'fb-label', '修正'));
+      r.appendChild(el('div', 'fb-en', corrected));
+      body.appendChild(r);
+    }
+    if (fb.better) {
+      const r = el('div', 'fb-row');
+      r.appendChild(el('div', 'fb-label', 'より自然・プロらしい言い方'));
+      const bb = el('div', 'fb-better');
+      bb.appendChild(el('span', 'fb-en', fb.better));
+      const p = el('button', 'mini', '🔊');
+      p.addEventListener('click', () => speak(fb.better));
+      bb.appendChild(p);
+      r.appendChild(bb);
+      body.appendChild(r);
+    }
+    if (fb.comments_ja) {
+      const r = el('div', 'fb-row', fb.comments_ja);
+      r.style.whiteSpace = 'pre-wrap';
+      body.appendChild(r);
+    }
+    if (fb.gcp_note_ja) {
+      const g = el('div', 'fb-gcp');
+      g.appendChild(el('b', '', 'GCPメモ：'));
+      g.appendChild(document.createTextNode(fb.gcp_note_ja));
+      body.appendChild(g);
+    }
+    box.appendChild(body);
+    msgEl.appendChild(box);
+    scrollBottom();
+  }
+
+  function showTyping() {
+    const t = el('div', 'typing');
+    t.id = 'typing';
+    t.appendChild(document.createTextNode('Dr. ' + state.scenario.doctorName + ' is typing '));
+    for (let i = 0; i < 3; i++) t.appendChild(el('span', '', '●'));
+    inner.appendChild(t);
+    scrollBottom();
+  }
+  function hideTyping() { const t = $('typing'); if (t) t.remove(); }
+
+  function setBusy(b) {
+    state.busy = b;
+    ['send-btn', 'hint-btn', 'tr-btn', 'end-btn'].forEach(id => { $(id).disabled = b; });
+  }
+
+  // ---------- flow ----------
+  $('start-btn').addEventListener('click', async () => {
+    if (!state.scenarioId) { $('setup-err').textContent = 'シナリオを選択してください。'; return; }
+    const s = buildScenario();
+    if (!s) { $('setup-err').textContent = '状況とゴールを入力してください。'; return; }
+    state.scenario = s;
+    state.history = [];
+    inner.textContent = '';
+    setStatus('');
+    $('brief-title').textContent = s.name + ' — Dr. ' + s.doctorName;
+    $('brief-situation').textContent = s.id === 'custom' ? s.situation : s.desc;
+    $('brief-goal').textContent = s.id === 'custom' ? s.goal : goalJa(s);
+    $('brief-details').open = true;
+    show('chat-view');
+    setBusy(true);
+    showTyping();
+    try {
+      const r = await call('start');
+      hideTyping();
+      state.history.push({ role: 'doctor', text: r.reply });
+      addDoctor(r.reply, r.reply_ja);
+      $('input').focus();
+    } catch (e) {
+      hideTyping();
+      setStatus('開始できませんでした：' + e.message);
+    } finally {
+      setBusy(false);
+    }
+  });
+
+  const GOALS_JA = {
+    siv: 'プロトコルの要点と責務を説明し、SAEの24時間以内報告とDelegation Logの更新についてPIの理解を確認する。',
+    sdv: '不一致を丁寧に伝え、正しいデータを確認し、来週末までのeCRF修正・クエリ回答に合意する。',
+    query: '医師の負担に共感しつつクエリの重要性を説明し、現実的な解決計画と期限に合意する。',
+    sae: '入院はSAEに該当し、認知から24時間以内の報告が必要と説明。本日中のSAE報告と再発防止策に合意する。',
+    pd: '責めずに事実を伝え、被験者の安全と継続可否（メディカルモニターへの相談が必要）を話し合い、逸脱の記録・IRB報告と是正措置に合意する。',
+    icf: '問題を説明し、v3.0での再同意、逸脱報告、旧版の使用停止に合意する。',
+    enroll: '登録が進まない本当の理由を聞き出し、具体的な支援策を提案し、修正目標とフォローアップに合意する。',
+    ip: '逸脱のスポンサー報告と、評価完了までの該当治験薬の隔離を説明し、投与済み被験者のフォローと再発防止策に合意する。',
+    cov: '残りの終了手続きと担当者を確認し、必須文書の保存要件（スポンサーへの連絡なしに廃棄しない）をPIに理解してもらう。'
+  };
+  function goalJa(s) { return GOALS_JA[s.id] || s.goal; }
+
+  async function send() {
+    const text = $('input').value.trim();
+    if (!text || state.busy) return;
+    stopMic();
+    stopSpeaking();
+    closeHelper();
+    $('input').value = '';
+    autoGrow();
+    $('brief-details').open = false;
+    const msgEl = addCra(text);
+    state.history.push({ role: 'cra', text });
+    setBusy(true);
+    setStatus('');
+    showTyping();
+    try {
+      const r = await call('turn');
+      hideTyping();
+      addFeedback(msgEl, text, r.feedback);
+      state.history.push({ role: 'doctor', text: r.reply });
+      addDoctor(r.reply, r.reply_ja);
+    } catch (e) {
+      hideTyping();
+      state.history.pop();
+      msgEl.remove();
+      $('input').value = text;
+      autoGrow();
+      setStatus('送信できませんでした：' + e.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  $('send-btn').addEventListener('click', send);
+  $('input').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); send(); }
+  });
+  function autoGrow() {
+    const t = $('input');
+    t.style.height = 'auto';
+    t.style.height = Math.min(t.scrollHeight, 140) + 'px';
+  }
+  $('input').addEventListener('input', autoGrow);
+
+  // ---------- helpers: hint / translate ----------
+  function closeHelper() { const h = $('helper'); if (h) h.remove(); }
+  function helperPanel(title) {
+    closeHelper();
+    const p = el('div', 'helper-panel');
+    p.id = 'helper';
+    const h = el('h4');
+    h.appendChild(el('span', '', title));
+    const x = el('button', 'mini', '×');
+    x.addEventListener('click', closeHelper);
+    h.appendChild(x);
+    p.appendChild(h);
+    inner.appendChild(p);
+    scrollBottom();
+    return p;
+  }
+  function suggestion(en, ja, note) {
+    const s = el('div', 'sugg');
+    s.appendChild(el('div', 'en', en));
+    if (ja) s.appendChild(el('div', 'meta', ja));
+    if (note) s.appendChild(el('div', 'meta', '💬 ' + note));
+    const act = el('div', 'act');
+    const use = el('button', 'mini', '入力欄へ');
+    use.addEventListener('click', () => { $('input').value = en; autoGrow(); $('input').focus(); });
+    const play = el('button', 'mini', '🔊');
+    play.addEventListener('click', () => speak(en));
+    act.appendChild(use);
+    act.appendChild(play);
+    s.appendChild(act);
+    return s;
+  }
+
+  $('hint-btn').addEventListener('click', async () => {
+    if (state.busy) return;
+    const p = helperPanel('💡 次に言えること');
+    const loading = el('div', 'meta', '考え中…');
+    p.appendChild(loading);
+    setBusy(true);
+    try {
+      const r = await call('hint');
+      loading.remove();
+      (r.suggestions || []).forEach(s => p.appendChild(suggestion(s.en, s.ja, s.note_ja)));
+      scrollBottom();
+    } catch (e) {
+      loading.textContent = '取得できませんでした：' + e.message;
+    } finally {
+      setBusy(false);
+    }
+  });
+
+  $('tr-btn').addEventListener('click', () => {
+    if (state.busy) return;
+    const p = helperPanel('🔁 日本語で言いたいことを英語に');
+    const ta = el('textarea');
+    ta.rows = 2;
+    ta.placeholder = '例：お忙しいところ恐縮ですが、来週までにクエリへの回答をお願いできますか';
+    const typed = $('input').value.trim();
+    if (/[぀-ヿ一-龯]/.test(typed)) ta.value = typed;
+    p.appendChild(ta);
+    const go = el('button', 'secondary', '英訳する');
+    go.style.marginTop = '6px';
+    const out = el('div');
+    p.appendChild(go);
+    p.appendChild(out);
+    ta.focus();
+    go.addEventListener('click', async () => {
+      const text = ta.value.trim();
+      if (!text) return;
+      out.textContent = '';
+      const loading = el('div', 'meta', '翻訳中…');
+      out.appendChild(loading);
+      setBusy(true);
+      go.disabled = true;
+      try {
+        const r = await call('translate', { text });
+        loading.remove();
+        (r.options || []).forEach(o => out.appendChild(suggestion(o.en, null, o.tone_ja)));
+        scrollBottom();
+      } catch (e) {
+        loading.textContent = '翻訳できませんでした：' + e.message;
+      } finally {
+        setBusy(false);
+        go.disabled = false;
+      }
+    });
+  });
+
+  // ---------- evaluation ----------
+  $('end-btn').addEventListener('click', async () => {
+    if (state.busy) return;
+    if (!state.history.some(m => m.role === 'cra')) {
+      setStatus('まだ発言がありません。少なくとも1回は返答してください。');
+      return;
+    }
+    stopMic();
+    stopSpeaking();
+    const out = $('result-inner');
+    out.textContent = '';
+    out.appendChild(el('div', 'loading-full', '会話全体を評価しています…'));
+    show('result-view');
+    try {
+      const r = await call('evaluate');
+      renderResult(r);
+    } catch (e) {
+      out.textContent = '';
+      out.appendChild(el('div', 'loading-full', '評価できませんでした：' + e.message));
+      const back = el('button', 'secondary', '会話に戻る');
+      back.addEventListener('click', () => show('chat-view'));
+      out.appendChild(back);
+    }
+  });
+
+  function renderResult(r) {
+    const out = $('result-inner');
+    out.textContent = '';
+    out.appendChild(el('h2', '', '評価レポート'));
+    const sub = el('div');
+    sub.appendChild(el('span', 'badge ' + (r.goal_achieved ? 'ok' : 'ng'), r.goal_achieved ? 'ゴール達成' : 'ゴール未達'));
+    sub.appendChild(document.createTextNode('  ' + state.scenario.name));
+    out.appendChild(sub);
+
+    const sp = el('div', 'panel');
+    sp.appendChild(el('h3', '', 'スコア（10点満点）'));
+    Object.keys(SCORE_LABELS).forEach(k => {
+      const v = Math.max(0, Math.min(10, Math.round((r.scores || {})[k] || 0)));
+      const row = el('div', 'score-row');
+      row.appendChild(el('span', '', SCORE_LABELS[k]));
+      const bar = el('div', 'bar');
+      const fill = el('div');
+      fill.style.width = (v * 10) + '%';
+      bar.appendChild(fill);
+      row.appendChild(bar);
+      row.appendChild(el('b', '', String(v)));
+      sp.appendChild(row);
+    });
+    if (r.summary_ja) {
+      const p = el('p', '', r.summary_ja);
+      p.style.marginBottom = '0';
+      sp.appendChild(p);
+    }
+    out.appendChild(sp);
+
+    function listPanel(title, items) {
+      if (!items || !items.length) return;
+      const p = el('div', 'panel');
+      p.appendChild(el('h3', '', title));
+      const ul = el('ul');
+      items.forEach(i => ul.appendChild(el('li', '', i)));
+      p.appendChild(ul);
+      out.appendChild(p);
+    }
+    listPanel('👍 良かった点', r.strengths_ja);
+    listPanel('📈 改善ポイント', r.improvements_ja);
+
+    if (r.key_phrases && r.key_phrases.length) {
+      const p = el('div', 'panel');
+      p.appendChild(el('h3', '', '📝 この場面で使えるフレーズ'));
+      r.key_phrases.forEach(k => {
+        const row = el('div', 'phrase');
+        const left = el('div');
+        left.appendChild(el('div', 'en', k.en));
+        left.appendChild(el('div', 'ja2', k.ja));
+        row.appendChild(left);
+        const play = el('button', 'mini', '🔊');
+        play.addEventListener('click', () => speak(k.en));
+        row.appendChild(play);
+        p.appendChild(row);
+      });
+      out.appendChild(p);
+    }
+
+    const acts = el('div', 'result-actions');
+    const again = el('button', 'primary', '同じシナリオでもう一度');
+    again.addEventListener('click', () => $('start-btn').click());
+    const back = el('button', 'secondary', '会話ログを見る');
+    back.addEventListener('click', () => show('chat-view'));
+    const home = el('button', 'secondary', '別のシナリオを選ぶ');
+    home.addEventListener('click', () => show('setup-view'));
+    acts.appendChild(again);
+    acts.appendChild(back);
+    acts.appendChild(home);
+    out.appendChild(acts);
+  }
+})();
+</script>
+</body>
+</html>
